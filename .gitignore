@@ -24,9 +24,11 @@ nbproject/private/
 build/
 dist/
 
-eQueue/eQueue-ejb/nbproject/private/
+eQueue/eQueue-ejb/nbproject/
 eQueue/eQueue-ejb/build/
 eQueue/eQueue-ejb/dist/
+
+eQueue/eQueue-war/
 
 eQueue/nbproject/private/
 eQueue/build/
