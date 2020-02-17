@@ -12,34 +12,31 @@ public class Queue implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long queueId;
 
-    
-    
-    
-    public Long getId() {
-        return id;
+    public Long getQueueId() {
+        return queueId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setQueueId(Long queueId) {
+        this.queueId = queueId;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (queueId != null ? queueId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the queueId fields are not set
         if (!(object instanceof Queue)) {
             return false;
         }
         Queue other = (Queue) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.queueId == null && other.queueId != null) || (this.queueId != null && !this.queueId.equals(other.queueId))) {
             return false;
         }
         return true;
@@ -47,7 +44,7 @@ public class Queue implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Queue[ id=" + id + " ]";
+        return "entity.Queue[ id=" + queueId + " ]";
     }
     
 }

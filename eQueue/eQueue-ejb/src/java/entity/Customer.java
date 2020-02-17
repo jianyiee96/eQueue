@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -17,38 +18,41 @@ public class Customer implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    
+    private Long customerId;
+
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
     private String firstName;
-    
+
     @Column(nullable = false, length = 32)
     @NotNull
     @Size(max = 32)
     private String lastName;
-    
+
     @Column(nullable = false, unique = true, length = 64)
     @NotNull
     @Size(max = 64)
     @Email
     private String email;
-    
+
     @Column(columnDefinition = "CHAR(32) NOT NULL")
     @NotNull
     private String password;
-    
+
     @Column(columnDefinition = "CHAR(32) NOT NULL")
     @NotNull
     private String salt;
+
+    @OneToOne (mappedBy = "customer", optional = true)
+    DiningTable allocatedDiningTable;
     
-    public Customer(){
-        
+    public Customer() {
+
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
-        
+
     }
-    
+
     public Customer(String firstName, String lastName, String email, String password) {
         this();
         this.firstName = firstName;
@@ -56,16 +60,16 @@ public class Customer implements Serializable {
         this.email = email;
         setPassword(password);
     }
-    
-    public Long getId() {
-        return id;
+
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 
-        public String getFirstName() {
+    public String getFirstName() {
         return firstName;
     }
 
@@ -92,33 +96,39 @@ public class Customer implements Serializable {
     public String getPassword() {
         return password;
     }
-
+    
     public void setPassword(String password) {
-        if(password != null)
-        {
+        if (password != null) {
             this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
-        }
-        else
-        {
+        } else {
             this.password = null;
         }
     }
+
+    public DiningTable getAllocatedDiningTable() {
+        return allocatedDiningTable;
+    }
+
+    public void setAllocatedDiningTable(DiningTable allocatedDiningTable) {
+        this.allocatedDiningTable = allocatedDiningTable;
+    }
+
     
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (customerId != null ? customerId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
+        // TODO: Warning - this method won't work in the case the customerId fields are not set
         if (!(object instanceof Customer)) {
             return false;
         }
         Customer other = (Customer) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.customerId == null && other.customerId != null) || (this.customerId != null && !this.customerId.equals(other.customerId))) {
             return false;
         }
         return true;
@@ -126,7 +136,7 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Customer[ id=" + id + " ]";
+        return "entity.Customer[ id=" + customerId + " ]";
     }
-    
+
 }

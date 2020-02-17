@@ -42,7 +42,7 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
                 em.persist(newCustomer);
                 em.flush();
 
-                return newCustomer.getId();
+                return newCustomer.getCustomerId();
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
@@ -57,7 +57,7 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
-
+        
     }
 
     @Override
