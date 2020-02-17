@@ -38,7 +38,7 @@ public class MenuItem implements Serializable {
     private String menuItemName;
 
     @Column(nullable = true, length = 128)
-    @Size(max = 64)
+    @Size(max = 128)
     private String menuItemDescription;
 
     @Column(nullable = false, precision = 11, scale = 2)

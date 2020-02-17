@@ -1,11 +1,14 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -53,9 +56,13 @@ public class Customer implements Serializable {
     @OneToOne (optional = true)
     private CreditCard creditCard;
     
+    @OneToMany(mappedBy = "customer")
+    private List<Notification> notifications;
+    
     public Customer() {
 
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
+        this.notifications = new ArrayList<>();
 
     }
 
@@ -135,6 +142,15 @@ public class Customer implements Serializable {
         this.creditCard = creditCard;
     }
 
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    
     
     @Override
     public int hashCode() {
