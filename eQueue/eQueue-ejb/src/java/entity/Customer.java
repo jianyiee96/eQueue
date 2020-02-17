@@ -50,6 +50,9 @@ public class Customer implements Serializable {
     @OneToOne (mappedBy = "customer", optional = true)
     private Queue currentQueue;
     
+    @OneToOne (optional = true)
+    private CreditCard creditCard;
+    
     public Customer() {
 
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
@@ -124,7 +127,14 @@ public class Customer implements Serializable {
         this.currentQueue = currentQueue;
     }
 
-    
+    public CreditCard getCreditCard() {
+        return creditCard;
+    }
+
+    public void setCreditCard(CreditCard creditCard) {
+        this.creditCard = creditCard;
+    }
+
     
     @Override
     public int hashCode() {
