@@ -53,6 +53,9 @@ public class CustomerOrder implements Serializable {
     @JoinColumn(nullable = false)
     private Customer customer;
     
+    @ManyToOne(optional = true)
+    private PaymentTransaction paymentTransaction;
+    
     public CustomerOrder(){
         
         this.orderDate = new Date();
@@ -123,6 +126,29 @@ public class CustomerOrder implements Serializable {
         }
     }
 
+    public PaymentTransaction getPaymentTransaction() {
+        return paymentTransaction;
+    }
+
+    public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
+        if(this.paymentTransaction != null)
+        {
+            this.paymentTransaction.getCustomerOrders().remove(this);
+        }
+        
+        this.paymentTransaction = paymentTransaction;
+        
+        if(this.paymentTransaction != null)
+        {
+            if(!this.paymentTransaction.getCustomerOrders().contains(this))
+            {
+                this.paymentTransaction.getCustomerOrders().add(this);
+            }
+        }
+    }
+
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
