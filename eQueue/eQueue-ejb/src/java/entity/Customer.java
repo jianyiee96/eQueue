@@ -45,7 +45,7 @@ public class Customer implements Serializable {
     private String salt;
 
     @OneToOne (mappedBy = "customer", optional = true)
-    DiningTable allocatedDiningTable;
+    private DiningTable allocatedDiningTable;
     
     public Customer() {
 

@@ -3,6 +3,7 @@ package ejb.session.singleton;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
 import entity.Customer;
+import entity.DiningTable;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -46,8 +47,15 @@ public class DataInitializationSessionBean {
     private void initializeData() {
 
         try{
-            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
             
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
             
             
             

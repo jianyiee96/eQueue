@@ -22,23 +22,37 @@ public class DiningTable implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long diningTableId;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = false)
     @NotNull
-    String qrCode;
+    private String qrCode;
 
     @Column(nullable = false)
     @NotNull
     @Positive
     @Min(1)
-    Long seatingCapacity;
+    private Long seatingCapacity;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
-    TableStatusEnum tableStatus;
+    private TableStatusEnum tableStatus;
 
     @OneToOne(optional = true)
-    Customer customer;
+    private Customer customer;
+    
+    public DiningTable(){
+        
+        this.tableStatus = TableStatusEnum.FROZEN_UNOCCUPIED;
+        this.qrCode = "default.jpg";
+        
+    }
+    
+    public DiningTable(Long seatingCapacity){
+        
+        this();
+        this.seatingCapacity = seatingCapacity;
+        
+    }
     
     public Long getDiningTableId() {
         return diningTableId;
