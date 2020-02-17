@@ -47,6 +47,9 @@ public class Customer implements Serializable {
     @OneToOne (mappedBy = "customer", optional = true)
     private DiningTable allocatedDiningTable;
     
+    @OneToOne (mappedBy = "customer", optional = true)
+    private Queue currentQueue;
+    
     public Customer() {
 
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
@@ -113,6 +116,15 @@ public class Customer implements Serializable {
         this.allocatedDiningTable = allocatedDiningTable;
     }
 
+    public Queue getCurrentQueue() {
+        return currentQueue;
+    }
+
+    public void setCurrentQueue(Queue currentQueue) {
+        this.currentQueue = currentQueue;
+    }
+
+    
     
     @Override
     public int hashCode() {

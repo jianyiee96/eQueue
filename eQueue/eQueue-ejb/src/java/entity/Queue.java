@@ -1,10 +1,21 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import util.enumeration.QueueStatusEnum;
 
 @Entity
 public class Queue implements Serializable {
@@ -14,6 +25,50 @@ public class Queue implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long queueId;
 
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
+    @NotNull
+    private Date startDateTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = true)
+    private Date allocatedDateTime;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = true)
+    private Date seatedDateTime;
+
+    @Column(nullable = false)
+    @NotNull
+    @Positive
+    @Min(1)
+    private Long numberOfPax;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private QueueStatusEnum queueStatus;
+
+    @OneToOne(optional = false)
+    private Customer customer;
+    
+    @OneToOne(optional = true)
+    private DiningTable allocatedDiningTable;
+
+    public Queue() {
+
+        this.startDateTime = new Date();
+        this.queueStatus = QueueStatusEnum.ACTIVE;
+
+    }
+
+    public Queue(Long numberOfPax) {
+
+        this();
+        this.numberOfPax = numberOfPax;
+
+    }
+
     public Long getQueueId() {
         return queueId;
     }
@@ -21,6 +76,73 @@ public class Queue implements Serializable {
     public void setQueueId(Long queueId) {
         this.queueId = queueId;
     }
+
+    public Date getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(Date startDateTime) {
+        this.startDateTime = startDateTime;
+    }
+
+    public Date getAllocatedDateTime() {
+        return allocatedDateTime;
+    }
+
+    public void setAllocatedDateTime(Date allocatedDateTime) {
+        this.allocatedDateTime = allocatedDateTime;
+    }
+
+    public Date getSeatedDateTime() {
+        return seatedDateTime;
+    }
+
+    public void setSeatedDateTime(Date seatedDateTime) {
+        this.seatedDateTime = seatedDateTime;
+    }
+
+    public Long getNumberOfPax() {
+        return numberOfPax;
+    }
+
+    public void setNumberOfPax(Long numberOfPax) {
+        this.numberOfPax = numberOfPax;
+    }
+
+    public QueueStatusEnum getQueueStatus() {
+        return queueStatus;
+    }
+
+    public void setQueueStatus(QueueStatusEnum queueStatus) {
+        this.queueStatus = queueStatus;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        if (this.customer != null) {
+            this.customer.setCurrentQueue(null);
+        }
+
+        this.customer = customer;
+
+        if (this.customer != null) {
+            this.customer.setCurrentQueue(this);
+        }
+    }
+
+    public DiningTable getAllocatedDiningTable() {
+        return allocatedDiningTable;
+    }
+    
+
+    public void setAllocatedDiningTable(DiningTable allocatedDiningTable) {
+        this.allocatedDiningTable = allocatedDiningTable;
+    }
+    
+    
 
     @Override
     public int hashCode() {
@@ -46,5 +168,5 @@ public class Queue implements Serializable {
     public String toString() {
         return "entity.Queue[ id=" + queueId + " ]";
     }
-    
+
 }
