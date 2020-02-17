@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,13 +15,14 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import util.enumeration.NotificationTypeEnum;
 
 @Entity
 public class Notification implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -44,16 +47,22 @@ public class Notification implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private NotificationTypeEnum notificationType;
 
     public Notification() {
         this.notificationDate = new Date();
         this.isRead = false;
     }
 
-    public Notification(String title, String message) {
+    public Notification(String title, String message, NotificationTypeEnum notificationType) {
         this();
         this.title = title;
         this.message = message;
+        this.notificationType = notificationType;
     }
 
     public Long getNotificationId() {
@@ -116,6 +125,16 @@ public class Notification implements Serializable {
         }
     }
 
+    public NotificationTypeEnum getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationTypeEnum notificationType) {
+        this.notificationType = notificationType;
+    }
+
+    
+    
     @Override
     public int hashCode() {
         int hash = 0;
