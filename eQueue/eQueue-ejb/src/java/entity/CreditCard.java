@@ -51,6 +51,7 @@ public class CreditCard implements Serializable {
     }
     
     public CreditCard(String creditCardNumber, String cvv, Long expiryMonth, Long expiryDay){
+        this();
         this.creditCardNumber = creditCardNumber;
         this.cvv = cvv;
         this.expiryMonth = expiryMonth;

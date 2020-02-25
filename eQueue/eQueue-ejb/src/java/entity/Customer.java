@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
@@ -62,7 +61,6 @@ public class Customer implements Serializable {
     
     @OneToMany(mappedBy = "customer")
     private List<CustomerOrder> customerOrders;
-    
     
     @OneToOne (optional = true)
     private ShoppingCart shoppingCart;

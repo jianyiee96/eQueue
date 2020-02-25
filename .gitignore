@@ -34,18 +34,6 @@ eQueue/nbproject/private/
 eQueue/build/
 eQueue/dist/
 
-CaRMS_ManagementClient/nbproject/private/
-CaRMS_ManagementClient/build/
-CaRMS_ManagementClient/dist/
-
-CaRMS_ReservationClient/nbproject/private/
-CaRMS_ReservationClient/build/
-CaRMS_ReservationClient/dist/
-
-CaRMS_ClassLibrary/nbproject/private/
-CaRMS_ClassLibrary/build/
-CaRMS_ClassLibrary/dist/
-
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 /CaRMS_HolidayReservationSystemClient/nbproject/private/

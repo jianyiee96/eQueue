@@ -19,7 +19,7 @@ public class ShoppingCart implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long ShoppingCart;
+    private Long shoppingCartId ;
     
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
@@ -34,12 +34,12 @@ public class ShoppingCart implements Serializable {
         this.orderLineItems = new ArrayList<>();
     }
     
-    public Long getShoppingCart() {
-        return ShoppingCart;
+    public Long getShoppingCartId() {
+        return shoppingCartId;
     }
 
-    public void setShoppingCart(Long ShoppingCart) {
-        this.ShoppingCart = ShoppingCart;
+    public void setShoppingCartId(Long shoppingCartId) {
+        this.shoppingCartId = shoppingCartId;
     }
 
     public Double getTotalAmount() {
@@ -63,18 +63,18 @@ public class ShoppingCart implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (ShoppingCart != null ? ShoppingCart.hashCode() : 0);
+        hash += (shoppingCartId != null ? shoppingCartId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the ShoppingCart fields are not set
+        // TODO: Warning - this method won't work in the case the shoppingCartId fields are not set
         if (!(object instanceof ShoppingCart)) {
             return false;
         }
         ShoppingCart other = (ShoppingCart) object;
-        if ((this.ShoppingCart == null && other.ShoppingCart != null) || (this.ShoppingCart != null && !this.ShoppingCart.equals(other.ShoppingCart))) {
+        if ((this.shoppingCartId == null && other.shoppingCartId != null) || (this.shoppingCartId != null && !this.shoppingCartId.equals(other.shoppingCartId))) {
             return false;
         }
         return true;
@@ -82,7 +82,7 @@ public class ShoppingCart implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.ShoppingCart[ id=" + ShoppingCart + " ]";
+        return "entity.ShoppingCart[ id=" + shoppingCartId + " ]";
     }
     
 }

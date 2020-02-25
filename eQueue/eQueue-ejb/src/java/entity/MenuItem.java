@@ -1,7 +1,6 @@
 package entity;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -61,6 +60,8 @@ public class MenuItem implements Serializable {
     @JoinColumn(nullable = false)
     private MenuCategory menuCategory;
 
+    //private String menuItemImagePath;
+    
     public MenuItem() {
 
         this.availability = MenuItemAvailabilityEnum.UNAVAILABLE;

@@ -19,7 +19,7 @@ public class MenuCategory implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long menuCaregoryId;
+    private Long menuCategoryId;
 
     @Column(nullable = false, unique = true, length = 32)
     @NotNull
@@ -46,12 +46,12 @@ public class MenuCategory implements Serializable {
         this.categoryName = categoryName;
     }
     
-    public Long getMenuCaregoryId() {
-        return menuCaregoryId;
+    public Long getMenuCategoryId() {
+        return menuCategoryId;
     }
 
-    public void setMenuCaregoryId(Long menuCaregoryId) {
-        this.menuCaregoryId = menuCaregoryId;
+    public void setMenuCategoryId(Long menuCategoryId) {
+        this.menuCategoryId = menuCategoryId;
     }
 
     public String getCategoryName() {
@@ -101,18 +101,18 @@ public class MenuCategory implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (menuCaregoryId != null ? menuCaregoryId.hashCode() : 0);
+        hash += (menuCategoryId != null ? menuCategoryId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the menuCaregoryId fields are not set
+        // TODO: Warning - this method won't work in the case the menuCategoryId fields are not set
         if (!(object instanceof MenuCategory)) {
             return false;
         }
         MenuCategory other = (MenuCategory) object;
-        if ((this.menuCaregoryId == null && other.menuCaregoryId != null) || (this.menuCaregoryId != null && !this.menuCaregoryId.equals(other.menuCaregoryId))) {
+        if ((this.menuCategoryId == null && other.menuCategoryId != null) || (this.menuCategoryId != null && !this.menuCategoryId.equals(other.menuCategoryId))) {
             return false;
         }
         return true;
@@ -120,7 +120,7 @@ public class MenuCategory implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.MenuCategory[ id=" + menuCaregoryId + " ]";
+        return "entity.MenuCategory[ id=" + menuCategoryId + " ]";
     }
 
 }
