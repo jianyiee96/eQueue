@@ -31,6 +31,8 @@ eQueue/eQueue-ejb/dist/
 eQueue/eQueue-war/nbproject/private/
 
 eQueue/nbproject/private/
+eQueue/nbproject/project.properties
+eQueue/nbproject/genfiles.properties
 eQueue/build/
 eQueue/dist/
 
