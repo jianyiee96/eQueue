@@ -7,19 +7,75 @@
     </h:head>
     <h:body>
         <h1>Welcome to eQueue</h1>
-        
+
+
+
         <ul>
-            
+
             <li>
                 <h:link value="Store Management" outcome="viewStoreVariables" />
             </li>
-            
+
             <li>
                 <h:link value="Create new Customer" outcome="createNewCustomer" />
             </li>
-            
+
+
         </ul>
-        
+
+
+
+
+
+
+        <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
+
+            Welcome #{sessionScope.currentCustomer.firstName}
+
+            <h:form id="logoutForm">
+                <h:commandButton value="Logout" actionListener="#{customerLoginManagedBean.customerLogout}" />
+            </h:form>
+
+            <ul>
+                <li>
+                    <h:link value="Join Queue" outcome="joinQueue" />
+                </li>
+                <li>
+                    <h:link value="View My Queue" outcome="viewQueue" />
+                </li>
+                <li>
+                    <h:link value="View My Table Allocation" outcome="viewTableAllocation" />
+                </li>
+            </ul>
+
+        </h:panelGroup>
+
+
+        <h:panelGroup rendered="#{sessionScope.customerIsLogin == false}">
+
+            <h4>Customer Login:</h4>
+            <h:form id="loginForm">
+                <h:outputLabel for="email" value="Email:" />&nbsp;
+                <h:inputText id="username" value="#{customerLoginManagedBean.email}" required="true" requiredMessage="Email is required" maxlength="32"/>
+                <h:message for="email" errorClass="errorText" fatalClass="errorText" />&nbsp;
+                &nbsp;
+                <h:outputLabel for="password" value="Password:" />&nbsp;
+                <h:inputSecret id="password" value="#{customerLoginManagedBean.password}" required="true" requiredMessage="Password is required" maxlength="32"/>
+
+                <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
+
+                <br />
+                <br />
+
+                <h:commandButton type="reset" value="Clear" />&nbsp;
+                <h:commandButton type="submit" value="Login" actionListener="#{customerLoginManagedBean.customerLogin}" />
+
+                <h:messages errorClass="errorTexts" fatalClass="errorTexts" infoClass="infoTexts" globalOnly="true" />
+            </h:form>
+
+        </h:panelGroup>
+
+
     </h:body>
 </html>
 

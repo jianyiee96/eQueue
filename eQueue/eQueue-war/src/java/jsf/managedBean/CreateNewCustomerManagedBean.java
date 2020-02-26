@@ -50,11 +50,6 @@ public class CreateNewCustomerManagedBean implements Serializable {
     public void back(ActionEvent event) throws IOException {
         FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
     }
-
-//    public void back(ActionEvent event) throws IOException {
-//        FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
-//    }
-//    
     
     public Customer getNewCustomer() {
         return newCustomer;
