@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Store management</title>
+    </h:head>
+    <h:body>
+        <h2>Store Management</h2>
+
+        #{viewStoreVariablesManagedBean.foo()}
+
+        <h:panelGrid style="border-style: dotted;" columns="2" rendered="#{viewStoreVariablesManagedBean.storeVariablesToView != null}">
+
+            <h:outputText style="font-weight: bold; width: 30%;" value="Store Name"/>
+            <h:outputText style="width: 70%;" value="#{viewStoreVariablesManagedBean.storeVariablesToView.storeName}"/>
+
+            <h:outputText style="font-weight: bold;" value="Email"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.storeEmail}"/>
+
+            <h:outputText style="font-weight: bold;" value="Address"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.storeAddress}"/>
+
+            <h:outputText style="font-weight: bold;" value="Contact"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.storeContact}"/>
+
+            <h:outputText style="font-weight: bold;" value="Quantity On Hand"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.storeName}"/>
+
+            <h:outputText style="font-weight: bold;" value="Queue Waiting Time(Minutes)"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.estimatedQueueUnitWaitingMinutes}"/>
+
+            <h:outputText style="font-weight: bold;" value="Allocation Response Time(Minutes)"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.allocationGraceWaitingMinutes}"/>
+
+            <h:outputText style="font-weight: bold;" value="Message of the Day"/>
+            <h:outputText value="#{viewStoreVariablesManagedBean.storeVariablesToView.messageOfTheDay}"/>
+
+        </h:panelGrid>
+        <h:form rendered="#{viewStoreVariablesManagedBean.storeVariablesToView != null}">
+            <h:commandLink value="Back" actionListener="#{viewStoreVariablesManagedBean.back}" />&nbsp;|
+            <h:commandLink value="Update" actionListener="#{viewStoreVariablesManagedBean.updateVariables}" />
+        </h:form>
+    </h:body>
+</html>
+

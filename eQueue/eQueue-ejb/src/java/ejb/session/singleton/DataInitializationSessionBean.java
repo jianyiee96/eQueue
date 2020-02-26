@@ -2,8 +2,10 @@ package ejb.session.singleton;
 
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
 import entity.DiningTable;
+import entity.StoreVariables;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
@@ -14,6 +16,7 @@ import javax.persistence.PersistenceContext;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.CustomerNotUniqueException;
 import util.exceptions.InputDataValidationException;
+import util.exceptions.StoreNotInitializedException;
 import util.exceptions.UnknownPersistenceException;
 
 @Singleton
@@ -25,6 +28,8 @@ public class DataInitializationSessionBean {
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
 
+    @EJB
+    private StoreManagementSessionBeanLocal storeManagementSessionBeanLocal;
     @EJB
     private CustomerSessionBeanLocal customerSessionBeanLocal;
     @EJB
@@ -38,8 +43,8 @@ public class DataInitializationSessionBean {
     @PostConstruct
     public void postConstruct() {
         try {
-            customerSessionBeanLocal.retrieveCustomerByEmail("guest@equeue.com");
-        } catch (CustomerNotFoundException ex) {
+            storeManagementSessionBeanLocal.retrieveStoreVariables();
+        } catch (StoreNotInitializedException ex) {
             initializeData();
         }
     }
@@ -47,6 +52,9 @@ public class DataInitializationSessionBean {
     private void initializeData() {
 
         try{
+            
+            
+            storeManagementSessionBeanLocal.storeInitialization(new StoreVariables("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
             
             customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));

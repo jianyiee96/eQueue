@@ -50,6 +50,7 @@ public class StoreVariables implements Serializable {
     @Min(1)
     private Long estimatedQueueUnitWaitingMinutes;
     
+    
     @Column(nullable = false)
     @NotNull
     @Positive
@@ -57,7 +58,7 @@ public class StoreVariables implements Serializable {
     private Long allocationGraceWaitingMinutes;
     
     public StoreVariables(){
-        this.estimatedQueueUnitWaitingMinutes = 0l;
+        this.estimatedQueueUnitWaitingMinutes = 1l;
         this.allocationGraceWaitingMinutes = 15l;
     }
     
