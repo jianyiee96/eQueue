@@ -6,7 +6,7 @@
             <name>eQueue-ejb</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <included-library dirs="200">libs.javaee-api-7.0.classpath</included-library>
-            <included-library dirs="200">libs.Bean_Validation_API_2.0.1.classpath</included-library>
+            <included-library dirs="200">libs.validation-api-2.0.1.Final.classpath</included-library>
             <source-roots>
                 <root id="src.dir"/>
             </source-roots>
