@@ -32,7 +32,10 @@ public class LoginManagedBean {
             FacesContext.getCurrentInstance().getExternalContext().getSession(true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("employeeIsLogin", true);
             FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", currentEmployee);
-            FacesContext.getCurrentInstance().getExternalContext().redirect(FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath() + "/index.xhtml");
+//            System.out.println("Cur Inst - " + FacesContext.getCurrentInstance());
+//            System.out.println("Ext Cotx - " + FacesContext.getCurrentInstance().getExternalContext());
+//            System.out.println("Ctx Path - " + FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
+            FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
         } catch (EmployeeInvalidLoginCredentialException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
         }

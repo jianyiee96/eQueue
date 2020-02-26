@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 @Named(value = "viewAllEmployeesManagedBean")
@@ -28,7 +29,9 @@ public class ViewAllEmployeesManagedBean {
     }
 
     public void viewEmployeeDetails(ActionEvent event) throws IOException {
-
+        Long employeeIdToView = (Long) event.getComponent().getAttributes().get("employeeId");
+        FacesContext.getCurrentInstance().getExternalContext().getFlash().put("employeeIdToView", employeeIdToView);
+        FacesContext.getCurrentInstance().getExternalContext().redirect("viewEmployeeDetails.xhtml");
     }
 
     public List<Employee> getEmployees() {
