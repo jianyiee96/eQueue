@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>View All Employees</title>
+    </h:head>
+    <h:body>
+        <h1>View All Employees</h1>
+
+        <br />
+
+        <h:form>
+            <h:dataTable value="#{viewAllEmployeesManagedBean.employees}" var="employee" style="width: 35%">
+                <h:column>
+                    <f:facet name="header">Employee ID</f:facet>
+                    <h:outputText value="#{employee.employeeId}" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">First Name</f:facet>
+                    <h:outputText value="#{employee.firstName}" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Last Name</f:facet>
+                    <h:outputText value="#{employee.lastName}" />
+                </h:column>
+
+                <h:column>
+                    <f:facet name="header">Role</f:facet>
+                    <h:outputText value="#{employee.employeeRole}" />
+                </h:column>
+
+                <h:column>    				
+                    <f:facet name = "header">Action</f:facet>
+                    <h:commandLink value="View" actionListener="#{viewAllEmployeesManagedBean.viewEmployeeDetails}">
+                        <f:attribute name="employeeId" value="#{employee.employeeId}" />
+                    </h:commandLink>
+                </h:column>
+
+            </h:dataTable>
+        </h:form>
+
+        <br />
+        
+        <div style="text-align: left;">
+            <h:button outcome="index.xhtml" value="Back" />&nbsp;
+        </div>
+
+    </h:body>
+</html>
+
