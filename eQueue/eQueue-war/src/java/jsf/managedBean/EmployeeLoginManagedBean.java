@@ -12,9 +12,9 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 import util.exceptions.EmployeeInvalidLoginCredentialException;
 
-@Named(value = "loginManagedBean")
+@Named(value = "employeeLoginManagedBean")
 @RequestScoped
-public class LoginManagedBean {
+public class EmployeeLoginManagedBean {
 
     @EJB(name = "EmployeeSessionBeanLocal")
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
@@ -22,7 +22,7 @@ public class LoginManagedBean {
     private String username;
     private String password;
 
-    public LoginManagedBean() {
+    public EmployeeLoginManagedBean() {
     }
 
     public void login(ActionEvent event) throws IOException {
