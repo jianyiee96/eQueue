@@ -40,7 +40,7 @@ public class DeleteEmployeeManagedBean implements Serializable {
         }
     }
 
-    public void deleteProduct(ActionEvent event) {
+    public void deleteEmployee(ActionEvent event) {
         try {
             employeeSessionBeanLocal.deleteEmployee(employeeIdToDelete);
             employeeToDelete = null;
