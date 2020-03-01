@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Update Dining Table</title>
+    </h:head>
+    <h:body>
+        <h3>Update Dining Table</h3>
+
+        #{updateDiningTableManagedBean.foo()}
+        <h:form>
+            <h:messages errorClass="errorTextsWithBullet" fatalClass="errorTextsWithBullet" infoClass="infoTextsWithBullet" globalOnly="true" />
+            <br/>
+            <h:commandLink value="Back" actionListener="#{updateDiningTableManagedBean.back}" />
+            <br/><br/>
+            <h:panelGrid columns="3" rendered="#{updateDiningTableManagedBean.diningTableToUpdate != null}">
+
+                <h:outputText style="font-weight: bold;" value="Dining Table ID"/>
+                <h:outputText value="#{updateDiningTableManagedBean.diningTableToUpdate.diningTableId}"/>
+                <h:outputText value="" />
+
+                <h:outputLabel style="font-weight: bold;" for="txtQrCode" value="QR Code" />
+                <h:inputText id="txtQrCode" value="#{updateDiningTableManagedBean.diningTableToUpdate.qrCode}" required="true" requiredMessage="QR code is required" />
+                <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="txtQrCode" />
+
+                <h:outputLabel style="font-weight: bold;" for="selSeatingCapacity" value="Seating Capacity" />
+                <h:selectOneMenu id="selSeatingCapacity" value="#{updateDiningTableManagedBean.diningTableToUpdate.seatingCapacity}">                            
+                    <f:selectItem itemValue="1" itemLabel="1" />
+                    <f:selectItem itemValue="2" itemLabel="2" />
+                    <f:selectItem itemValue="3" itemLabel="3" />
+                    <f:selectItem itemValue="4" itemLabel="4" />
+                    <f:selectItem itemValue="5" itemLabel="5" />
+                    <f:selectItem itemValue="6" itemLabel="6" />
+                    <f:selectItem itemValue="7" itemLabel="7" />
+                    <f:selectItem itemValue="8" itemLabel="8" />
+                </h:selectOneMenu>
+                <h:message errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" for="selSeatingCapacity" />
+
+                <h:outputLabel style="font-weight: bold;" for="selTableStatus" value="Table Status" />
+                <h:selectOneMenu id="selTableStatus" value="#{updateDiningTableManagedBean.diningTableToUpdate.tableStatus}">
+                    <f:selectItem itemLabel="Select Status" noSelectionOption="true" />
+                    <f:selectItems value="#{updateDiningTableManagedBean.tableStatuses}"/>
+                </h:selectOneMenu>
+                <h:message for="selTableStatus" errorClass="errorTextsNoMarginLeft" fatalClass="errorTextsNoMarginLeft" />
+
+            </h:panelGrid>
+            <div>
+                <h:commandButton value="Update" type="submit" actionListener="#{updateDiningTableManagedBean.updateDiningTable}" rendered="#{updateDiningTableManagedBean.diningTableToUpdate != null}" />
+            </div>
+        </h:form>
+    </h:body>
+</html>
+

@@ -49,6 +49,9 @@ public class DataInitializationSessionBean {
         try{
             
             customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
@@ -57,6 +60,10 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
             
+            diningTableSessionBean.allocateTableToCustomer(1l, 1l);
+            diningTableSessionBean.allocateTableToCustomer(2l, 2l);
+            diningTableSessionBean.seatCustomerToDiningTable(2l, 2l);
+            diningTableSessionBean.seatCustomerToDiningTable(1l, 4l);
             
             
         } catch (CustomerNotUniqueException | InputDataValidationException | UnknownPersistenceException ex){
