@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,9 +44,8 @@ public class Employee implements Serializable {
     @Column(nullable = false, unique = true, length = 64)
     @NotNull
     @Size(max = 64)
-    @Email
     private String username;
-    
+
     @Column(columnDefinition = "CHAR(32) NOT NULL")
     @NotNull
     private String password;
@@ -53,23 +53,21 @@ public class Employee implements Serializable {
     @Column(columnDefinition = "CHAR(32) NOT NULL")
     @NotNull
     private String salt;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private EmployeeRoleEnum employeeRole;
-    
+
     @OneToMany(mappedBy = "employee")
     private List<PaymentTransaction> paymentTransactions;
 
-    
-    public Employee(){
-        
+    public Employee() {
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
-        
+        this.paymentTransactions = new ArrayList<>();
     }
-    
-    public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole){
+
+    public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole) {
         this();
         this.firstName = firstName;
         this.lastName = lastName;
@@ -77,9 +75,8 @@ public class Employee implements Serializable {
         this.username = username;
         setPassword(password);
         this.employeeRole = employeeRole;
-        
     }
-    
+
     public Long getEmployeeId() {
         return employeeId;
     }
@@ -132,6 +129,14 @@ public class Employee implements Serializable {
         }
     }
 
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
+
     public EmployeeRoleEnum getEmployeeRole() {
         return employeeRole;
     }
@@ -148,8 +153,6 @@ public class Employee implements Serializable {
         this.paymentTransactions = paymentTransactions;
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -174,5 +177,5 @@ public class Employee implements Serializable {
     public String toString() {
         return "entity.Employee[ id=" + employeeId + " ]";
     }
-    
+
 }
