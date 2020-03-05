@@ -43,13 +43,13 @@
             </h:panelGroup>
         </header>
 
-
         <h:panelGroup rendered="#{sessionScope.employeeIsLogin == true}">
             <ul>
                 <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
                 <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
                 <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
-
+                <li><h:link outcome="/createDiningTable.xhtml"> create dining table</h:link></li>
+                <li><h:link outcome="/viewAllDiningTables.xhtml"> view all dining table</h:link></li>
             </ul>
         </h:panelGroup>
 
@@ -60,7 +60,6 @@
                 </h:form>
             </h:panelGroup>
         </footer>
-
     </h:body>
 </html>
 

@@ -59,6 +59,9 @@ public class DataInitializationSessionBean {
 
             storeManagementSessionBeanLocal.storeInitialization(new StoreVariables("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
             customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
+            customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
@@ -67,6 +70,10 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Manager", "Default", "manager@eQueue.com", "manager", "password", EmployeeRoleEnum.MANAGER));
+            diningTableSessionBean.allocateTableToCustomer(1l, 1l);
+            diningTableSessionBean.allocateTableToCustomer(2l, 2l);
+            diningTableSessionBean.seatCustomerToDiningTable(2l, 2l);
+            diningTableSessionBean.seatCustomerToDiningTable(1l, 4l);
 
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException | UnknownPersistenceException ex) {
             ex.printStackTrace();
