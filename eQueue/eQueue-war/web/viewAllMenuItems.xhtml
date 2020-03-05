@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>View All Menu Items</title>
+    </h:head>
+    <h:body>
+        <div>
+            <h3>All Menu Items</h3>
+            
+            <h:form>
+                <h:dataTable value="#{viewAllMenuItemsManagedBean.menuItems}" var="menuItem" style="width: 100%;">
+
+                    <h:column>			
+                        <f:facet name = "header">Menu Item Code</f:facet>
+                        <h:outputText value="#{menuItem.menuItemCode}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Menu Item ID</f:facet>
+                        <h:outputText value="#{menuItem.menuItemId}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Name</f:facet>
+                        <h:outputText value="#{menuItem.menuItemName}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Description</f:facet>
+                        <h:outputText value="#{menuItem.menuItemDescription}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Unit Price</f:facet>
+                        <div style="text-align: right;">
+                            <h:outputText value="#{menuItem.menuItemPrice}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                            </h:outputText>
+                        </div>
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Category</f:facet>
+                        <h:outputText value="#{menuItem.menuCategory.categoryName}" />
+                    </h:column>
+
+                    <h:column>    				
+                        <f:facet name = "header">Action</f:facet>
+                        <h:commandLink value="View" actionListener="#{viewAllMenuItemsManagedBean.viewMenuItemDetails}">
+                            <f:attribute name="menuItemId" value="#{menuItem.menuItemId}" />
+                        </h:commandLink>
+                    </h:column>
+
+                </h:dataTable>
+            </h:form>
+        </div>
+    </h:body>
+</html>
+
