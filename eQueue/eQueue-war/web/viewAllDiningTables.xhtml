@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>View All Dining Tables</title>
+    </h:head>
+    <h:body>
+        <h3>View All Dining Tables</h3>
+
+        <h:form>
+            <h:dataTable value="#{viewAllTablesManagedBean.diningTables}" var="diningTable" style="width: 100%;">
+                <h:column>
+                    <f:facet name = "header">Dining Table ID</f:facet>
+                    <h:outputText value="#{diningTable.diningTableId}" />
+                </h:column>  
+                <h:column>
+                    <f:facet name = "header">QR Code</f:facet>
+                    <h:outputText value="#{diningTable.qrCode}" />
+                </h:column>  
+                <h:column>
+                    <f:facet name = "header">Capacity</f:facet>
+                    <h:outputText value="#{diningTable.seatingCapacity}" />
+                </h:column>  
+                <h:column>
+                    <f:facet name = "header">Status</f:facet>
+                    <h:outputText value="#{diningTable.tableStatus}" />
+                </h:column>  
+                <h:column>
+                    <f:facet name="header">Time since occupied</f:facet>
+
+                </h:column>
+                <h:column>
+                    <f:facet name="header">Action</f:facet>
+                    <h:commandLink value="View" actionListener="#{viewAllTablesManagedBean.viewDiningTableDetails}">
+                        <f:attribute name="diningTableId" value="#{diningTable.diningTableId}"/>
+                    </h:commandLink>
+                </h:column>
+            </h:dataTable>
+        </h:form>
+        <h:link outcome="index.xhtml"> index</h:link>
+    </h:body>
+</html>
+

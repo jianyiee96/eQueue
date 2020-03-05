@@ -99,7 +99,6 @@
         </h:panelGroup>
 
 
-
         <h:panelGroup rendered="#{sessionScope.employeeIsLogin == true}">
             <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
             <br />
@@ -107,6 +106,12 @@
                 <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
                 <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
                 <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
+
+                <li><h:link outcome="/createNewMenuCategory.xhtml">Create New Menu Category</h:link></li>
+                <li><h:link outcome="/createNewMenuItem.xhtml">Create New Menu Item</h:link></li>
+                <li><h:link outcome="/viewAllMenuItems.xhtml">View All Menu Items</h:link></li>
+                <li><h:link outcome="/createDiningTable.xhtml"> create dining table</h:link></li>
+                <li><h:link outcome="/viewAllDiningTables.xhtml"> view all dining table</h:link></li>
 
             </ul>
             <h:form id="logoutForm">
