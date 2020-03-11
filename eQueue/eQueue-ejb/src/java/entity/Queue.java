@@ -52,8 +52,6 @@ public class Queue implements Serializable {
     @OneToOne(optional = false)
     private Customer customer;
     
-    @OneToOne(optional = true)
-    private DiningTable allocatedDiningTable;
 
     public Queue() {
 
@@ -131,18 +129,7 @@ public class Queue implements Serializable {
         if (this.customer != null) {
             this.customer.setCurrentQueue(this);
         }
-    }
-
-    public DiningTable getAllocatedDiningTable() {
-        return allocatedDiningTable;
-    }
-    
-
-    public void setAllocatedDiningTable(DiningTable allocatedDiningTable) {
-        this.allocatedDiningTable = allocatedDiningTable;
-    }
-    
-    
+    }    
 
     @Override
     public int hashCode() {
