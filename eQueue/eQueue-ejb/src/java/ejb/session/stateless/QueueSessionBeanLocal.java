@@ -8,6 +8,7 @@ package ejb.session.stateless;
 import entity.Queue;
 import java.util.List;
 import javax.ejb.Local;
+import util.exceptions.QueueNotFoundException;
 import util.exceptions.UnableToJoinQueueException;
 
 /**
@@ -17,8 +18,8 @@ import util.exceptions.UnableToJoinQueueException;
 @Local
 public interface QueueSessionBeanLocal {
     
-    public List<Queue> retrieveQueueByCustomerId(Long customerId);
+    public Queue retrieveQueueByCustomerId(Long customerId);
     
-    public Long joinQueue(Long customerId) throws UnableToJoinQueueException;
+    public Long joinQueue(Long customerId, Long numberOfPax) throws UnableToJoinQueueException;
     
 }

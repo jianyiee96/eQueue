@@ -7,14 +7,14 @@ package jsf.managedBean;
 
 import ejb.session.stateless.QueueSessionBeanLocal;
 import entity.Customer;
-import entity.Queue;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import util.exceptions.UnableToJoinQueueException;
 
 /**
  *
@@ -26,27 +26,50 @@ public class JoinQueueManagedBean implements Serializable {
 
     @EJB
     private QueueSessionBeanLocal queueSessionBeanLocal;
-    
-    private Boolean joinable = true;
-    
-    public JoinQueueManagedBean() {
-        
-    }
-    
-    
 
-    public void join(){
-        
-        Customer customer = (Customer)FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
-        List<Queue> customerQueue = queueSessionBeanLocal.retrieveQueueByCustomerId(customer.getCustomerId());
-        
-        System.out.println("Retrieved: "+customerQueue.size() +" queues.");
-        for(Queue q : customerQueue) {
-            System.out.println(q.toString());
-        }
-     
+    private Long numberOfPax;
+    private Boolean joinable = true;
+    private Customer currentCustomer;
+
+    public JoinQueueManagedBean() {
+        numberOfPax = 1l;
     }
     
+    @PostConstruct
+    public void postConstruct(){
+        currentCustomer = (Customer) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentCustomer");
+    }
+
+    public void foo(){}
+    
+    public void join() {
+
+        try {
+
+            if (queueSessionBeanLocal.retrieveQueueByCustomerId(currentCustomer.getCustomerId())== null) {
+                queueSessionBeanLocal.joinQueue(currentCustomer.getCustomerId(), numberOfPax);
+                numberOfPax = 1l;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucessfully Joined Queue!", null));
+            } else {
+
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Unable to join queue: Customer has exisitng queue", null));
+            }
+
+        } catch (UnableToJoinQueueException ex) {
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Customer does not exist", null));
+        }
+
+    }
+
+    public Long getNumberOfPax() {
+        return numberOfPax;
+    }
+
+    public void setNumberOfPax(Long numberOfPax) {
+        this.numberOfPax = numberOfPax;
+    }
+
     public Boolean getJoinable() {
         return joinable;
     }
@@ -54,7 +77,5 @@ public class JoinQueueManagedBean implements Serializable {
     public void setJoinable(Boolean joinable) {
         this.joinable = joinable;
     }
-    
-    
-    
+
 }
