@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Join Queue</title>
+    </h:head>
+    <h:body style="background-color: black; color: white;">
+        Joining Queue
+
+
+        #{joinQueueManagedBean.foo()}
+        <h:form id="joinQueueForm">
+
+            <br></br>
+            <h:outputLabel style="font-weight: bold;"  value="Number of Pax:" />
+            &nbsp;
+            <h:panelGroup>
+                <h:inputText id="txtPax" p:type="range" value="#{joinQueueManagedBean.numberOfPax}" 
+                             p:min="1" p:max="12" p:required="required" 
+                             p:title="Drag the slider between 1 and 12 inclusive.">
+
+                    <f:ajax event="change" execute="@this" render="joinQueueForm:pax" />
+                </h:inputText>
+                &nbsp;
+                <h:outputText id="pax" value="#{joinQueueManagedBean.numberOfPax}" style="vertical-align: top;" />
+            </h:panelGroup>
+            <br></br>
+            <br></br>
+            <h:commandButton value="Join Queue" type="submit">
+                <f:ajax event="click" execute="@form" render="@form"  listener="#{joinQueueManagedBean.join}" />
+            </h:commandButton>
+
+            <h:messages globalOnly="true" />
+        </h:form>
+        <br></br>
+        <h:link value="Back" outcome="index.xhtml"/>
+    </h:body>
+</html>
+

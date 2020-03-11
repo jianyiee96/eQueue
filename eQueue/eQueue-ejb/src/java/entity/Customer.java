@@ -123,6 +123,10 @@ public class Customer implements Serializable {
             this.password = null;
         }
     }
+    
+    public String getSalt() {
+        return salt;
+    }
 
     public DiningTable getAllocatedDiningTable() {
         return allocatedDiningTable;
