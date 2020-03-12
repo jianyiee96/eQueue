@@ -13,10 +13,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.exceptions.CustomerInvalidLoginCredentialException;
 import util.exceptions.CustomerNotUniqueException;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.UnknownPersistenceException;
+import util.security.CryptographicHelper;
 
 @Stateless
 public class CustomerSessionBean implements CustomerSessionBeanLocal {
@@ -34,7 +36,7 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
 
     @Override
     public Long createNewCustomer(Customer newCustomer) throws InputDataValidationException, CustomerNotUniqueException, UnknownPersistenceException {
-        
+
         try {
             Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(newCustomer);
 
@@ -57,7 +59,7 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
                 throw new UnknownPersistenceException(ex.getMessage());
             }
         }
-        
+
     }
 
     @Override
@@ -80,6 +82,22 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
             return (Customer) query.getSingleResult();
         } catch (NoResultException | NonUniqueResultException ex) {
             throw new CustomerNotFoundException("Customer email " + email + " does not exist!");
+        }
+    }
+
+    @Override
+    public Customer customerLogin(String email, String password) throws CustomerInvalidLoginCredentialException {
+        try {
+            Customer customer = retrieveCustomerByEmail(email);
+            String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + customer.getSalt()));
+
+            if (customer.getPassword().equals(passwordHash)) {
+                return customer;
+            } else {
+                throw new CustomerInvalidLoginCredentialException("Email does not exist or invalid password!");
+            }
+        } catch (CustomerNotFoundException ex) {
+            throw new CustomerInvalidLoginCredentialException("Email does not exist or invalid password!");
         }
     }
 
