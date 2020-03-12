@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:head>
+        <title>View Menu Category Details</title>
+    </h:head>
+    <h:body>
+        <div>
+            <h3>View Menu Category Details</h3>
+
+            <br/>
+
+            #{viewMenuCategoryDetailsManagedBean.foo()}
+            <h:messages errorClass="errorTextsWithBullet" fatalClass="errorTextsWithBullet" infoClass="infoTextsWithBullet" globalOnly="true" />
+            <br/>
+
+            <h:form rendered="#{viewMenuCategoryDetailsManagedBean.menuCategoryToView != null}">
+                <h:commandLink value="Back" actionListener="#{viewMenuCategoryDetailsManagedBean.back}" />&nbsp;|
+                <h:commandLink value="Update" actionListener="#{viewMenuCategoryDetailsManagedBean.updateMenuCategory}" />&nbsp;|
+                <h:commandLink value="Delete" actionListener="#{viewMenuCategoryDetailsManagedBean.deleteMenuCategory}" />
+            </h:form>
+
+            <br/>
+
+            <h:panelGrid columnClasses="dataTableLabel,dataTableValue" columns="2" style="width: 100%;" rendered="#{viewMenuCategoryDetailsManagedBean.menuCategoryToView != null}">
+
+                <h:outputText style="font-weight: bold; width: 20%;" value="Menu Category ID"/>
+                <h:outputText style="width: 80%;" value="#{viewMenuCategoryDetailsManagedBean.menuCategoryToView.menuCategoryId}"/>
+
+                <h:outputText style="font-weight: bold;" value="Name"/>
+                <h:outputText value="#{viewMenuCategoryDetailsManagedBean.menuCategoryToView.categoryName}"/>
+                
+                <h:outputText style="font-weight: bold;" value="Parent Category"/>
+                <h:outputText value="#{viewMenuCategoryDetailsManagedBean.menuCategoryToView.parentMenuCategory.categoryName}"/>
+                
+                //Sub categories
+                //Menu Items
+
+            </h:panelGrid>
+        </div>
+    </h:body>
+</html>
+

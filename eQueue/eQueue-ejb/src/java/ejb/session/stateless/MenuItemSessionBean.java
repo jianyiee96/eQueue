@@ -116,6 +116,7 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
                         }
                         menuItemToUpdate.setMenuCategory(menuCategoryToUpdate);
                     }
+                    // POINT - POTENTIALLY WORK ON ELSE STATEMENT TO CATCH IF NO CATEGORY HAS BEEN ASSINGED HERE
 
                     menuItemToUpdate.setMenuItemCode(menuItem.getMenuItemCode());
                     menuItemToUpdate.setMenuItemName(menuItem.getMenuItemName());
@@ -138,6 +139,7 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
     @Override
     public void deleteMenuItem(Long menuItemId) throws MenuItemNotFoundException, DeleteMenuItemException {
         MenuItem menuItemToRemove = retrieveMenuItemById(menuItemId);
+        menuItemToRemove.getMenuCategory().getMenuItems().remove(menuItemToRemove);
         em.remove(menuItemToRemove);
 //        List<SaleTransactionLineItemEntity> saleTransactionLineItemEntities = saleTransactionEntitySessionBeanLocal.retrieveSaleTransactionLineItemsByProductId(productId);
 //

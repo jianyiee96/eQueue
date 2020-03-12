@@ -16,7 +16,7 @@ import util.exceptions.MenuItemNotFoundException;
 
 @Named(value = "deleteMenuItemManagedBean")
 @ViewScoped
-public class deleteMenuItemManagedBean implements Serializable {
+public class DeleteMenuItemManagedBean implements Serializable {
 
     @EJB
     private MenuItemSessionBeanLocal menuItemSessionBean;
@@ -24,7 +24,7 @@ public class deleteMenuItemManagedBean implements Serializable {
     private Long menuItemIdToDelete;
     private MenuItem menuItemToDelete;
 
-    public deleteMenuItemManagedBean() {
+    public DeleteMenuItemManagedBean() {
     }
 
     @PostConstruct
