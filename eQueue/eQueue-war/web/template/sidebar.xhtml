@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:outputStylesheet library="css" name="sidebar.css" />
+
+    <p:sidebar widgetVar="sidebar1" baseZIndex="10000">
+        <div class="menu-container" style="">
+            <h1 class="menu-header">Menu</h1>
+            <h:form id="menuForm">   
+                <p:panelMenu class="menu-panel">
+                    <p:submenu label="Store">
+                        <p:menuitem value="Store Details" icon="fa fa-tasks" />
+                        <p:menuitem value="Queue Management" icon="fa fa-dashboard" />
+                        <p:menuitem value="Menu Management" outcome="/menuManagement.xhtml" icon="fa fa-cutlery" />
+                        <p:menuitem value="Table Management" icon="fa fa-th-large" />
+                    </p:submenu>
+                    <p:submenu label="Employee">
+                        <p:menuitem value="Employee Management" icon="fa fa-users" />
+                    </p:submenu>
+                    <p:submenu label="Sales">
+                        <p:menuitem value="Transaction History" icon="fa fa-dollar" />
+                    </p:submenu>
+                    <p:submenu label="Navigations" >
+                        <p:menuitem value="Home" outcome="/index" icon="fa fa-home"/>
+                    </p:submenu>
+                </p:panelMenu>
+            </h:form>
+            <div class="menu-user-container-outer">
+                <div class="menu-user-container-inner">
+                    <div class="profile-picture-container" >
+                        <p:graphicImage class="profile-picture" library="images" name="default-user-profile-picture.png" height="60" width="60" alt="User Profile Picture"/>
+                    </div>
+                    <div class="profile-container-text">
+                        <p:commandLink id="profileNameText" value="TAN WEE KEK"/>
+                        <div>Manager</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </p:sidebar>
+</html>

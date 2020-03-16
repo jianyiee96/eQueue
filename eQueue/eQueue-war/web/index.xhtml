@@ -1,123 +1,123 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-    <h:head>
-        <title>eQueue</title>
-    </h:head>
-    <h:body>
-        <h1>Welcome to eQueue</h1>
+      template="/template/defaultTemplate.xhtml"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-        <h:messages style="color: red" errorClass="errorTexts" fatalClass="errorTexts" infoClass="infoTexts" globalOnly="true" />
+    <ui:define name="content">
+            <h1>Welcome to eQueue</h1>
 
-        <h4>Guest </h4>
-        <ul>
-            <li>
-                <h:link value="Create new Customer" outcome="createNewCustomer" />
-            </li>
+            <h:messages style="color: red" errorClass="errorTexts" fatalClass="errorTexts" infoClass="infoTexts" globalOnly="true" />
 
-        </ul>
-
-
-        <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
-
-            Welcome #{sessionScope.currentCustomer.firstName}
-
+            <h4>Guest </h4>
             <ul>
                 <li>
-                    <h:link value="Join Queue" outcome="joinQueue" />
+                    <h:link value="Create new Customer" outcome="createNewCustomer" />
                 </li>
-                <li>
-                    <h:link value="View My Queue" outcome="viewQueue" />
-                </li>
-                <li>
-                    <h:link value="View My Table Allocation" outcome="viewTableAllocation" />
-                </li>
+
             </ul>
 
-            <h:form id="customerLogoutForm">
-                <h:commandButton value="Logout" actionListener="#{customerLoginManagedBean.customerLogout}" />
-            </h:form>
-            
-            <br></br>
-            <br></br>
-        </h:panelGroup>
 
-        
-        
-        <h:panelGroup rendered="#{sessionScope.customerIsLogin == false}">
+            <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
 
-            <h4>Customer Login:</h4>
-            <h:form id="customerLoginForm">
-                <h:outputLabel for="email" value="Email:" />&nbsp;
-                <h:inputText id="username" value="#{customerLoginManagedBean.email}" size="16"  required="true" requiredMessage="Email is required" maxlength="32"/>
-                <h:message for="email" errorClass="errorText" fatalClass="errorText" />&nbsp;
-                &nbsp;
-                <h:outputLabel for="password" value="Password:" />&nbsp;
-                <h:inputSecret id="password" value="#{customerLoginManagedBean.password}"  size="16"  required="true" requiredMessage="Password is required" maxlength="32"/>
+                Welcome #{sessionScope.currentCustomer.firstName}
 
-                <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
+                <ul>
+                    <li>
+                        <h:link value="Join Queue" outcome="joinQueue" />
+                    </li>
+                    <li>
+                        <h:link value="View My Queue" outcome="viewQueue" />
+                    </li>
+                    <li>
+                        <h:link value="View My Table Allocation" outcome="viewTableAllocation" />
+                    </li>
+                </ul>
 
+                <h:form id="customerLogoutForm">
+                    <h:commandButton value="Logout" actionListener="#{customerLoginManagedBean.customerLogout}" />
+                </h:form>
+
+                <br></br>
+                <br></br>
+            </h:panelGroup>
+
+
+
+            <h:panelGroup rendered="#{sessionScope.customerIsLogin == false}">
+
+                <h4>Customer Login:</h4>
+                <h:form id="customerLoginForm">
+                    <h:outputLabel for="email" value="Email:" />&nbsp;
+                    <h:inputText id="username" value="#{customerLoginManagedBean.email}" size="16"  required="true" requiredMessage="Email is required" maxlength="32"/>
+                    <h:message for="email" errorClass="errorText" fatalClass="errorText" />&nbsp;
+                    &nbsp;
+                    <h:outputLabel for="password" value="Password:" />&nbsp;
+                    <h:inputSecret id="password" value="#{customerLoginManagedBean.password}"  size="16"  required="true" requiredMessage="Password is required" maxlength="32"/>
+
+                    <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
+
+                    <br />
+                    <br />
+
+                    <h:commandButton type="reset" value="Clear" />&nbsp;
+                    <h:commandButton type="submit" value="Login" actionListener="#{customerLoginManagedBean.customerLogin}" />
+
+
+                </h:form>
+
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{sessionScope.employeeIsLogin == false}">
+
+                <h4>Employee Login:</h4>
+                <h:form id="loginForm">
+                    <h:outputLabel for="username" value="Username:" />&nbsp;
+                    <h:inputText id="username" value="#{employeeLoginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
+                        <f:validateLength minimum="4" />
+                    </h:inputText>
+                    <h:message for="username" errorClass="errorText" fatalClass="errorText" />&nbsp;
+
+                    &nbsp;
+
+                    <h:outputLabel for="password" value="Password" />&nbsp;
+                    <h:inputSecret id="password" value="#{employeeLoginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
+                        <f:validateLength minimum="4" />
+                    </h:inputSecret>
+                    <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
+
+                    <br />
+                    <br />
+
+                    <h:commandButton type="reset" value="Clear" />&nbsp;
+                    <h:commandButton type="submit" value="Login" actionListener="#{employeeLoginManagedBean.login}" />
+
+                </h:form>
+            </h:panelGroup>
+
+
+            <h:panelGroup rendered="#{sessionScope.employeeIsLogin == true}">
+                <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
                 <br />
-                <br />
+                <ul>
+                    <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
+                    <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
+                    <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
 
-                <h:commandButton type="reset" value="Clear" />&nbsp;
-                <h:commandButton type="submit" value="Login" actionListener="#{customerLoginManagedBean.customerLogin}" />
+                    <li><h:link outcome="/createDiningTable.xhtml"> create dining table</h:link></li>
+                    <li><h:link outcome="/viewAllDiningTables.xhtml"> view all dining table</h:link></li>
 
+                    <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
 
-            </h:form>
+                </ul>
+                <h:form id="logoutForm">
+                    <h:commandButton value="Logout" actionListener="#{employeeLoginManagedBean.logout}" />
+                </h:form>
+            </h:panelGroup>
 
-        </h:panelGroup>
-
-        <h:panelGroup rendered="#{sessionScope.employeeIsLogin == false}">
-
-            <h4>Employee Login:</h4>
-            <h:form id="loginForm">
-                <h:outputLabel for="username" value="Username:" />&nbsp;
-                <h:inputText id="username" value="#{employeeLoginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
-                    <f:validateLength minimum="4" />
-                </h:inputText>
-                <h:message for="username" errorClass="errorText" fatalClass="errorText" />&nbsp;
-
-                &nbsp;
-
-                <h:outputLabel for="password" value="Password" />&nbsp;
-                <h:inputSecret id="password" value="#{employeeLoginManagedBean.password}" size="16" required="true" requiredMessage="Password is required" maxlength="32">
-                    <f:validateLength minimum="4" />
-                </h:inputSecret>
-                <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
-
-                <br />
-                <br />
-
-                <h:commandButton type="reset" value="Clear" />&nbsp;
-                <h:commandButton type="submit" value="Login" actionListener="#{employeeLoginManagedBean.login}" />
-
-            </h:form>
-        </h:panelGroup>
-
-
-        <h:panelGroup rendered="#{sessionScope.employeeIsLogin == true}">
-            <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
-            <br />
-            <ul>
-                <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
-                <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
-                <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
-                
-                <li><h:link outcome="/createDiningTable.xhtml"> create dining table</h:link></li>
-                <li><h:link outcome="/viewAllDiningTables.xhtml"> view all dining table</h:link></li>
-                
-                <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
-
-            </ul>
-            <h:form id="logoutForm">
-                <h:commandButton value="Logout" actionListener="#{employeeLoginManagedBean.logout}" />
-            </h:form>
-        </h:panelGroup>
-
-    </h:body>
-</html>
+    </ui:define>
+</ui:composition>
 
