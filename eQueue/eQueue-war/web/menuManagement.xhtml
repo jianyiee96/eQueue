@@ -3,16 +3,14 @@
 <ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
                 xmlns:p="http://primefaces.org/ui">
-    <h:head>
-        <title>Menu Management</title>
-        <h:outputStylesheet library="css" name="default.css" />
-    </h:head>
-    <h:body>
+
+    <ui:define name="content">
         <div>
-            <p:layout fullPage="true">
-                <p:layoutUnit position="west" resizable="true" maxSize="310">
+            <p:layout>
+                <p:layoutUnit position="west" resizable="false" size="310">
                     <div style="margin:5;display: flex;">
                         <h3>Overview</h3>
                         <div style="display: inline-block; height:auto; margin-left: auto;">
@@ -22,10 +20,10 @@
                     </div>
                     <h:form id="treeForm">
                         <p:tree value="#{menuManagementManagedBean.treeNode}" var="node" selectionMode="single" selection="#{menuManagementManagedBean.selectedTreeNode}">
-                            <p:treeNode type="menuCategory" expandedIcon="ui-icon ui-icon-folder-open" collapsedIcon="ui-icon ui-icon-folder-collapsed">
+                            <p:treeNode type="menuCategory" expandedIcon="fa fa-list-alt" collapsedIcon="fa fa-list">
                                 <h:outputText value="#{node.categoryName}" />
                             </p:treeNode>
-                            <p:treeNode type="menuItem" icon="ui-icon ui-icon-document">
+                            <p:treeNode type="menuItem" icon="fa fa-cutlery">
                                 <h:outputText value="#{node.menuItemName}" />
                             </p:treeNode>
                             <p:ajax event="select" listener="#{menuManagementManagedBean.selectTreeNode}" process="@form" update="ccViewMenuCategory:formViewMenuCategory ccViewMenuItem:formViewMenuItem"/>
@@ -531,6 +529,6 @@
                 </p:layoutUnit>
             </p:layout>
         </div>
-    </h:body>
+    </ui:define>
 </ui:composition>
 

@@ -3,10 +3,14 @@ package ejb.session.singleton;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
+import ejb.session.stateless.MenuCategorySessionBeanLocal;
+import ejb.session.stateless.MenuItemSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
 import entity.DiningTable;
 import entity.Employee;
+import entity.MenuCategory;
+import entity.MenuItem;
 import entity.StoreVariables;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -16,9 +20,13 @@ import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumeration.EmployeeRoleEnum;
+import util.enumeration.MenuItemAvailabilityEnum;
+import util.exceptions.CreateNewMenuCategoryException;
+import util.exceptions.CreateNewMenuItemException;
 import util.exceptions.CustomerNotUniqueException;
 import util.exceptions.EmployeeUsernameExistException;
 import util.exceptions.InputDataValidationException;
+import util.exceptions.MenuItemNotUniqueException;
 import util.exceptions.StoreNotInitializedException;
 import util.exceptions.UnknownPersistenceException;
 
@@ -39,6 +47,10 @@ public class DataInitializationSessionBean {
     private DiningTableSessionBeanLocal diningTableSessionBean;
     @EJB(name = "EmployeeSessionBeanLocal")
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
+    @EJB
+    private MenuItemSessionBeanLocal menuItemSessionBean;
+    @EJB
+    private MenuCategorySessionBeanLocal menuCategorySessionBean;
 
     public DataInitializationSessionBean() {
 
@@ -75,7 +87,20 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.seatCustomerToDiningTable(2l, 2l);
             diningTableSessionBean.seatCustomerToDiningTable(1l, 4l);
 
-        } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException | UnknownPersistenceException ex) {
+            Long mc1Id = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
+            Long mc2Id = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mc1Id);
+            Long mc3Id = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Malay"), mc1Id);
+            Long mc4Id = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Peranakan"), mc3Id);
+            Long mc5Id = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Western"), null);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI001", "Chicken Rice", 3.50, 10L, MenuItemAvailabilityEnum.AVAILABLE), mc2Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE), mc2Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE), mc2Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI004", "Ayam Buah Keluak", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE), mc4Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI005", "Chap Chai", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE), mc4Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI006", "Chicken Chop", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE), mc5Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI007", "Fish and Chips", 6.50, 10L, MenuItemAvailabilityEnum.AVAILABLE), mc5Id);
+            menuItemSessionBean.createNewMenuItem(new MenuItem("MI008", "Fries", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE), mc5Id);
+        } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException | MenuItemNotUniqueException ex) {
             ex.printStackTrace();
         }
 
