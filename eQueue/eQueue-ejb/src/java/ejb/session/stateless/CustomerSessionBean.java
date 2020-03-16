@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import java.util.Set;
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,6 +24,9 @@ import util.security.CryptographicHelper;
 @Stateless
 public class CustomerSessionBean implements CustomerSessionBeanLocal {
 
+    @EJB
+    private ShoppingCartSessionBeanLocal shoppingCartSessionBean;
+
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
 
@@ -43,6 +47,8 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
             if (constraintViolations.isEmpty()) {
                 em.persist(newCustomer);
                 em.flush();
+                
+                Long shoppingCartId = shoppingCartSessionBean.createNewShoppingCart(newCustomer);
 
                 return newCustomer.getCustomerId();
             } else {

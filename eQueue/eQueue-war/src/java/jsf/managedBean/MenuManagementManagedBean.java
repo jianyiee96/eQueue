@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import util.enumeration.MenuItemAvailabilityEnum;
 import util.exceptions.CreateNewMenuCategoryException;
 import util.exceptions.CreateNewMenuItemException;
 import util.exceptions.DeleteMenuCategoryException;
@@ -50,6 +51,7 @@ public class MenuManagementManagedBean implements Serializable {
     private List<MenuCategory> menuCategoriesWithoutItems;
     private List<MenuCategory> filteredMenuCategories;
     private List<MenuCategory> rootMenuCategories;
+    private MenuItemAvailabilityEnum[] menuItemAvailabilities;
 
     private MenuItem menuItemToCreate;
     private Long menuCategoryIdToCreate;
@@ -68,12 +70,14 @@ public class MenuManagementManagedBean implements Serializable {
 
     public MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
+        menuItemToUpdate = new MenuItem();
         menuCategoryToCreate = new MenuCategory();
     }
 
     @PostConstruct
     public void postConstruct() {
         menuItems = menuItemSessionBean.retrieveAllMenuItems();
+        menuItemAvailabilities = getMenuItemAvailabilities();
         menuCategories = menuCategorySessionBean.retrieveAllMenuCategories();
 
         //To choose as category for menu item
@@ -188,7 +192,7 @@ public class MenuManagementManagedBean implements Serializable {
             }
 
             postConstruct();
-            
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New menu item created successfully (Menu Item ID: " + menuItemToCreate.getMenuItemId() + ")", null));
 
             menuItemToCreate = new MenuItem();
@@ -251,7 +255,7 @@ public class MenuManagementManagedBean implements Serializable {
                     break;
                 }
             }
-            
+
             postConstruct();
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu item updated successfully", null));
@@ -336,7 +340,6 @@ public class MenuManagementManagedBean implements Serializable {
 //        
 //        menuItems = menuItemSessionBean.retrieveAllMenuItems();
 //    }
-
     public ViewMenuItemManagedBean getViewMenuItemManagedBean() {
         return viewMenuItemManagedBean;
     }
@@ -463,6 +466,10 @@ public class MenuManagementManagedBean implements Serializable {
 
     public void setParentMenuCategoryIdToUpdate(Long parentMenuCategoryIdToUpdate) {
         this.parentMenuCategoryIdToUpdate = parentMenuCategoryIdToUpdate;
+    }
+
+    public MenuItemAvailabilityEnum[] getMenuItemAvailabilities() {
+        return MenuItemAvailabilityEnum.values();
     }
 
     public List<MenuCategory> getRootMenuCategories() {

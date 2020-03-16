@@ -47,6 +47,7 @@ public class OrderLineItem implements Serializable {
     
     public OrderLineItem(){
         
+        this.status = OrderLineItemStatusEnum.IN_CART;
         this.isEdited = false;
         
     }
