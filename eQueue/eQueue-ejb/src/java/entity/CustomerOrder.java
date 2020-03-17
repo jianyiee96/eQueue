@@ -61,6 +61,8 @@ public class CustomerOrder implements Serializable {
         this.orderDate = new Date();
         this.status = OrderStatusEnum.UNPAID;
         this.orderLineItems = new ArrayList<>();
+        this.totalAmount = 0.0;
+        this.paymentTransaction = null;
         
     }
     
