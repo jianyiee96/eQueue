@@ -1,0 +1,534 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <div>
+            <p:layout>
+                <p:layoutUnit position="west" resizable="false" size="310">
+                    <div style="margin:5;display: flex;">
+                        <h3>Overview</h3>
+                        <div style="display: inline-block; height:auto; margin-left: auto;">
+                            <p:commandButton actionListener="#{menuManagementManagedBean.collapsingORexpanding(menuManagementManagedBean.treeNode, true)}" update="treeForm" value="Expand"/>
+                            <p:commandButton actionListener="#{menuManagementManagedBean.collapsingORexpanding(menuManagementManagedBean.treeNode, false)}" update="treeForm" value="Collapse"/>
+                        </div>
+                    </div>
+                    <h:form id="treeForm">
+                        <p:tree value="#{menuManagementManagedBean.treeNode}" var="node" selectionMode="single" selection="#{menuManagementManagedBean.selectedTreeNode}">
+                            <p:treeNode type="menuCategory" expandedIcon="fa fa-list-alt" collapsedIcon="fa fa-list">
+                                <h:outputText value="#{node.categoryName}" />
+                            </p:treeNode>
+                            <p:treeNode type="menuItem" icon="fa fa-cutlery">
+                                <h:outputText value="#{node.menuItemName}" />
+                            </p:treeNode>
+                            <p:ajax event="select" listener="#{menuManagementManagedBean.selectTreeNode}" process="@form" update="ccViewMenuCategory:formViewMenuCategory ccViewMenuItem:formViewMenuItem"/>
+                        </p:tree>
+                    </h:form>
+                </p:layoutUnit>
+
+                <ez:viewMenuCategory id="ccViewMenuCategory" />
+                <ez:viewMenuItem id="ccViewMenuItem" />
+
+                <p:layoutUnit position="center">
+                    <p:tabView id="menuManagementTabView">
+                        <p:tab id="itemsTabSelection">
+                            <f:facet name="title">
+                                <h:outputText value="Items"/>
+                            </f:facet>
+
+                            <h:form>
+                                <p:menubar>
+                                    <p:submenu label="File" icon="ui-icon-document">
+                                        <p:menuitem value="Create New Item" onclick="PF('dialogCreateNewMenuItem').show()" icon="ui-icon-plusthick" />
+                                    </p:submenu>                                  
+                                </p:menubar>
+                                <br/>
+                            </h:form>
+
+                            <h:form id="formAllMenuItems">
+
+                                <p:messages id="messages" redisplay="false" closable="true" />
+
+                                <p:dataTable id="dataTableAllMenuItems" widgetVar="dataTableAllMenuItems" value="#{menuManagementManagedBean.menuItems}" var="menuItem" rowKey="#{menuItem.menuItemId}" rowIndexVar="row"
+                                             filteredValue="#{menuManagementManagedBean.filteredMenuItems}"
+                                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                                    <f:facet name="header" >
+                                        <p:outputPanel style="text-align: right;">
+                                            <h:outputText value="Search all fields:" />
+                                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuItems').filter()" style="width:300px" placeholder="Enter keyword"/>
+                                            <p:commandButton type="reset" value="Clear Filter" onclick="PF('dataTableAllMenuItems').clearFilters()" style="display: inline-block; margin-left: 7px" />
+                                        </p:outputPanel>
+                                    </f:facet>
+
+                                    <p:column headerText="Menu Item Code" sortBy="#{menuItem.menuItemCode}" filterBy="#{menuItem.menuItemCode}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuItem.menuItemCode}" />
+                                    </p:column>
+
+                                    <p:column headerText="Product ID" sortBy="#{menuItem.menuItemId}" filterBy="#{menuItem.menuItemId}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuItem.menuItemId}" />
+                                    </p:column>                            
+
+                                    <p:column headerText="Name" sortBy="#{menuItem.menuItemName}" filterBy="#{menuItem.menuItemName}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuItem.menuItemName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Description" sortBy="#{menuItem.menuItemDescription}" filterBy="#{menuItem.menuItemDescription}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuItem.menuItemDescription}" />
+                                    </p:column>
+
+                                    <p:column headerText="Unit Price" sortBy="#{menuItem.menuItemPrice}" filterBy="#{menuItem.menuItemPrice}" filterMatchMode="contains" style="text-align: right;">
+                                        <h:outputText value="#{menuItem.menuItemPrice}">
+                                            <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
+                                        </h:outputText>
+                                    </p:column>
+
+                                    <p:column headerText="Waiting Time (mins)" sortBy="#{menuItem.waitingTimeMinutes}" filterBy="#{menuItem.waitingTimeMinutes}" filterMatchMode="contains" style="text-align: right;">
+                                        <h:outputText value="#{menuItem.waitingTimeMinutes}"/>
+                                    </p:column>
+
+                                    <p:column headerText="Category" sortBy="#{menuItem.menuCategory.categoryName}" filterBy="#{menuItem.menuCategory.categoryName}" filterMatchMode="exact">
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuItems').filter()">
+                                                <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
+                                                <f:selectItems value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{menuItem.menuCategory.categoryName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Action" >
+                                        <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
+                                            <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
+                                        </p:commandButton>
+
+                                        <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuItem}" update="menuManagementTabView:formUpdateMenuItem" oncomplete="PF('dialogUpdateMenuItem').show()" icon="ui-icon-pencil" title="Update">
+                                            <f:attribute name="menuItemToUpdate" value="#{menuItem}" />
+                                        </p:commandButton>
+
+                                        <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuItem}" update="menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formAllMenuItems:messages treeForm">
+                                            <f:attribute name="menuItemToDelete" value="#{menuItem}" />
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuItem.menuItemName} (Menu Item Code: #{menuItem.menuItemCode})?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+
+                                    </p:column>
+
+                                </p:dataTable>
+
+                                <!--This is for delete menu item-->
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+                            </h:form>
+
+                            <h:form id="formCreateNewMenuItem">
+
+                                <p:dialog id="dialogCreateNewMenuItem" widgetVar="dialogCreateNewMenuItem" header="Create New Menu Item" closable="true">
+
+                                    <p:messages id="messagesCreateNewMenuItem" redisplay="false" />
+
+                                    <p:panelGrid id="createNewMenuItemPanel">
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="menuItemCode" value="Item Code: " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="menuItemCode" value="#{menuManagementManagedBean.menuItemToCreate.menuItemCode}" placeholder="MI999" required="true" requiredMessage="Item Code is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="menuItemCode" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="name" value="Name: " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToCreate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="name" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="description" value="Description " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToCreate.menuItemDescription}" placeholder="Menu Item 1" required="true" requiredMessage="Description is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="description" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="unitPrice" value="Unit Price " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>                            
+                                                <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToCreate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.10" required="true" requiredMessage="Item Unit Price is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="unitPrice" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="waitingTime" value="Waiting Time (mins) " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToCreate.waitingTimeMinutes}" placeholder="10" min="0" stepFactor="1" required="true" requiredMessage="Waiting Time is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="waitingTime" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="selCategory" value="Category " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="selCategory" value="#{menuManagementManagedBean.menuCategoryIdToCreate}">
+                                                    <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                                                    <f:selectItems value="#{menuManagementManagedBean.leafMenuCategories}" var="menuCategory" itemValue="#{menuCategory.menuCategoryId}" itemLabel="#{menuCategory.categoryName}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="selCategory" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column colspan="3">
+                                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                                <p:commandButton  value="Create New Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel treeForm" actionListener="#{menuManagementManagedBean.createNewMenuItem}" oncomplete="PF('dialogCreateNewMenuItem').show();" />
+                                            </p:column>
+                                        </p:row>
+
+                                    </p:panelGrid>
+
+                                </p:dialog>
+
+                            </h:form>
+
+
+
+                            <h:form id="formUpdateMenuItem">
+
+                                <p:dialog id="dialogUpdateMenuItem" widgetVar="dialogUpdateMenuItem" header="Update Menu Item" closable="true">
+
+                                    <p:messages id="messagesUpdateMenuItem" redisplay="false" />
+
+                                    <p:panelGrid>
+
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputLabel value="Menu Item ID: " />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{menuManagementManagedBean.menuItemToUpdate.menuItemId}" />
+                                            </p:column>
+                                            <p:column>
+                                                &nbsp;
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputLabel value="Menu Item Code: " />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{menuManagementManagedBean.menuItemToUpdate.menuItemCode}"/>
+                                            </p:column>
+                                            <p:column>
+                                                &nbsp;
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="name" value="Name: " />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="name" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="description" value="Description " />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemDescription}" placeholder="Menu Item 1" required="true" requiredMessage="Description is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="description" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="unitPrice" value="Unit Price " />
+                                            </p:column>
+                                            <p:column>
+                                                <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.1" required="true" requiredMessage="Unit Price is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="unitPrice" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="waitingTime" value="Wating Time (mins) " />
+                                            </p:column>
+                                            <p:column>
+                                                <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToUpdate.waitingTimeMinutes}" placeholder="10" min="0" max="500" stepFactor="1" required="true" requiredMessage="Waiting Time is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="waitingTime" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="selCategory" value="Category " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="selCategory" value="#{menuManagementManagedBean.menuCategoryIdToUpdate}">
+                                                    <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                                                    <f:selectItems value="#{menuManagementManagedBean.leafMenuCategories}" var="menuCategory" itemValue="#{menuCategory.menuCategoryId}" itemLabel="#{menuCategory.categoryName}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="selCategory" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column colspan="3">
+                                                <p:commandButton value="Update Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel treeForm" actionListener="#{menuManagementManagedBean.updateMenuItem}" oncomplete="PF('dialogUpdateMenuItem').show();" />
+                                                <p:commandButton value="Close" oncomplete="PF('dialogUpdateMenuItem').hide();" />
+                                            </p:column>
+                                        </p:row>
+
+                                    </p:panelGrid>
+
+                                </p:dialog>
+
+                            </h:form>
+
+                        </p:tab>
+                        <p:tab>
+                            <f:facet name="title">
+                                <h:outputText value="Categories"/>
+                            </f:facet>
+
+
+
+                            <h:form>
+                                <p:menubar>
+                                    <p:submenu label="File" icon="ui-icon-document">
+                                        <p:menuitem value="Create New Category" onclick="PF('dialogCreateNewMenuCategory').show()" icon="ui-icon-plusthick" />
+                                    </p:submenu>                                  
+                                </p:menubar>
+                                <br/>
+                            </h:form>
+
+                            <h:form id="formAllMenuCategories">
+
+                                <p:messages id="messages" redisplay="false" closable="true" />
+
+                                <p:dataTable id="dataTableAllMenuCategories" widgetVar="dataTableAllMenuCategories" value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" rowKey="#{menuCategory.menuCategoryId}" rowIndexVar="row"
+                                             filteredValue="#{menuManagementManagedBean.filteredMenuCategories}"
+                                             rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                                    <f:facet name="header">
+                                        <p:outputPanel style="text-align: right;">
+                                            <h:outputText value="Search all fields:" />
+                                            <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuCategories').filter()" style="width:300px" placeholder="Enter keyword"/>
+                                            <p:commandButton type="reset" value="Clear Filter" onclick="PF('dataTableAllMenuCategories').clearFilters()" style="display: inline-block; margin-left: 7px" />
+                                        </p:outputPanel>
+                                    </f:facet>
+
+                                    <p:column headerText="Menu Category ID" sortBy="#{menuCategory.menuCategoryId}" filterBy="#{menuCategory.menuCategoryId}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuCategory.menuCategoryId}" />
+                                    </p:column>                      
+
+                                    <p:column headerText="Name" sortBy="#{menuCategory.categoryName}" filterBy="#{menuCategory.categoryName}" filterMatchMode="contains">
+                                        <h:outputText value="#{menuCategory.categoryName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Parent Category" sortBy="#{menuCategory.parentMenuCategory.categoryName}" filterBy="#{menuCategory.parentMenuCategory.categoryName}" filterMatchMode="exact">
+                                        <f:facet name="filter">
+                                            <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuCategories').filter()">
+                                                <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
+                                                <f:selectItem  itemValue="#{null}" itemLabel="NIL" />
+                                                <f:selectItems value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
+                                            </p:selectOneMenu>
+                                        </f:facet>
+                                        <h:outputText value="#{menuCategory.parentMenuCategory.categoryName}" />
+                                    </p:column>
+
+                                    <p:column headerText="Action" >
+
+                                        <p:commandButton update="ccViewMenuCategory:formViewMenuCategory" oncomplete="PF('dialogViewMenuCategory').show()" icon="ui-icon-document" title="View">
+                                            <f:setPropertyActionListener value="#{menuCategory}" target="#{menuManagementManagedBean.viewMenuCategoryManagedBean.menuCategoryToView}" />
+                                        </p:commandButton>
+
+                                        <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuCategory}" update="menuManagementTabView:formUpdateMenuCategory" oncomplete="PF('dialogUpdateMenuCategory').show()" icon="ui-icon-pencil" title="Update">
+                                            <f:attribute name="menuCategoryToUpdate" value="#{menuCategory}" />
+                                        </p:commandButton>
+
+                                        <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuCategory}" update="
+                                                         menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formAllMenuCategories:messages treeForm">
+                                            <f:attribute name="menuCategoryToDelete" value="#{menuCategory}" />
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuCategory.categoryName}?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+
+                                    </p:column>
+
+                                </p:dataTable>
+
+                                <!--This is for delete menu category-->
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                    <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+                            </h:form>
+
+                            <h:form id="formCreateNewMenuCategory">
+
+                                <p:dialog id="dialogCreateNewMenuCategory" widgetVar="dialogCreateNewMenuCategory" header="Create New Menu Category" closable="true">
+
+                                    <p:messages id="messagesCreateNewMenuCategory" redisplay="false" />
+
+                                    <p:panelGrid id="createNewMenuCategoryPanel">
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="name" value="Name: " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToCreate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="name" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="selCategory" value="Parent Category " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="selCategory" value="#{menuManagementManagedBean.parentMenuCategoryIdToCreate}">
+                                                    <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                                                    <f:selectItems value="#{menuManagementManagedBean.menuCategoriesWithoutItems}" var="parentMenuCategory" itemValue="#{parentMenuCategory.menuCategoryId}" itemLabel="#{parentMenuCategory.categoryName}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="selCategory" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column colspan="3">
+                                                <p:commandButton type="reset" value="Clear" />&nbsp;
+                                                <p:commandButton  value="Create New Menu Category" update="@form menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formCreateNewMenuCategory menuManagementTabView:formCreateNewMenuItem:createNewMenuItemPanel treeForm" actionListener="#{menuManagementManagedBean.createNewMenuCategory}" oncomplete="PF('dialogCreateNewMenuCategory').show();" />
+                                            </p:column>
+                                        </p:row>
+
+                                    </p:panelGrid>
+
+                                </p:dialog>
+
+                            </h:form>
+
+
+
+                            <h:form id="formUpdateMenuCategory">
+
+                                <p:dialog id="dialogUpdateMenuCategory" widgetVar="dialogUpdateMenuCategory" header="Update Menu Category" closable="true">
+
+                                    <p:messages id="messagesUpdateMenuCategory" redisplay="false" />
+
+                                    <p:panelGrid>
+
+                                        <p:row>
+                                            <p:column>
+                                                <h:outputLabel value="Menu Category ID: " />
+                                            </p:column>
+                                            <p:column>
+                                                <h:outputText value="#{menuManagementManagedBean.menuCategoryToUpdate.menuCategoryId}" />
+                                            </p:column>
+                                            <p:column>
+                                                &nbsp;
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="name" value="Name: " />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToUpdate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="name" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column>
+                                                <p:outputLabel for="selCategory" value="Parent Category " style="font-weight: bold;" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="selCategory" value="#{menuManagementManagedBean.parentMenuCategoryIdToUpdate}">
+                                                    <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
+                                                    <f:selectItems value="#{menuManagementManagedBean.menuCategoriesWithoutItems}" var="parentMenuCategory" itemValue="#{parentMenuCategory.menuCategoryId}" itemLabel="#{parentMenuCategory.categoryName}" />
+                                                </p:selectOneMenu>
+                                            </p:column>
+                                            <p:column>
+                                                <p:message for="selCategory" />
+                                            </p:column>
+                                        </p:row>
+
+                                        <p:row>
+                                            <p:column colspan="3">
+                                                <p:commandButton value="Update Menu Category" update="@form menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel  menuManagementTabView:formAllMenuItems:dataTableAllMenuItems treeForm" actionListener="#{menuManagementManagedBean.updateMenuCategory}" oncomplete="PF('dialogUpdateMenuCategory').show();" />
+                                                <p:commandButton value="Close" oncomplete="PF('dialogUpdateMenuCategory').hide();" />
+                                            </p:column>
+                                        </p:row>
+
+                                    </p:panelGrid>
+
+                                </p:dialog>
+
+                            </h:form>
+
+                        </p:tab>
+                    </p:tabView>
+                </p:layoutUnit>
+            </p:layout>
+        </div>
+    </ui:define>
+</ui:composition>
+
