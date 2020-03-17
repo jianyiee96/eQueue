@@ -46,11 +46,11 @@ public class ShoppingCartSessionBean implements ShoppingCartSessionBeanLocal {
         }
     }
     
-    @Override
-    public void updateShoppingCart(ShoppingCart shoppingCart) throws ShoppingCartNotFoundException {
-        ShoppingCart shoppingCartToUpdate = retrieveShoppingCartById(shoppingCart.getShoppingCartId());
-        List<OrderLineItem> orderLineItemsToUpdate = shoppingCartToUpdate.getOrderLineItems();
-        
-        
-    }
+//    @Override
+//    public void updateShoppingCart(ShoppingCart shoppingCart) throws ShoppingCartNotFoundException {
+//        ShoppingCart shoppingCartToUpdate = retrieveShoppingCartById(shoppingCart.getShoppingCartId());
+//        List<OrderLineItem> orderLineItemsToUpdate = shoppingCartToUpdate.getOrderLineItems();
+//        
+//        
+//    }
 }

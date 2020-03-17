@@ -9,7 +9,7 @@
 
     <ui:define name="content">
         <p:layout>
-            <p:layoutUnit minSize="300" position="west"  header="Menu" collapsible="true">
+            <p:layoutUnit minSize="300" position="west"  header="Menu Management" collapsible="true">
                 <div style="margin:5;display: flex;">
                     <div style="display: inline-block; height:auto; margin-left: auto;">
                         <p:commandButton actionListener="#{menuManagementManagedBean.collapsingORexpanding(menuManagementManagedBean.treeNode, true)}" update="treeForm" value="Expand"/>
@@ -40,11 +40,7 @@
                         </f:facet>
 
                         <h:form>
-                            <p:menubar>
-                                <p:submenu label="File" icon="ui-icon-document">
-                                    <p:menuitem value="Create New Item" onclick="PF('dialogCreateNewMenuItem').show()" icon="ui-icon-plusthick" />
-                                </p:submenu>                                  
-                            </p:menubar>
+                            <p:commandButton value="Create New Item" onclick="PF('dialogCreateNewMenuItem').show()" icon="ui-icon-plusthick" />
                             <br/>
                         </h:form>
 
@@ -58,39 +54,34 @@
 
                                 <f:facet name="header" >
                                     <p:outputPanel style="text-align: right;">
-                                        <h:outputText value="Search all fields:" />
+                                        <h:outputText value="Search all fields: " />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuItems').filter()" style="width:300px" placeholder="Enter keyword"/>
-                                        <p:commandButton type="reset" value="Clear Filter" onclick="PF('dataTableAllMenuItems').clearFilters()" style="display: inline-block; margin-left: 7px" />
                                     </p:outputPanel>
                                 </f:facet>
 
-                                <p:column headerText="Menu Item Code" sortBy="#{menuItem.menuItemCode}" filterBy="#{menuItem.menuItemCode}" filterMatchMode="contains">
+                                <p:column headerText="Menu Item Code" width="120" sortBy="#{menuItem.menuItemCode}" filterBy="#{menuItem.menuItemCode}" filterMatchMode="contains">
                                     <h:outputText value="#{menuItem.menuItemCode}" />
                                 </p:column>
 
-                                <p:column headerText="Product ID" sortBy="#{menuItem.menuItemId}" filterBy="#{menuItem.menuItemId}" filterMatchMode="contains">
+                                <p:column headerText="Product ID" width="100" sortBy="#{menuItem.menuItemId}" filterBy="#{menuItem.menuItemId}" filterMatchMode="contains">
                                     <h:outputText value="#{menuItem.menuItemId}" />
                                 </p:column>                            
 
-                                <p:column headerText="Name" sortBy="#{menuItem.menuItemName}" filterBy="#{menuItem.menuItemName}" filterMatchMode="contains">
+                                <p:column headerText="Name" width="160" sortBy="#{menuItem.menuItemName}" filterBy="#{menuItem.menuItemName}" filterMatchMode="contains">
                                     <h:outputText value="#{menuItem.menuItemName}" />
                                 </p:column>
 
-                                <p:column headerText="Description" sortBy="#{menuItem.menuItemDescription}" filterBy="#{menuItem.menuItemDescription}" filterMatchMode="contains">
-                                    <h:outputText value="#{menuItem.menuItemDescription}" />
-                                </p:column>
-
-                                <p:column headerText="Unit Price" sortBy="#{menuItem.menuItemPrice}" filterBy="#{menuItem.menuItemPrice}" filterMatchMode="contains" style="text-align: right;">
+                                <p:column headerText="Unit Price" width="100" sortBy="#{menuItem.menuItemPrice}" filterBy="#{menuItem.menuItemPrice}" filterMatchMode="contains" style="text-align: right;">
                                     <h:outputText value="#{menuItem.menuItemPrice}">
                                         <f:convertNumber minFractionDigits="2" maxFractionDigits="2" type="currency" currencyCode="SGD" />
                                     </h:outputText>
                                 </p:column>
 
-                                <p:column headerText="Waiting Time (mins)" sortBy="#{menuItem.waitingTimeMinutes}" filterBy="#{menuItem.waitingTimeMinutes}" filterMatchMode="contains" style="text-align: right;">
+                                <p:column headerText="Waiting Time (mins)" width="150" sortBy="#{menuItem.waitingTimeMinutes}" filterBy="#{menuItem.waitingTimeMinutes}" filterMatchMode="contains" style="text-align: right;">
                                     <h:outputText value="#{menuItem.waitingTimeMinutes}"/>
                                 </p:column>
 
-                                <p:column headerText="Availability" sortBy="#{menuItem.availability}" filterBy="#{menuItem.availability}" filterMatchMode="exact">
+                                <p:column headerText="Availability" width="150" sortBy="#{menuItem.availability}" filterBy="#{menuItem.availability}" filterMatchMode="exact">
                                     <f:facet name="filter">
                                         <p:selectOneMenu id="selAvailability" onchange="PF('dataTableAllMenuItems').filter()">
                                             <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
@@ -101,7 +92,7 @@
                                     <h:outputText value="#{menuItem.availability}"/>
                                 </p:column>
 
-                                <p:column headerText="Category" sortBy="#{menuItem.menuCategory.categoryName}" filterBy="#{menuItem.menuCategory.categoryName}" filterMatchMode="exact">
+                                <p:column headerText="Category" width="130" sortBy="#{menuItem.menuCategory.categoryName}" filterBy="#{menuItem.menuCategory.categoryName}" filterMatchMode="exact">
                                     <f:facet name="filter">
                                         <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuItems').filter()">
                                             <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
@@ -111,7 +102,7 @@
                                     <h:outputText value="#{menuItem.menuCategory.categoryName}" />
                                 </p:column>
 
-                                <p:column headerText="Action" >
+                                <p:column headerText="Action" width="100">
                                     <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
                                         <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
                                     </p:commandButton>
@@ -380,11 +371,7 @@
 
 
                         <h:form>
-                            <p:menubar>
-                                <p:submenu label="File" icon="ui-icon-document">
-                                    <p:menuitem value="Create New Category" onclick="PF('dialogCreateNewMenuCategory').show()" icon="ui-icon-plusthick" />
-                                </p:submenu>                                  
-                            </p:menubar>
+                            <p:commandButton value="Create New Category" onclick="PF('dialogCreateNewMenuCategory').show()" icon="ui-icon-plusthick" />
                             <br/>
                         </h:form>
 
@@ -400,7 +387,6 @@
                                     <p:outputPanel style="text-align: right;">
                                         <h:outputText value="Search all fields:" />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuCategories').filter()" style="width:300px" placeholder="Enter keyword"/>
-                                        <p:commandButton type="reset" value="Clear Filter" onclick="PF('dataTableAllMenuCategories').clearFilters()" style="display: inline-block; margin-left: 7px" />
                                     </p:outputPanel>
                                 </f:facet>
 

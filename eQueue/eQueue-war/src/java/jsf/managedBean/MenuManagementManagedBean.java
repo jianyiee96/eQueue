@@ -35,6 +35,7 @@ public class MenuManagementManagedBean implements Serializable {
 
     @EJB
     private MenuItemSessionBeanLocal menuItemSessionBean;
+
     @EJB
     private MenuCategorySessionBeanLocal menuCategorySessionBean;
 
@@ -165,7 +166,6 @@ public class MenuManagementManagedBean implements Serializable {
     }
 
     public void collapsingORexpanding(TreeNode n, boolean option) {
-        System.out.println("Called***********************************");
         if (n.getChildren().size() == 0) {
             n.setSelected(false);
         } else {

@@ -1,17 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ejb.session.stateless;
 
+import entity.CustomerOrder;
+import entity.OrderLineItem;
+import java.util.List;
 import javax.ejb.Local;
+import util.exceptions.CreateNewCustomerOrderException;
+import util.exceptions.InputDataValidationException;
+import util.exceptions.UnknownPersistenceException;
 
-/**
- *
- * @author Bryan
- */
 @Local
 public interface CustomerOrderSessionBeanLocal {
+
+    public Long createCustomerOrder(CustomerOrder newCustomerOrder, Long customerId, List<OrderLineItem> orderLineItems) throws InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException;
     
 }

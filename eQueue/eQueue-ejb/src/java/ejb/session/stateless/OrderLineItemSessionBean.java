@@ -60,9 +60,12 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
                 em.flush();
                 return newOrderLineItem.getOrderLineItemId();
             } catch (PersistenceException ex) {
-                // DO NOT COPY THIS CODE AS REFERENCE - REMOVED CODE AS ORDERLINEITEM WILL NEVER BE NOT UNIQUE
                 if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
-                    throw new UnknownPersistenceException(ex.getMessage());
+                    if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
+                        throw new CreateNewOrderLineItemException("Order line item not unique");
+                    } else {
+                        throw new UnknownPersistenceException(ex.getMessage());
+                    }
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
@@ -148,7 +151,7 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
         }
     }
 
-    // MAKE SURE TO DISASSOCIATE AT SHOPPING CART AND CUSTOMER ORDER
+    // MAKE SURE TO DISASSOCIATE AT SHOPPING CART AND [CUSTOMER ORDER (This one just set to cancelled instead)]
     // ONLY FOR EMPLOYEE USE & SHOPPING CART USE
     // When customers cancel their orders while in Ordered state, use updateByCustomer method
     @Override
