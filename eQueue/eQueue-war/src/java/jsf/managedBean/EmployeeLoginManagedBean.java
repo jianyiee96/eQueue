@@ -35,7 +35,7 @@ public class EmployeeLoginManagedBean {
 //            System.out.println("Cur Inst - " + FacesContext.getCurrentInstance());
 //            System.out.println("Ext Cotx - " + FacesContext.getCurrentInstance().getExternalContext());
 //            System.out.println("Ctx Path - " + FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath());
-            FacesContext.getCurrentInstance().getExternalContext().redirect("index.xhtml");
+            FacesContext.getCurrentInstance().getExternalContext().redirect("homepage.xhtml");
         } catch (EmployeeInvalidLoginCredentialException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Invalid login credential: " + ex.getMessage(), null));
         }
