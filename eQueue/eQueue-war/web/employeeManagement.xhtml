@@ -36,27 +36,6 @@
                     <br/><br/>
                 </h:form>
 
-<!--                <h:form enctype="multipart/form-data">
-                    <p:fileUpload value="{employeeManagementManagedBean.file}" mode="simple" skinSimple="true" />
-                    <p:commandButton actionListener="{employeeManagementManagedBean.upload}" ajax="false" icon="fa fa-upload" />
-                </h:form>-->
-
-<!--                <h:form id="formFileUpload" enctype="multipart/form-data">
-
-                    <p:panel header="File Upload">
-
-                        <p:messages  redisplay="false">
-                            <p:autoUpdate />
-                        </p:messages>
-
-                        <p:fileUpload fileUploadListener="{demo03ManagedBean.handleFileUpload}" multiple="false" />
-
-                    </p:panel>
-
-                </h:form>-->
-
-
-
                 <h:form id="formAllEmployees">
 
                     <p:dataTable id="dataTableAllEmployees" widgetVar="dataTableAllEmployees" value="#{employeeManagementManagedBean.employees}" var="employee" 
@@ -203,14 +182,32 @@
                                 </p:column>
                             </p:row>
 
+                            <!--                            <h:form id="formFileUpload" enctype="multipart/form-data">
+                                                            <p:panel header="File Upload">
+                                                                <p:messages  redisplay="false">
+                                                                    <p:autoUpdate />
+                                                                </p:messages>
+                                                                <p:fileUpload fileUploadListener="{employeeManagementManagedBean.handleFileUpload}" multiple="false" />
+                                                            </p:panel>
+                                                        </h:form>-->
+
                             <p:row>
-                                <p:column></p:column>
+                                <p:column>
+                                    <p:outputLabel value="Profile Picture" style="text-align: right; font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:fileUpload id="employeePhoto" update="msg" fileUploadListener="#{employeeManagementManagedBean.handleFileUpload}" previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                                  chooseIcon="fa fa-file-photo-o" label="" cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" />
+                                    <p:growl id="msg" redisplay="false" life="3500" />
+                                </p:column>
                             </p:row>
 
                             <p:row>
                                 <p:column colspan="2">
-                                    <p:commandButton type="reset" icon="" />&nbsp;
-                                    <p:commandButton value="Create New Employee" update="@form formAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show()" />
+                                    <div style="text-align: center;">
+                                        <p:commandButton type="reset" icon="fa fa-undo" />&nbsp;
+                                        <p:commandButton icon="fa fa-save" update="@form formAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show()" />
+                                    </div>
                                 </p:column>
                             </p:row>
                         </p:panelGrid>
@@ -227,7 +224,7 @@
                     <p:panelGrid>
                         <p:row>
                             <p:column colspan="2">
-                                <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/tan_wee_kek.jpg" alt="#{employeeManagementManagedBean.employeeToView.lastName} #{employeeManagementManagedBean.employeeToView.firstName}'s Profile Picture" />
+                                <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeManagementManagedBean.employeeToView.imagePath}" alt="#{employeeManagementManagedBean.employeeToView.lastName} #{employeeManagementManagedBean.employeeToView.firstName}'s Profile Picture" />
                             </p:column>
                         </p:row>
 

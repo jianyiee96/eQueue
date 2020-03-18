@@ -2,14 +2,22 @@ package jsf.managedBean;
 
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import entity.Employee;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 import util.exceptions.EmployeeNotFoundException;
 import util.exceptions.EmployeeUsernameExistException;
@@ -25,8 +33,6 @@ public class EmployeeManagementManagedBean implements Serializable {
 
     private List<Employee> employees;
     private List<Employee> filteredEmployees;
-
-//    private UploadedFile file;
 
     private Employee employeeToCreate;
     private Employee employeeToView;
@@ -56,11 +62,49 @@ public class EmployeeManagementManagedBean implements Serializable {
         }
     }
 
-//    public void upload() {
-//        if (file != null) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, file.getFileName() + " is uploaded successfully", null));
-//        }
-//    }
+
+    public void handleFileUpload(FileUploadEvent event) {
+        try {
+//            String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getInitParameter("alternatedocroot_1") + System.getProperty("file.separator") + event.getFile().getFileName();
+
+            String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+            Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+            List<Integer> positions = new ArrayList<>();
+            while (m.find()) {
+                positions.add(m.end());
+            }
+            newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + event.getFile().getFileName();
+
+            File file = new File(newFilePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            int a;
+            int BUFFER_SIZE = 8192;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            InputStream inputStream = event.getFile().getInputstream();
+
+            while (true) {
+                a = inputStream.read(buffer);
+
+                if (a < 0) {
+                    break;
+                }
+
+                fileOutputStream.write(buffer, 0, a);
+                fileOutputStream.flush();
+            }
+
+            fileOutputStream.close();
+            inputStream.close();
+
+            this.employeeToCreate.setImagePath(event.getFile().getFileName());
+            
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "File uploaded successfully", ""));
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File upload error: " + ex.getMessage(), ""));
+        }
+    }
 
     public Employee getEmployeeToCreate() {
         return employeeToCreate;
@@ -93,13 +137,4 @@ public class EmployeeManagementManagedBean implements Serializable {
     public void setFilteredEmployees(List<Employee> filteredEmployees) {
         this.filteredEmployees = filteredEmployees;
     }
-
-//    public UploadedFile getFile() {
-//        return file;
-//    }
-//
-//    public void setFile(UploadedFile file) {
-//        this.file = file;
-//    }
-
 }

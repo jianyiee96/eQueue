@@ -51,6 +51,9 @@ public class Employee implements Serializable {
     @Size(min = 4, max = 64, message = "Password must be between length 4 to 64")
     private String password;
 
+    @Column(unique = true)
+    private String imagePath;
+
     @Column(columnDefinition = "CHAR(64) NOT NULL")
     @NotNull
     private String salt;
@@ -66,6 +69,17 @@ public class Employee implements Serializable {
     public Employee() {
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
         this.paymentTransactions = new ArrayList<>();
+    }
+
+    public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole, String imagePath) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        setPassword(password);
+        this.employeeRole = employeeRole;
+        this.imagePath = imagePath;
     }
 
     public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole) {
@@ -144,6 +158,14 @@ public class Employee implements Serializable {
 
     public void setEmployeeRole(EmployeeRoleEnum employeeRole) {
         this.employeeRole = employeeRole;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public List<PaymentTransaction> getPaymentTransactions() {
