@@ -22,19 +22,10 @@
         </style>
 
         <p:layout>
-            <p:layoutUnit minSize="300" position="west" header="Employee Management" collapsible="true">
-                <div>
-                    hello
-                </div>
-
-            </p:layoutUnit>
 
             <p:layoutUnit style="margin-left: 10px;" position="center">
 
-                <h:form>
-                    <p:commandButton onclick="PF('dialogCreateNewEmployee').show()" icon="fa fa-user-plus" />
-                    <br/><br/>
-                </h:form>
+                <h2 style="margin-left: 10px;">Employee Management</h2>
 
                 <h:form id="formAllEmployees">
 
@@ -44,6 +35,8 @@
                                  rowsPerPageTemplate="10,20,50" sortBy="#{employee.employeeRole}"
                                  rowStyleClass="#{employee.employeeRole eq 'MANAGER' ? 'manager' : employee.employeeRole eq 'CASHIER' ? 'cashier' : 'default'}">
                         <f:facet name="header">
+                            <p:commandButton style="float: left;" onclick="PF('dialogCreateNewEmployee').show()" icon="fa fa-user-plus" />
+
                             <p:outputPanel style="text-align: right;">
                                 <h:outputText value="Search all fields: " />
                                 <p:inputText id="globalFilter" onkeyup="PF('dataTableAllEmployees').filter()" style="width: 300px;" placeholder="Enter keyword" />
@@ -75,33 +68,23 @@
                                 <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToView}" />
                             </p:commandButton>
                             &nbsp;
-                            <p:commandButton icon="ui-icon-pencil" title="Update">
-
+                            <p:commandButton update="formUpdateEmployee" oncomplete="PF('dialogUpdateEmployee').show()" icon="ui-icon-pencil" title="Update">
+                                <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToUpdate}" />
                             </p:commandButton>
                             &nbsp;
-                            <p:commandButton icon="ui-icon-trash" title="Delete">
-
+                            <p:commandButton update="formDeleteEmployee" oncomplete="PF('dialogDeleteEmployee').show()" icon="ui-icon-trash" title="Delete">
+                                <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToDelete}" />
                             </p:commandButton>
                         </p:column>
-
-
-                        <!--                        <p:column headerText="Action" width="100">
-                                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
-                                                        <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
-                                                    </p:commandButton>
-                        
-                                                    <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuItem}" update="menuManagementTabView:formUpdateMenuItem" oncomplete="PF('dialogUpdateMenuItem').show()" icon="ui-icon-pencil" title="Update">
-                                                        <f:attribute name="menuItemToUpdate" value="#{menuItem}" />
-                                                    </p:commandButton>
-                        
-                                                    <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuItem}" update="menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formAllMenuItems:messages treeForm">
-                                                        <f:attribute name="menuItemToDelete" value="#{menuItem}" />
-                                                        <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuItem.menuItemName} (Menu Item Code: #{menuItem.menuItemCode})?" icon="ui-icon-alert" />
-                                                    </p:commandButton>
-                        
-                                                </p:column>-->
-
                     </p:dataTable>
+
+                    <!--This is for delete employee-->
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <div style="text-align: center;">
+                            <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </div>
+                    </p:confirmDialog>
 
                 </h:form>
 
@@ -182,23 +165,25 @@
                                 </p:column>
                             </p:row>
 
-                            <!--                            <h:form id="formFileUpload" enctype="multipart/form-data">
-                                                            <p:panel header="File Upload">
-                                                                <p:messages  redisplay="false">
-                                                                    <p:autoUpdate />
-                                                                </p:messages>
-                                                                <p:fileUpload fileUploadListener="{employeeManagementManagedBean.handleFileUpload}" multiple="false" />
-                                                            </p:panel>
-                                                        </h:form>-->
+                            <!--
+                            <h:form id="formFileUpload" enctype="multipart/form-data">
+                                <p:panel header="File Upload">
+                                    <p:messages  redisplay="false">
+                                        <p:autoUpdate />
+                                    </p:messages>
+                                    <p:fileUpload fileUploadListener="{employeeManagementManagedBean.handleFileUpload}" multiple="false" />
+                                </p:panel>
+                            </h:form>
+                            -->
 
                             <p:row>
                                 <p:column>
                                     <p:outputLabel value="Profile Picture" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:fileUpload id="employeePhoto" update="msg" fileUploadListener="#{employeeManagementManagedBean.handleFileUpload}" previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                    <p:fileUpload update="createdImageUploadMessage" fileUploadListener="#{employeeManagementManagedBean.createProfilePhoto}" previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/"
                                                   chooseIcon="fa fa-file-photo-o" label="" cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" />
-                                    <p:growl id="msg" redisplay="false" life="3500" />
+                                    <p:growl id="createdImageUploadMessage" redisplay="false" life="3500" />
                                 </p:column>
                             </p:row>
 
@@ -206,7 +191,7 @@
                                 <p:column colspan="2">
                                     <div style="text-align: center;">
                                         <p:commandButton type="reset" icon="fa fa-undo" />&nbsp;
-                                        <p:commandButton icon="fa fa-save" update="@form formAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').show()" />
+                                        <p:commandButton icon="fa fa-save" update="@form formAllEmployees" actionListener="#{employeeManagementManagedBean.createNewEmployee}" oncomplete="PF('dialogCreateNewEmployee').hide()" />
                                     </div>
                                 </p:column>
                             </p:row>
@@ -215,66 +200,243 @@
                     </p:dialog>
                 </h:form>
 
+                <h:form id="formViewEmployee">
+                    <p:dialog id="dialogViewEmployee" widgetVar="dialogViewEmployee" responsive="true" header="View Employee Details" closable="true" showEffect="clip" hideEffect="clip">
+                        <p:panelGrid>
+                            <p:row rendered="#{employeeManagementManagedBean.employeeToView.imagePath != null}">
+                                <p:column colspan="2">
+                                    <div style='text-align: center;'>
+                                        <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeManagementManagedBean.employeeToView.imagePath}" alt="#{employeeManagementManagedBean.employeeToView.lastName} #{employeeManagementManagedBean.employeeToView.firstName}'s Profile Picture" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Employee ID" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToView.employeeId}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="First Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToView.firstName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Last Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToView.lastName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="E-mail" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToView.email}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Role" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToView.employeeRole}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <div style="text-align: center;">
+                                        <p:commandButton icon="fa fa-close" oncomplete="PF('dialogViewEmployee').hide();" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formUpdateEmployee">
+                    <p:dialog id="dialogUpdateEmployee" widgetVar="dialogUpdateEmployee" responsive="true" header="Update Employee Details" closable="true" showEffect="clip" hideEffect="clip">
+
+                        <p:growl redisplay="false" life="3500" />
+
+                        <p:panelGrid>
+                            <p:row id="updateProfilePicture" rendered="#{employeeManagementManagedBean.employeeToUpdate.imagePath != null}">
+                                <p:column colspan="2">
+                                    <div style='text-align: center;'>
+                                        <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeManagementManagedBean.employeeToUpdate.imagePath}" alt="#{employeeManagementManagedBean.employeeToUpdate.lastName} #{employeeManagementManagedBean.employeeToUpdate.firstName}'s Profile Picture" />
+                                        <br/>
+                                        <p:commandButton icon='fa fa-trash' update='dialogUpdateEmployee' actionListener="#{employeeManagementManagedBean.removeProfilePhoto}" oncomplete="PF('dialogUpdateEmployee').show()" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Employee ID" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToUpdate.employeeId}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel for="employeeFirstName" value="First Name" style="text-align: right; font-weight: bold;"  />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="employeeFirstName" value="#{employeeManagementManagedBean.employeeToUpdate.firstName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.firstName}" required="true" requiredMessage="First name is required" size="16" maxlength="64">
+                                        <f:validateBean />
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel for="employeeLastName" value="Last Name" style="text-align: right; font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="employeeLastName" value="#{employeeManagementManagedBean.employeeToUpdate.lastName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.lastName}" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
+                                        <f:validateBean />
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel for="employeeEmail" value="E-mail" style="text-align: right; font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="employeeEmail" value="#{employeeManagementManagedBean.employeeToUpdate.email}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.email}" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
+                                        <f:validateBean />
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="selEmployeeRole" value="Role" style="text-align: right; font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu id="selEmployeeRole" value="#{employeeManagementManagedBean.employeeToUpdate.employeeRole}" required="true" requiredMessage="Role is required">
+                                        <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
+                                        <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
+                                        <f:selectItem itemValue="CASHIER" itemLabel="Cashier" />
+                                        <f:selectItem itemValue="DEFAULT" itemLabel="Others" />
+                                        <f:validateBean />
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Profile Picture" style="text-align: right; font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:fileUpload update="updatedImageUploadMessage" fileUploadListener="#{employeeManagementManagedBean.updateProfilePhoto}" previewWidth="1" 
+                                                  allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
+                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" />
+                                    <p:growl id='updatedImageUploadMessage' life="3500" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <div style="text-align: center;">
+                                        <p:commandButton icon='fa fa-save' update='@form formAllEmployees' actionListener="#{employeeManagementManagedBean.updateEmployee}" oncomplete="PF('dialogUpdateEmployee').hide()" />&nbsp;
+                                        <p:commandButton icon="fa fa-close" oncomplete="PF('dialogUpdateEmployee').hide();" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id='formDeleteEmployee'>
+                    <p:dialog id="dialogDeleteEmployee" widgetVar="dialogDeleteEmployee" responsive="true" header="Delete Employee" closable="true" showEffect="clip" hideEffect="clip">
+                        <p:panelGrid>
+                            <p:row rendered="#{employeeManagementManagedBean.employeeToDelete.imagePath != null}">
+                                <p:column colspan="2">
+                                    <div style='text-align: center;'>
+                                        <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeManagementManagedBean.employeeToDelete.imagePath}" alt="#{employeeManagementManagedBean.employeeToDelete.lastName} #{employeeManagementManagedBean.employeeToDelete.firstName}'s Profile Picture" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Employee ID" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToDelete.employeeId}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="First Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToDelete.firstName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Last Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToDelete.lastName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="E-mail" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToDelete.email}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Role" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{employeeManagementManagedBean.employeeToDelete.employeeRole}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <div style="text-align: center;">
+                                        <p:commandButton icon='fa fa-trash' update='@form formAllEmployees deleteMessage' actionListener="#{employeeManagementManagedBean.deleteEmployee}" oncomplete="PF('dialogUpdateEmployee').hide()">
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{employeeManagementManagedBean.employeeToUpdate.lastName} #{employeeManagementManagedBean.employeeToUpdate.firstName} (Employee ID: #{employeeManagementManagedBean.employeeToDelete.employeeId})?" icon="ui-icon-alert" />
+                                        </p:commandButton>&nbsp;
+                                        <p:commandButton icon="fa fa-close" oncomplete="PF('dialogDeleteEmployee').hide();" />
+                                        <p:growl id='deleteMessage' life="3500" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
             </p:layoutUnit>
-
-
-            <h:form id="formViewEmployee">
-
-                <p:dialog id="dialogViewEmployee" widgetVar="dialogViewEmployee" responsive="true" header="View Employee Details" closable="true" showEffect="clip" hideEffect="clip">
-                    <p:panelGrid>
-                        <p:row>
-                            <p:column colspan="2">
-                                <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeManagementManagedBean.employeeToView.imagePath}" alt="#{employeeManagementManagedBean.employeeToView.lastName} #{employeeManagementManagedBean.employeeToView.firstName}'s Profile Picture" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="text-align: right;" value="Employee ID" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{employeeManagementManagedBean.employeeToView.employeeId}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="text-align: right;" value="First Name" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{employeeManagementManagedBean.employeeToView.firstName}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="text-align: right;" value="Last Name" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{employeeManagementManagedBean.employeeToView.lastName}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="text-align: right;" value="Role" />
-                            </p:column>
-                            <p:column>
-                                <h:outputText value="#{employeeManagementManagedBean.employeeToView.employeeRole}" />
-                            </p:column>
-                        </p:row>
-
-                        <p:row>
-                            <p:column colspan="2">
-                                <div style="text-align: center;">
-                                    <p:commandButton icon="fa fa-close" oncomplete="PF('dialogViewEmployee').hide();" />
-                                </div>
-                            </p:column>
-                        </p:row>
-                    </p:panelGrid>
-                </p:dialog>
-
-            </h:form>
 
         </p:layout>
 

@@ -51,7 +51,7 @@ public class Employee implements Serializable {
     @Size(min = 4, max = 64, message = "Password must be between length 4 to 64")
     private String password;
 
-    @Column(unique = true)
+    @Column()
     private String imagePath;
 
     @Column(columnDefinition = "CHAR(64) NOT NULL")
