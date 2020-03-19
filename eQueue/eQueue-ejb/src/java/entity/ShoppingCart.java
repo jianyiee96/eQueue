@@ -31,6 +31,7 @@ public class ShoppingCart implements Serializable {
     private List<OrderLineItem> orderLineItems;
 
     public ShoppingCart(){
+        this.totalAmount = 0.0;
         this.orderLineItems = new ArrayList<>();
     }
     

@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -30,6 +31,7 @@ public class DiningTable implements Serializable {
     @NotNull
     @Positive
     @Min(1)
+    @Max(8)
     private Long seatingCapacity;
 
     @Enumerated(EnumType.STRING)

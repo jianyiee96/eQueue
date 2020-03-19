@@ -1,0 +1,58 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>eQueue Management System</title>
+        <h:outputStylesheet library="css" name="default.css" />
+    </h:head>
+    <h:body>
+
+        <ui:insert name="mainmenu">
+            <ui:include src="sidebar.xhtml" />
+        </ui:insert>  
+
+        <p:layout fullPage="true">
+
+            <p:layoutUnit position="north" resizable="false" size="80">
+
+                <h1><p:commandLink oncomplete="PF('sidebar1').show()">eQueue Management System</p:commandLink></h1>
+
+            </p:layoutUnit>
+
+            <!--            <p:layoutUnit size="240" position="west">
+                            
+                            <ui:insert name="mainmenu">
+                                <ui:include src="/mainmenu.xhtml" />
+                            </ui:insert>        
+                            
+                        </p:layoutUnit>-->
+
+            <p:layoutUnit position="center" >
+
+                <ui:insert name="content">Content</ui:insert>
+
+            </p:layoutUnit>
+
+            <!--            <p:layoutUnit minSize="200" position="east" header="Advertisements" collapsible="true" collapsed="true">
+                            
+                            <ui:insert name="sidebar">
+                                <ui:include src="/sidebar.xhtml" />
+                            </ui:insert>        
+                            
+                        </p:layoutUnit>-->
+
+            <!--            <p:layoutUnit position="south" size="70" >
+            
+                            <ui:insert name="footer">
+                                <ui:include src="/footer.xhtml" />
+                            </ui:insert>
+            
+                        </p:layoutUnit>                -->
+
+        </p:layout>
+    </h:body>
+</html>
+

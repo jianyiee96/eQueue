@@ -75,6 +75,16 @@
 
                     <p:row>
                         <p:column>
+                            <h:outputLabel value="Availability: " />
+                        </p:column>
+                        <p:column>
+                            <i class="fa #{viewMenuItemManagedBean.menuItemToView.availability == 'SELLING_FAST' ? 'fa-level-up' : viewMenuItemManagedBean.menuItemToView.availability == 'AVAILABLE' ? 'fa-thumbs-up' : 'fa-times'}" style="float: left"/>
+                            <h:outputText value="#{viewMenuItemManagedBean.menuItemToView.availability}" />
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
                             <h:outputLabel value="Category: " />
                         </p:column>
                         <p:column>

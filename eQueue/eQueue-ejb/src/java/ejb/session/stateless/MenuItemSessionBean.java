@@ -141,6 +141,8 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
         MenuItem menuItemToRemove = retrieveMenuItemById(menuItemId);
         menuItemToRemove.getMenuCategory().getMenuItems().remove(menuItemToRemove);
         em.remove(menuItemToRemove);
+        
+        // SELECT DISTINCT O.orderlineitems.product.id FROM Orders O
 //        List<SaleTransactionLineItemEntity> saleTransactionLineItemEntities = saleTransactionEntitySessionBeanLocal.retrieveSaleTransactionLineItemsByProductId(productId);
 //
 //        if (saleTransactionLineItemEntities.isEmpty()) {
