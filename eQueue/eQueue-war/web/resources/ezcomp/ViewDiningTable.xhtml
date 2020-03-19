@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    
+    <cc:interface>
+    </cc:interface>
+
+    
+    <cc:implementation>
+        <h:form id="formViewDiningTable" >
+            
+            <p:dialog id="dialogViewDiningTable" widgetVar="dialogViewDiningTable" header="View Dining Table" closable="true">
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Dining Table ID: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewDiningTableManagedBean.diningTableToView.diningTableId}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="QR Code: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewDiningTableManagedBean.diningTableToView.qrCode}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Capacity: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewDiningTableManagedBean.diningTableToView.seatingCapacity}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="Table Status: " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText value="#{viewDiningTableManagedBean.diningTableToView.tableStatus}" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+            </p:dialog>
+            
+            
+        </h:form>
+    </cc:implementation>
+</html>

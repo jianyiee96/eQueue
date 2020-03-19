@@ -40,13 +40,13 @@
             <h:form id="customerLogoutForm">
                 <h:commandButton value="Logout" actionListener="#{customerLoginManagedBean.customerLogout}" />
             </h:form>
-            
+
             <br></br>
             <br></br>
         </h:panelGroup>
 
-        
-        
+
+
         <h:panelGroup rendered="#{sessionScope.customerIsLogin == false}">
 
             <h4>Customer Login:</h4>
@@ -106,11 +106,12 @@
                 <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
                 <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
                 <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
-                
+
                 <li><h:link outcome="/createDiningTable.xhtml"> create dining table</h:link></li>
                 <li><h:link outcome="/viewAllDiningTables.xhtml"> view all dining table</h:link></li>
-                
+
                 <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
+                <li><h:link outcome="/diningTableManagement.xhtml"> Table Management</h:link></li>
 
             </ul>
             <h:form id="logoutForm">
