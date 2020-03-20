@@ -45,9 +45,11 @@
                     <p:autoUpdate />
                 </p:growl>
             </h:form>
+
         </h:panelGroup>
 
         <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
+
             <h4>Customer Login:</h4>
             <h:form id="customerLoginForm">
                 <h:outputLabel for="email" value="Email:" />&nbsp;
@@ -68,6 +70,7 @@
         <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
             Welcome #{sessionScope.currentCustomer.firstName}
             <ul>
+
                 <li><h:link value="Join Queue" outcome="joinQueue" /></li>
                 <li><h:link value="View My Queue" outcome="viewQueue" /></li>
                 <li><h:link value="View My Table Allocation" outcome="viewTableAllocation" /></li>

@@ -105,26 +105,22 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     public void allocateTableToCustomer(Long diningTableId, Long customerId) {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
         Customer customer = em.find(Customer.class, customerId);
-
         diningTable.setCustomer(customer);
-        customer.setAllocatedDiningTable(diningTable);
-        diningTable.setTableStatus(TableStatusEnum.FROZEN_ALLOCATED);
+        diningTable.setTableStatus(TableStatusEnum.UNFROZEN_ALLOCATED);
     }
 
     @Override // when customer did not seat at table in time or when customer leaves table
     public void removeCustomerTableRelationship(Long diningTableId, Long customerId) {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
         Customer customer = em.find(Customer.class, customerId);
-
         diningTable.setCustomer(null);
-        customer.setAllocatedDiningTable(null);
-        diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
+        diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
     }
 
     @Override
-    public void seatCustomerToDiningTable(Long diningTableId, Long customerId) {
+    public void seatCustomerToDiningTable(Long diningTableId) {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
-        diningTable.setTableStatus(TableStatusEnum.FROZEN_OCCUPIED);
+        diningTable.setTableStatus(TableStatusEnum.UNFROZEN_OCCUPIED);
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<DiningTable>> constraintViolations) {

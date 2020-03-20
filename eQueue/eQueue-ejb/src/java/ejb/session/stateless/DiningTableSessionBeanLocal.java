@@ -26,6 +26,6 @@ public interface DiningTableSessionBeanLocal {
 
     public void removeCustomerTableRelationship(Long diningTableId, Long customerId);
 
-    public void seatCustomerToDiningTable(Long diningTableId, Long customerId);
+    public void seatCustomerToDiningTable(Long diningTableId);
 
 }

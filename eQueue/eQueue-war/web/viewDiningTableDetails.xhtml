@@ -32,11 +32,11 @@
             <h:outputText value="#{viewTableDetailsManagedBean.diningTableToView.tableStatus}"/>
 
 
-            <h:outputText style="font-weight: bold;" value="[Frozen Status] Allocated To" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'FROZEN_ALLOCATED'}"/>
-            <h:outputText value="#{viewTableDetailsManagedBean.diningTableToView.customer.firstName} #{viewTableDetailsManagedBean.diningTableToView.customer.lastName}" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'FROZEN_ALLOCATED'}"/>
+            <h:outputText style="font-weight: bold;" value="[Unfrozen Status] Allocated To" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'UNFROZEN_ALLOCATED'}"/>
+            <h:outputText value="#{viewTableDetailsManagedBean.diningTableToView.customer.firstName} #{viewTableDetailsManagedBean.diningTableToView.customer.lastName}" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'UNFROZEN_ALLOCATED'}"/>
 
-             <h:outputText style="font-weight: bold;" value="[Frozen Status] Currently Occupied By" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'FROZEN_OCCUPIED'}"/>
-            <h:outputText value="#{viewTableDetailsManagedBean.diningTableToView.customer.firstName} #{viewTableDetailsManagedBean.diningTableToView.customer.lastName}" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'FROZEN_OCCUPIED'}"/>
+             <h:outputText style="font-weight: bold;" value="[Unfrozen Status] Currently Occupied By" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'UNFROZEN_OCCUPIED'}"/>
+            <h:outputText value="#{viewTableDetailsManagedBean.diningTableToView.customer.firstName} #{viewTableDetailsManagedBean.diningTableToView.customer.lastName}" rendered="#{viewTableDetailsManagedBean.diningTableToView.tableStatus == 'UNFROZEN_OCCUPIED'}"/>
 
         </h:panelGrid>
     </h:body>
