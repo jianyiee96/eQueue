@@ -4,6 +4,7 @@ import entity.Employee;
 import java.util.List;
 import javax.ejb.Local;
 import util.exceptions.DeleteEmployeeException;
+import util.exceptions.EmployeeInvalidEnteredCurrentPasswordException;
 import util.exceptions.EmployeeInvalidLoginCredentialException;
 import util.exceptions.EmployeeNotFoundException;
 import util.exceptions.EmployeeUsernameExistException;
@@ -27,5 +28,7 @@ public interface EmployeeSessionBeanLocal {
     public Employee employeeLogin(String username, String password) throws EmployeeInvalidLoginCredentialException;
 
     public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException;
+
+    public void updateEmployeePassword(String username, String currentPassword, String newPassword) throws EmployeeInvalidEnteredCurrentPasswordException, EmployeeNotFoundException;
     
 }
