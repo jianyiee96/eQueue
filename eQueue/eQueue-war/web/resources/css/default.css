@@ -48,122 +48,124 @@ a:hover {
 }
 
 div.ui-growl {
-   left: 10;  
+    left: 10;  
 }
 
+/*
+Remove this as it messes up the components
 * {
-	margin: 0;
-	padding: 0;
-	font-family: verdana,arial;	
+    margin: 0;
+    padding: 0;
+    font-family: verdana,arial;	
 }
 
 body {
-	display: block;
-	width: 99%;
-	margin: 0.5% 0.5% 0.5% 0.5%;
+    display: block;
+    width: 99%;
+    margin: 0.5% 0.5% 0.5% 0.5%;
 }
 
 p {
-	padding: 5px 0px 5px 0px;
+    padding: 5px 0px 5px 0px;
 }
 
 table {
-	border-style: solid; 
-	border-width: 1px;
-	font-size: smaller;
+    border-style: solid; 
+    border-width: 1px;
+    font-size: smaller;
 }
 
 th, td {
-	border-style: solid; 
-	border-width: 1px;
-	border-spacing: 1px;
-	padding: 3px;
+    border-style: solid; 
+    border-width: 1px;
+    border-spacing: 1px;
+    padding: 3px;
 }
 
 a {
-	text-decoration-line: none;	
+    text-decoration-line: none;	
 }
 
 a:hover {
-	text-decoration-line: underline;
-	cursor: hand;
+    text-decoration-line: underline;
+    cursor: hand;
 }
 
 .header {
-	display: block;
-	padding: 3px 3px 3px 3px;
-	clear: both;
-	background-color: whitesmoke;
+    display: block;
+    padding: 3px 3px 3px 3px;
+    clear: both;
+    background-color: whitesmoke;
 }
 
 .loginbox {
-	display:block;
-	text-align: right;
-	padding: 3px 3px 3px 3px;
+    display:block;
+    text-align: right;
+    padding: 3px 3px 3px 3px;
 }
 
 .mainmenu {
-	display: block;
-	width: 15%;
-	margin: 0.5% 0% 0.5% 0%;
-	padding: 3px 3px 3px 3px;
-	float: left;
-	background-color: whitesmoke;
+    display: block;
+    width: 15%;
+    margin: 0.5% 0% 0.5% 0%;
+    padding: 3px 3px 3px 3px;
+    float: left;
+    background-color: whitesmoke;
 }
 
 .content {
-	display: block;
-	width: 67.5%;
-	margin: 0.5% 0.5% 0.5% 0.5%;
-	padding: 3px 3px 3px 3px;
-	float: left;
+    display: block;
+    width: 67.5%;
+    margin: 0.5% 0.5% 0.5% 0.5%;
+    padding: 3px 3px 3px 3px;
+    float: left;
 }
 
 .sidebar {
-	display: block;
-	width: 15%;
-	margin: 0.5% 0% 0.5% 0%;
-	padding: 3px 3px 3px 3px;
-	float: right;
-	background-color: silver;
-	text-align: center;
+    display: block;
+    width: 15%;
+    margin: 0.5% 0% 0.5% 0%;
+    padding: 3px 3px 3px 3px;
+    float: right;
+    background-color: silver;
+    text-align: center;
 }
 
 .footer {
-	display: block;
-	margin: 0.5% 0% 0% 0%;
-	padding: 3px 3px 3px 3px;
-	clear: both;
-	background-color: whitesmoke;
+    display: block;
+    margin: 0.5% 0% 0% 0%;
+    padding: 3px 3px 3px 3px;
+    clear: both;
+    background-color: whitesmoke;
 }
 
 .advertisement {
-	margin: 5px 0px 5px 0px;
+    margin: 5px 0px 5px 0px;
 }
 
 .menuHeader1 {
-	padding: 3px 3px 3px 3px;
-	color: white;
-	background-color: grey;
+    padding: 3px 3px 3px 3px;
+    color: white;
+    background-color: grey;
 }
 
 .menuHeader2 {
-	margin-top: 5px;
-	padding: 3px 3px 3px 3px;	
-	background-color: silver;
+    margin-top: 5px;
+    padding: 3px 3px 3px 3px;	
+    background-color: silver;
 }
 
 .secondaryMenu {
-	margin-left: 15px;
-	padding: 3px 3px 3px 3px;
+    margin-left: 15px;
+    padding: 3px 3px 3px 3px;
 }
 
 .cellnumber {
-	text-align: right;
+    text-align: right;
 }
 
 .rowheader {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .infoText {
@@ -257,4 +259,4 @@ a:hover {
     background-color: #484848;
     color: white;    
     font-size: smaller;
-}
+}*/

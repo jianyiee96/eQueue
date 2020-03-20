@@ -1,0 +1,87 @@
+.menu-container {
+    display:flex;
+    align-content: flex-start;
+    flex-direction:column;
+    height: 100%;
+}
+
+.menu-header {
+    font-weight:normal;
+}
+
+.menu-panel {
+    width: 220px;
+    margin-bottom: auto;
+}
+
+.menu-user-container-outer {
+    margin-top: auto;
+}
+
+.menu-user-container-inner {
+    display:flex;
+    align-content: flex-start;
+}
+
+.profile-picture-container {
+    border-radius: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.profile-picture-container:hover {
+    transform: scale(1.1);
+    box-shadow: 0px 0px 19px 2px rgba(137,126,199,0.75);
+}
+
+.profile-picture {
+    border-radius: 50%;
+}
+
+.profile-container-text {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/*Custom Icons*/
+.custom-icon {
+    width: 14px; 
+    height: 14px;
+    align: up;
+}
+
+.store-icon {
+    background-image: url("#{resource['images/icons/store_icon.svg']}") !important;
+}
+
+.queue-icon {
+    background-image: url("#{resource['images/icons/queue_icon.svg']}") !important;
+}
+
+.menu-icon {
+    background-image: url("#{resource['images/icons/menu_icon.svg']}") !important;
+}
+
+.table-icon {
+    background-image: url("#{resource['images/icons/table_icon.svg']}") !important;
+}
+
+.kitchen-icon {
+    background-image: url("#{resource['images/icons/kitchen_icon.svg']}") !important;
+}
+
+.transaction-icon {
+    background-image: url("#{resource['images/icons/transaction_icon.svg']}") !important;
+}
+
+.employees-icon {
+    background-image: url("#{resource['images/icons/employees_icon.svg']}") !important;
+}
+
+.home-icon {
+    background-image: url("#{resource['images/icons/home_icon.svg']}") !important;
+}
+
+
+

@@ -45,9 +45,24 @@
 
                     <p:row>
                         <p:column colspan="3">
+                            <label>Overview</label>
+                            <p:tree value="#{viewMenuCategoryManagedBean.treeNode}" var="node">
+                                <p:treeNode type="menuCategory" expandedIcon="fa fa-list-alt" collapsedIcon="fa fa-list">
+                                    <h:outputText value="#{node.categoryName}" />
+                                </p:treeNode>
+                                <p:treeNode type="menuItem" icon="fa fa-cutlery">
+                                    <h:outputText value="#{node.menuItemName}" />
+                                </p:treeNode>
+                            </p:tree>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column colspan="3">
                             <p:commandButton value="Close" oncomplete="PF('dialogViewMenuCategory').hide();" />
                         </p:column>
                     </p:row>
+
 
                 </p:panelGrid>
 

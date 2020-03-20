@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <ui:define name="content">
+        <h:panelGroup style="margin-top: 50px" rendered="#{sessionScope.employeeIsLogin == true}">
+            <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
+            <ul>
+                <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
+                <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
+                <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
+                <li><h:link outcome="/createDiningTable.xhtml">Create dining table</h:link></li>
+                <li><h:link outcome="/viewAllDiningTables.xhtml">View all dining table</h:link></li>
+                <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
+            </ul>
+            <h:form id="logoutForm">
+                <h:commandButton value="Logout" actionListener="#{employeeLoginManagedBean.logout}" />
+            </h:form>
+        </h:panelGroup>
+
+    </ui:define>
+</ui:composition>
