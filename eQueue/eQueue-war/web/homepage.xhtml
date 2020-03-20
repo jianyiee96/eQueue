@@ -10,11 +10,10 @@
         <h:panelGroup style="margin-top: 50px" rendered="#{sessionScope.employeeIsLogin == true}">
             <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
             <ul>
-                <li><h:link outcome="/createNewEmployee.xhtml">Create New Employee</h:link></li>
-                <li><h:link outcome="/viewAllEmployees.xhtml">View All Employees</h:link></li>
                 <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
                 <li><h:link outcome="/createDiningTable.xhtml">Create dining table</h:link></li>
                 <li><h:link outcome="/viewAllDiningTables.xhtml">View all dining table</h:link></li>
+                <li><h:link outcome="/employeeManagement.xhtml">Employee Management</h:link></li>
                 <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
             </ul>
             <h:form id="logoutForm">

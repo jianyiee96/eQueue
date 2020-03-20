@@ -15,6 +15,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exceptions.DeleteEmployeeException;
+import util.exceptions.EmployeeInvalidEnteredCurrentPasswordException;
 import util.exceptions.EmployeeInvalidLoginCredentialException;
 import util.exceptions.EmployeeNotFoundException;
 import util.exceptions.EmployeeUsernameExistException;
@@ -53,7 +54,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new EmployeeUsernameExistException("Employee username exists!");
+                    throw new EmployeeUsernameExistException("Employee username or image name exists!");
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
@@ -90,7 +91,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
     @Override
     public Employee retrieveEmployeeByUsername(String username) throws EmployeeNotFoundException {
 
-        Query query = em.createQuery("SELECT e FROM Employee e WHERE e.username = :inUsername");               
+        Query query = em.createQuery("SELECT e FROM Employee e WHERE e.username = :inUsername");
         query.setParameter("inUsername", username);
 
         try {
@@ -105,7 +106,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
         try {
             Employee employee = retrieveEmployeeByUsername(username);
             String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + employee.getSalt()));
-            
+
             if (employee.getPassword().equals(passwordHash)) {
                 employee.getPaymentTransactions().size();
                 return employee;
@@ -114,6 +115,18 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
             }
         } catch (EmployeeNotFoundException ex) {
             throw new EmployeeInvalidLoginCredentialException("Username does not exist or invalid password!");
+        }
+    }
+
+    @Override
+    public void updateEmployeePassword(String username, String currentPassword, String newPassword) throws EmployeeInvalidEnteredCurrentPasswordException, EmployeeNotFoundException {
+        Employee employee = retrieveEmployeeByUsername(username);
+        String currentPasswordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(currentPassword + employee.getSalt()));
+
+        if (employee.getPassword().equals(currentPasswordHash)) {
+            employee.setPassword(newPassword);
+        } else {
+            throw new EmployeeInvalidEnteredCurrentPasswordException("The entered password does not match!");
         }
     }
 
@@ -129,6 +142,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
                     employeeToUpdate.setEmployeeRole(employee.getEmployeeRole());
                     employeeToUpdate.setFirstName(employee.getFirstName());
                     employeeToUpdate.setLastName(employee.getLastName());
+                    employeeToUpdate.setImagePath(employee.getImagePath());
                 } else {
                     throw new UpdateEmployeeException("Username of employee record to be updated does not match the existing record!");
                 }
