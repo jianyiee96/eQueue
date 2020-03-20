@@ -25,38 +25,42 @@ public class Employee implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long employeeId;
 
-    @Column(nullable = false, length = 32)
-    @NotNull
-    @Size(max = 32)
+    @Column(nullable = false, length = 64)
+    @NotNull(message = "First Name must be between length 2 to 64")
+    @Size(min = 2, max = 64, message = "First Name must be between length 2 to 64")
     private String firstName;
 
-    @Column(nullable = false, length = 32)
-    @NotNull
-    @Size(max = 32)
+    @Column(nullable = false, length = 64)
+    @NotNull(message = "Last Name must be between length 2 to 64")
+    @Size(min = 2, max = 64, message = "Last Name must be between length 2 to 64")
     private String lastName;
 
     @Column(nullable = false, unique = true, length = 64)
-    @NotNull
-    @Size(max = 64)
-    @Email
+    @NotNull(message = "Proper email with length no more than 64 must be provided")
+    @Size(max = 64, message = "Proper email with length no more than 64 must be provided")
+    @Email(message = "Proper email with length no more than 64 must be provided")
     private String email;
 
     @Column(nullable = false, unique = true, length = 64)
-    @NotNull
-    @Size(max = 64)
+    @NotNull(message = "Username must be between length 4 to 64")
+    @Size(min = 4, max = 64, message = "Username must be between length 4 to 64")
     private String username;
 
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
-    @NotNull
+    @Column(columnDefinition = "CHAR(64) NOT NULL")
+    @NotNull(message = "Password must be between length 4 to 64")
+    @Size(min = 4, max = 64, message = "Password must be between length 4 to 64")
     private String password;
 
-    @Column(columnDefinition = "CHAR(32) NOT NULL")
+    @Column()
+    private String imagePath;
+
+    @Column(columnDefinition = "CHAR(64) NOT NULL")
     @NotNull
     private String salt;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    @NotNull
+    @NotNull(message = "Role must be provided")
     private EmployeeRoleEnum employeeRole;
 
     @OneToMany(mappedBy = "employee")
@@ -65,6 +69,17 @@ public class Employee implements Serializable {
     public Employee() {
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
         this.paymentTransactions = new ArrayList<>();
+    }
+
+    public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole, String imagePath) {
+        this();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.username = username;
+        setPassword(password);
+        this.employeeRole = employeeRole;
+        this.imagePath = imagePath;
     }
 
     public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole) {
@@ -143,6 +158,14 @@ public class Employee implements Serializable {
 
     public void setEmployeeRole(EmployeeRoleEnum employeeRole) {
         this.employeeRole = employeeRole;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public List<PaymentTransaction> getPaymentTransactions() {
