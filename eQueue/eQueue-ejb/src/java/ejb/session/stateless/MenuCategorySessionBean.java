@@ -152,17 +152,15 @@ public class MenuCategorySessionBean implements MenuCategorySessionBeanLocal {
                 if (parentMenuCategoryId != null) {
                     if (menuCategoryToUpdate.getMenuCategoryId().equals(parentMenuCategoryId)) {
                         throw new UpdateMenuCategoryException("Category cannot be its own parent");
-                    } else if (menuCategoryToUpdate.getParentMenuCategory()== null || (!menuCategoryToUpdate.getParentMenuCategory().getMenuCategoryId().equals(parentMenuCategoryId))) {
+                    } else if (menuCategoryToUpdate.getParentMenuCategory() == null || (!menuCategoryToUpdate.getParentMenuCategory().getMenuCategoryId().equals(parentMenuCategoryId))) {
                         MenuCategory parentMenuCategoryToUpdate = retrieveMenuCategoryById(parentMenuCategoryId);
 
                         if (!parentMenuCategoryToUpdate.getMenuItems().isEmpty()) {
                             throw new UpdateMenuCategoryException("Parent category cannot have any product associated with it");
                         }
-                        
-                        System.out.println("CALLEDDD HEREE");
-                        System.out.println("SIZE: " + menuCategoryToUpdate.getSubMenuCategories().size());
+
                         lazilyLoadSubMenuCategories(menuCategoryToUpdate);
-                        if (!isOwnChild(menuCategory.getMenuCategoryId(),parentMenuCategoryId)) {
+                        if (isOwnChild(menuCategory.getMenuCategoryId(), parentMenuCategoryId)) {
                             throw new UpdateMenuCategoryException("Parent category cannot be its own child");
                         }
 
@@ -178,20 +176,19 @@ public class MenuCategorySessionBean implements MenuCategorySessionBeanLocal {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
     }
-    
+
     private boolean isOwnChild(Long menuCategoryId, Long compareId) throws MenuCategoryNotFoundException {
-        System.out.println("CALLEDDD HEREE 2");
-        MenuCategory menuCategory = retrieveMenuCategoryById(compareId);
-        System.out.println("CALLEDDD HEREE 3");
-        System.out.println(menuCategory.getSubMenuCategories().size());
+        System.out.println("Entered isOwnChild");
+        MenuCategory menuCategory = retrieveMenuCategoryById(menuCategoryId);
         for (MenuCategory mc : menuCategory.getSubMenuCategories()) {
-            System.out.println("CALLEDDD HEREE 4");
-            if (mc.getMenuCategoryId().equals(menuCategoryId)) {
+            System.out.println("mc: " + mc);
+            if (mc.getMenuCategoryId().equals(compareId)) {
                 return true;
             } else {
-                return isOwnChild(menuCategoryId,mc.getMenuCategoryId());
+                return isOwnChild(menuCategoryId, mc.getMenuCategoryId());
             }
         }
+        System.out.println("Exit isOwnChild");
         return false;
     }
 

@@ -420,7 +420,7 @@
                                     </p:commandButton>
 
                                     <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuCategory}" update="
-                                                     menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formAllMenuCategories:messages treeForm">
+                                                     menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formAllMenuCategories:messages menuManagementTabView:formCreateNewMenuItem:createNewMenuItemPanel treeForm">
                                         <f:attribute name="menuCategoryToDelete" value="#{menuCategory}" />
                                         <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuCategory.categoryName}?" icon="ui-icon-alert" />
                                     </p:commandButton>
@@ -536,7 +536,7 @@
 
                                     <p:row>
                                         <p:column colspan="3">
-                                            <p:commandButton value="Update Menu Category" update="@form menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel  menuManagementTabView:formAllMenuItems:dataTableAllMenuItems treeForm" actionListener="#{menuManagementManagedBean.updateMenuCategory}" oncomplete="PF('dialogUpdateMenuCategory').show();" />
+                                            <p:commandButton value="Update Menu Category" update="@form menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel  menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuItem:createNewMenuItemPanel treeForm" actionListener="#{menuManagementManagedBean.updateMenuCategory}" oncomplete="PF('dialogUpdateMenuCategory').show();" />
                                             <p:commandButton value="Close" oncomplete="PF('dialogUpdateMenuCategory').hide();" />
                                         </p:column>
                                     </p:row>
