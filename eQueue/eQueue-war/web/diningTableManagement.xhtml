@@ -12,12 +12,6 @@
         <p:layout>
             <p:layoutUnit position="center">
                 <div>
-                    <h:form>
-
-                        <p:commandButton value="Create New Dining Table" onclick="PF('dialogCreateNewDiningTable').show()" icon="ui-icon-plusthick" />
-                        <br/>
-
-                    </h:form>
 
                     <h:form id="formAllDiningTables">
 
@@ -29,6 +23,7 @@
                                      >
 
                             <f:facet name="header">
+                                <p:commandButton style="float: left;" onclick="PF('dialogCreateNewDiningTable').show()" icon="fa fa-plus-circle" />
                                 <p:outputPanel style="text-align: right;">
                                     <h:outputText value="Search all fields:" />
                                     <p:inputText id="globalFilter" onkeyup="PF('dataTableAllDiningTables').filter()" style="width:300px" placeholder="Enter keyword"/>
