@@ -11,10 +11,12 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.OrderStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.InputDataValidationException;
@@ -41,6 +43,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         validator = validatorFactory.getValidator();
     }
 
+    
     // Call this at shopping cart checkout [TO DISSASSOCIATE SHOPPING CART AND ORDERLINEITEMS THERE]
     @Override
     public Long createCustomerOrder(CustomerOrder newCustomerOrder, Long customerId, List<OrderLineItem> orderLineItems) throws InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException {
