@@ -5,7 +5,6 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-
     <h:head>
         <title>eQueue</title>
         <style>
@@ -70,7 +69,6 @@
         <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
             Welcome #{sessionScope.currentCustomer.firstName}
             <ul>
-
                 <li><h:link value="Join Queue" outcome="joinQueue" /></li>
                 <li><h:link value="View My Queue" outcome="viewQueue" /></li>
                 <li><h:link value="View My Table Allocation" outcome="viewTableAllocation" /></li>
