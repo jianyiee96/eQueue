@@ -61,6 +61,15 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     }
 
     @Override
+    public List<DiningTable> retrieveAllUnfrozenUnoccupiedTables() {
+
+        Query query = em.createQuery("SELECT d FROM DiningTable d where d.tableStatus = :inStatus ORDER BY d.seatingCapacity ASC");
+        query.setParameter("inStatus", TableStatusEnum.UNFROZEN_UNOCCUPIED);
+
+        return query.getResultList();
+    }
+
+    @Override
     public DiningTable retrieveDiningTableById(Long diningTableId) throws DiningTableNotFoundException {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
 
@@ -110,11 +119,19 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     }
 
     @Override // when customer did not seat at table in time or when customer leaves table
-    public void removeCustomerTableRelationship(Long diningTableId, Long customerId) {
-        DiningTable diningTable = em.find(DiningTable.class, diningTableId);
+    public void removeCustomerTableRelationship(Long customerId) {
+        
         Customer customer = em.find(Customer.class, customerId);
-        diningTable.setCustomer(null);
-        diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
+        DiningTable diningTable = customer.getAllocatedDiningTable();
+
+        if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED) {
+            diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
+
+        } else if (diningTable.getTableStatus() == TableStatusEnum.FROZEN_ALLOCATED) {
+            diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
+
+        }
+
     }
 
     @Override

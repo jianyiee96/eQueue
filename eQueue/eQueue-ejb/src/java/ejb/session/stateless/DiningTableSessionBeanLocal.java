@@ -24,8 +24,10 @@ public interface DiningTableSessionBeanLocal {
 
     public void allocateTableToCustomer(Long diningTableId, Long customerId);
 
-    public void removeCustomerTableRelationship(Long diningTableId, Long customerId);
+    public void removeCustomerTableRelationship(Long customerId);
 
     public void seatCustomerToDiningTable(Long diningTableId);
+    
+    public List<DiningTable> retrieveAllUnfrozenUnoccupiedTables();
 
 }
