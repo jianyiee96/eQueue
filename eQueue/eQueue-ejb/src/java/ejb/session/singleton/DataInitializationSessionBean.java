@@ -84,6 +84,7 @@ public class DataInitializationSessionBean {
 
     private void initializeData() {
 
+        System.out.println("Initialiing Data...");
         try {
 
             storeManagementSessionBeanLocal.storeInitialization(new StoreVariables("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
