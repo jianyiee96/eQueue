@@ -63,7 +63,7 @@
                             <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null}">
                                 <p:column colspan="2">
                                     <div style='text-align: center;'>
-                                        <p:graphicImage style="margin: 15px;" width="180" height="240" library="images" name="profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture" />
+                                        <p:graphicImage style="margin: 15px;" width="180" height="180" library="images" name="profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture" />
                                         <br/>
                                         <p:commandButton icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
                                     </div>
@@ -175,9 +175,9 @@
                                     </div>
                                 </p:column>
                                 <p:column>
-                                    <p:fileUpload update="updatedImageMessage" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}" previewWidth="1" 
+                                    <p:fileUpload update="@form" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}" previewWidth="1" 
                                                   allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
-                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" />
+                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false"/>
                                     <p:growl id='updatedImageMessage' life="3500" />
                                 </p:column>
                             </p:row>
