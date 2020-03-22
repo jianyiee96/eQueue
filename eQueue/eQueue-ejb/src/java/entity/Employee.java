@@ -81,7 +81,19 @@ public class Employee implements Serializable {
         this.employeeRole = employeeRole;
         this.imagePath = imagePath;
     }
-
+    
+    public Employee(Employee another) {
+        this();
+        this.employeeId = another.employeeId;
+        this.firstName = another.firstName;
+        this.lastName = another.lastName;
+        this.email = another.email;
+        this.username = another.username;
+        this.password = another.password;
+        this.employeeRole = another.employeeRole;
+        this.imagePath = another.imagePath;
+    }
+    
     public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole) {
         this();
         this.firstName = firstName;
