@@ -28,10 +28,22 @@
                     
                     <p:row>
                         <p:column>
-                            <h:outputLabel value="QR Code: " />
+                            <h:outputLabel value="Code: " />
                         </p:column>
                         <p:column>
                             <h:outputText value="#{viewDiningTableManagedBean.diningTableToView.qrCode}" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <h:outputLabel value="QR Code: " />
+                        </p:column>
+                        <p:column>
+                            
+                            <p:graphicImage width="200" height="200" library="images" name="qrcode/#{viewDiningTableManagedBean.diningTableToView.qrCode}.png" alt="#{viewDiningTableManagedBean.diningTableToView.qrCode}" />
+                                        
+                            
                         </p:column>
                     </p:row>
                     

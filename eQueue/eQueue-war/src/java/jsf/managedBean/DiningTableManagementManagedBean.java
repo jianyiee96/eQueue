@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -28,9 +30,6 @@ public class DiningTableManagementManagedBean implements Serializable {
     @EJB
     private DiningTableSessionBeanLocal diningTableSessionBeanLocal;
 
-    @Inject
-    private ViewDiningTableManagedBean viewDiningTableManagedBean;
-
     private List<DiningTable> diningTables;
     private List<DiningTable> filteredDiningTables;
 
@@ -39,6 +38,8 @@ public class DiningTableManagementManagedBean implements Serializable {
     private DiningTable selectedDiningTableToUpdate;
 
     private List<TableStatusEnum> tableStatuses = new ArrayList();
+
+    private String filePath;
 
     public DiningTableManagementManagedBean() {
         newDiningTable = new DiningTable();
@@ -53,7 +54,21 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
+
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
+        generateTableQrCodes();
+
+    }
+
+    private void generateTableQrCodes() {
+        filePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(filePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        filePath = filePath.substring(0, positions.get(positions.size() - 3)) + "\\eQueue-war\\web\\resources\\images\\qrcode\\";
+        diningTables.forEach(t -> diningTableSessionBeanLocal.generateQrCode(t.getQrCode(), filePath+t.getQrCode()+".png"));
     }
 
     public void viewDiningTableDetails(ActionEvent event) throws IOException {
@@ -65,7 +80,9 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void createNewDiningTable(ActionEvent event) {
 
         try {
-            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(newDiningTable);
+            
+            diningTableSessionBeanLocal.generateQrCode(newDiningTable.getQrCode(), filePath+newDiningTable.getQrCode()+".png");
+            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(newDiningTable, false);
             DiningTable dt = diningTableSessionBeanLocal.retrieveDiningTableById(diningTableId);
             diningTables.add(dt);
 
@@ -87,6 +104,7 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     public void updateDiningTable(ActionEvent event) {
         try {
+            diningTableSessionBeanLocal.generateQrCode(selectedDiningTableToUpdate.getQrCode(), filePath+selectedDiningTableToUpdate.getQrCode()+".png");
             diningTableSessionBeanLocal.updateDiningTableInformation(selectedDiningTableToUpdate);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dining Table updated successfully", null));
@@ -107,7 +125,6 @@ public class DiningTableManagementManagedBean implements Serializable {
                 selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.UNFROZEN_ALLOCATED);
             } else if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED) {
                 selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.FROZEN_ALLOCATED);
-
             } else if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED) {
                 selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.UNFROZEN_OCCUPIED);
             } else if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.UNFROZEN_OCCUPIED) {
@@ -132,8 +149,6 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void cleanDiningTable(ActionEvent event) {
         try {
             selectedDiningTableToUpdate = (DiningTable) event.getComponent().getAttributes().get("diningTableToUpdate");
-
-            
 
             if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED) {
                 selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
@@ -172,14 +187,6 @@ public class DiningTableManagementManagedBean implements Serializable {
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
-    }
-
-    public ViewDiningTableManagedBean getViewDiningTableManagedBean() {
-        return viewDiningTableManagedBean;
-    }
-
-    public void setViewDiningTableManagedBean(ViewDiningTableManagedBean viewDiningTableManagedBean) {
-        this.viewDiningTableManagedBean = viewDiningTableManagedBean;
     }
 
     public List<DiningTable> getDiningTables() {

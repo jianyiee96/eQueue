@@ -12,6 +12,7 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
 import util.enumeration.TableStatusEnum;
 
@@ -25,6 +26,10 @@ public class DiningTable implements Serializable {
 
     @Column(nullable = false, unique = false)
     @NotNull
+    @Pattern(
+            regexp = "^[A-Za-z0-9]+$",
+            message = "Code must be alpha-numeric"
+    )
     private String qrCode;
 
     @Column(nullable = false)
@@ -41,21 +46,21 @@ public class DiningTable implements Serializable {
 
     @OneToOne(optional = true)
     private Customer customer;
-    
-    public DiningTable(){
-        
+
+    public DiningTable() {
+
         this.tableStatus = TableStatusEnum.FROZEN_UNOCCUPIED;
-        this.qrCode = "default.jpg";
-        
+        this.qrCode = "default";
+
     }
-    
-    public DiningTable(Long seatingCapacity){
-        
+
+    public DiningTable(Long seatingCapacity) {
+
         this();
         this.seatingCapacity = seatingCapacity;
-        
+
     }
-    
+
     public Long getDiningTableId() {
         return diningTableId;
     }
@@ -104,8 +109,6 @@ public class DiningTable implements Serializable {
         }
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;

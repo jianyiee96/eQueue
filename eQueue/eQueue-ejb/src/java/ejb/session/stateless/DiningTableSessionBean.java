@@ -16,6 +16,7 @@ import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -31,7 +32,6 @@ import util.exceptions.DeleteDiningTableException;
 import util.exceptions.DiningTableNotFoundException;
 import util.exceptions.EditTableException;
 import util.exceptions.InputDataValidationException;
-import util.exceptions.QrGenerationException;
 import util.exceptions.UnknownPersistenceException;
 
 @Stateless
@@ -49,11 +49,16 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     }
 
     @Override
-    public Long createNewDiningTable(DiningTable diningTable) throws UnknownPersistenceException, InputDataValidationException {
+    public Long createNewDiningTable(DiningTable diningTable, Boolean generateQr) throws UnknownPersistenceException, InputDataValidationException {
         try {
             Set<ConstraintViolation<DiningTable>> constraintViolations = validator.validate(diningTable);
 
             if (constraintViolations.isEmpty()) {
+
+                if (generateQr) {
+                    diningTable.setQrCode(UUID.randomUUID().toString().substring(0, 8));
+                }
+
                 em.persist(diningTable);
                 em.flush();
 
@@ -114,22 +119,24 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     }
 
     @Override
-    private void generateQrCode(String code, String destinationPath) throws QrGenerationException {
+    public void generateQrCode(String code, String destinationPath) {
 
         try {
-            String qrCodeData = "www.chillyfacts.com";
-            String filePath = "D:\\QRCODE\\chillyfacts.png";
-            String charset = "UTF-8"; // or "ISO-8859-1"
+            System.out.println("Starting generation...");
+            String charset = "UTF-8";
             Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new HashMap<>();
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-            BitMatrix matrix = new MultiFormatWriter().encode(
-                    new String(qrCodeData.getBytes(charset), charset),
+            BitMatrix matrix = new MultiFormatWriter().encode(new String(code.getBytes(charset), charset),
                     BarcodeFormat.QR_CODE, 200, 200, hintMap);
-            MatrixToImageWriter.writeToFile(matrix, filePath.substring(filePath
-                    .lastIndexOf('.') + 1), new File(filePath));
+            MatrixToImageWriter.writeToFile(matrix, destinationPath.substring(destinationPath
+                    .lastIndexOf('.') + 1), new File(destinationPath));
             System.out.println("QR Code image created successfully!");
+
+            System.out.println("Code: " + code);
+            System.out.println("Destination Path: " + destinationPath);
+
         } catch (WriterException | IOException e) {
-            throw new QrGenerationException();
+            System.out.println("Error in generating QR Code: " + e.getMessage());;
         }
 
     }
