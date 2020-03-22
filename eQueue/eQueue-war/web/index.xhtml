@@ -8,13 +8,13 @@
     <h:head>
         <title>eQueue</title>
         <style>
-/*            body {
+            body {
                 background-image: url("#{resource['images/queue-background.gif']}");
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position: center;
-                background-image: url(/eQueue-war/resources/images/walking.jpg);
-            }*/
+                //background-image: url(/eQueue-war/resources/images/walking.jpg);
+            }
         </style>
     </h:head>
     <h:body>
@@ -47,7 +47,7 @@
 
         </h:panelGroup>
 
-        <h:panelGroup rendered="#{sessionScope.customerIsLogin == false}">
+        <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
 
             <h4>Customer Login:</h4>
             <h:form id="customerLoginForm">
