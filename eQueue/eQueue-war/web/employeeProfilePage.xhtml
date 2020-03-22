@@ -60,12 +60,16 @@
                         <p:growl redisplay="false" life="3500" />
 
                         <p:panelGrid>
-                            <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null}">
+                            <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null || employeeProfilePageManagedBean.picturePreview != null}">
                                 <p:column colspan="2">
                                     <div style='text-align: center;'>
-                                        <p:graphicImage style="margin: 15px;" width="180" height="180" library="images" name="profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture" />
+                                        <p:graphicImage rendered="#{empty employeeProfilePageManagedBean.picturePreview}" style="margin: 15px;" width="180" height="180" library="images" name="profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture" />
+                                        <ui:fragment rendered="#{not empty employeeProfilePageManagedBean.picturePreview}" >
+                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContentsAsBase64}" style="margin: 15px;"/>
+                                            <h4>Picture Preview</h4>
+                                        </ui:fragment>
                                         <br/>
-                                        <p:commandButton icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
+                                        <p:commandButton rendered="#{empty employeeProfilePageManagedBean.picturePreview}" icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
                                     </div>
                                 </p:column>
                             </p:row>
@@ -175,9 +179,9 @@
                                     </div>
                                 </p:column>
                                 <p:column>
-                                    <p:fileUpload update="@form" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}" previewWidth="1" 
-                                                  allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
-                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false"/>
+                                    <p:fileUpload update="@form" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}"
+                                                  previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
+                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false" fileLimit="1"/>
                                     <p:growl id='updatedImageMessage' life="3500" />
                                 </p:column>
                             </p:row>
@@ -186,7 +190,6 @@
                                 <p:column colspan="2">
                                     <div style="text-align: center;">
                                         <p:commandButton icon='fa fa-save' update="@form sidebar1" actionListener="#{employeeProfilePageManagedBean.updatePersonalInformation}" />&nbsp;
-                                        <!--<p:commandButton icon="fa fa-refresh" actionListener="{employeeProfilePageManagedBean.navigate}" />-->
                                     </div>
                                 </p:column>
                             </p:row>
