@@ -124,6 +124,7 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
                     menuItemToUpdate.setMenuItemPrice(menuItem.getMenuItemPrice());
                     menuItemToUpdate.setWaitingTimeMinutes(menuItem.getWaitingTimeMinutes());
                     menuItemToUpdate.setAvailability(menuItem.getAvailability());
+                    menuItemToUpdate.setImagePath(menuItem.getImagePath());
 
                 } else {
                     throw new UpdateMenuItemException("Menu Item Code of record to be updated does not match the existing record");

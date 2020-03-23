@@ -56,12 +56,14 @@ public class MenuItem implements Serializable {
     @NotNull
     private MenuItemAvailabilityEnum availability;
 
+    @Column()
+    private String imagePath;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private MenuCategory menuCategory;
 
     //private String menuItemImagePath;
-    
     public MenuItem() {
 
         this.availability = MenuItemAvailabilityEnum.UNAVAILABLE;
@@ -69,13 +71,25 @@ public class MenuItem implements Serializable {
     }
 
     public MenuItem(String menuItemCode, String menuItemName, Double menuItemPrice, Long waitingTimeMinutes, MenuItemAvailabilityEnum availability) {
-        
+
         this();
         this.menuItemCode = menuItemCode;
         this.menuItemName = menuItemName;
         this.menuItemPrice = menuItemPrice;
         this.waitingTimeMinutes = waitingTimeMinutes;
         this.availability = availability;
+
+    }
+
+    public MenuItem(String menuItemCode, String menuItemName, Double menuItemPrice, Long waitingTimeMinutes, MenuItemAvailabilityEnum availability, String imagePath) {
+
+        this();
+        this.menuItemCode = menuItemCode;
+        this.menuItemName = menuItemName;
+        this.menuItemPrice = menuItemPrice;
+        this.waitingTimeMinutes = waitingTimeMinutes;
+        this.availability = availability;
+        this.imagePath = imagePath;
 
     }
 
@@ -133,6 +147,14 @@ public class MenuItem implements Serializable {
 
     public void setAvailability(MenuItemAvailabilityEnum availability) {
         this.availability = availability;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 
     public MenuCategory getMenuCategory() {

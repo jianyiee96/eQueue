@@ -39,11 +39,6 @@
                             <h:outputText value="Items"/>
                         </f:facet>
 
-                        <h:form>
-                            <p:commandButton value="Create New Item" onclick="PF('dialogCreateNewMenuItem').show()" icon="ui-icon-plusthick" />
-                            <br/>
-                        </h:form>
-
                         <h:form id="formAllMenuItems">
 
                             <p:messages id="messages" redisplay="false" closable="true" />
@@ -54,7 +49,8 @@
 
                                 <f:facet name="header" >
                                     <p:outputPanel style="text-align: right;">
-                                        <h:outputText value="Search all fields: " />
+                                        <p:commandButton actionListener="#{menuManagementManagedBean.doCreateMenuItem}" update="menuManagementTabView:formCreateNewMenuItem" style="float: left;" value="Create New Menu Item" oncomplete="PF('dialogCreateNewMenuItem').show()" icon="fa fa-plus-circle" />
+                                        <h:outputText value="Search all fields:" />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuItems').filter()" style="width:300px" placeholder="Enter keyword"/>
                                     </p:outputPanel>
                                 </f:facet>
@@ -135,7 +131,15 @@
                                 <p:messages id="messagesCreateNewMenuItem" redisplay="false" />
 
                                 <p:panelGrid id="createNewMenuItemPanel">
-
+                                    <p:row rendered="#{menuManagementManagedBean.createMenuItemPreviewPhoto != null}">
+                                        <p:column colspan="3">
+                                            <div style='text-align: center;'>
+                                                <img src="data:image/png;base64,#{menuManagementManagedBean.createMenuItemPreviewPhotoContents}" style="margin: 15px; width: 180px; height: 180px;" alt="Photo not loaded"/>
+                                                <br/>
+                                                Picture Preview
+                                            </div>
+                                        </p:column>
+                                    </p:row>
                                     <p:row>
                                         <p:column>
                                             <p:outputLabel for="menuItemCode" value="Item Code: " style="font-weight: bold;" />
@@ -226,6 +230,21 @@
                                     </p:row>
 
                                     <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Picture Upload" style="font-weight: bold;" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:fileUpload id="pictureUpload" update="@form" fileUploadListener="#{menuManagementManagedBean.uploadCreateMenuItemPreviewPhoto}"
+                                                          previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
+                                                          cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false" fileLimit="1"
+                                                          oncomplete="PF('dialogCreateNewMenuItem').show()"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:message for="pictureUpload" />
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
                                         <p:column colspan="3">
                                             <p:commandButton type="reset" value="Clear" />&nbsp;
                                             <p:commandButton  value="Create New Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel treeForm" actionListener="#{menuManagementManagedBean.createNewMenuItem}" oncomplete="PF('dialogCreateNewMenuItem').show();" />
@@ -247,6 +266,23 @@
                                 <p:messages id="messagesUpdateMenuItem" redisplay="false" />
 
                                 <p:panelGrid>
+
+                                    <p:row rendered="#{menuManagementManagedBean.menuItemToUpdate.imagePath != null || menuManagementManagedBean.updateMenuItemPreviewPhoto != null}">
+                                        <p:column colspan="3">
+                                            <div style='text-align: center;'>
+                                                <ui:fragment rendered="#{menuManagementManagedBean.updateMenuItemPreviewPhoto == null and menuManagementManagedBean.updateMenuItemCurrentPhotoContents != null}" >
+                                                    <img src="data:image/png;base64,#{menuManagementManagedBean.updateMenuItemCurrentPhotoContents}" style="margin: 15px; width: 180px; height: 180px;" alt="Picture not loaded"/>
+                                                    <br/>
+                                                    <p:commandButton icon='fa fa-trash' update='@form' actionListener="#{menuManagementManagedBean.removeMenuItemPhoto}" oncomplete="PF('dialogUpdateMenuItem').show();"/>
+                                                </ui:fragment>
+                                                <ui:fragment rendered="#{menuManagementManagedBean.updateMenuItemPreviewPhoto != null}" >
+                                                    <img src="data:image/png;base64,#{menuManagementManagedBean.updateMenuItemPreviewPhotoContents}" style="margin: 15px; width: 180px; height: 180px;"/>
+                                                    <br/>
+                                                    <h4>Picture Preview</h4>
+                                                </ui:fragment>
+                                            </div>
+                                        </p:column>
+                                    </p:row>
 
                                     <p:row>
                                         <p:column>
@@ -350,6 +386,21 @@
                                     </p:row>
 
                                     <p:row>
+                                        <p:column>
+                                            <p:outputLabel value="Picture Upload" style="font-weight: bold;" />
+                                        </p:column>
+                                        <p:column>
+                                            <p:fileUpload id="pictureUploadUpdate" update="@form" fileUploadListener="#{menuManagementManagedBean.uploadUpdateMenuItemPreviewPhoto}"
+                                                          previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
+                                                          cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false" fileLimit="1"
+                                                          oncomplete="PF('dialogUpdateMenuItem').show()"/>
+                                        </p:column>
+                                        <p:column>
+                                            <p:message for="pictureUploadUpdate" />
+                                        </p:column>
+                                    </p:row>
+
+                                    <p:row>
                                         <p:column colspan="3">
                                             <p:commandButton value="Update Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel treeForm" actionListener="#{menuManagementManagedBean.updateMenuItem}" oncomplete="PF('dialogUpdateMenuItem').show();" />
                                             <p:commandButton value="Close" oncomplete="PF('dialogUpdateMenuItem').hide();" />
@@ -368,13 +419,6 @@
                             <h:outputText value="Categories"/>
                         </f:facet>
 
-
-
-                        <h:form>
-                            <p:commandButton value="Create New Category" onclick="PF('dialogCreateNewMenuCategory').show()" icon="ui-icon-plusthick" />
-                            <br/>
-                        </h:form>
-
                         <h:form id="formAllMenuCategories">
 
                             <p:messages id="messages" redisplay="false" closable="true" />
@@ -385,6 +429,7 @@
 
                                 <f:facet name="header">
                                     <p:outputPanel style="text-align: right;">
+                                        <p:commandButton style="float: left;" value="Create New Menu Category" onclick="PF('dialogCreateNewMenuCategory').show()" icon="fa fa-plus-circle" />
                                         <h:outputText value="Search all fields:" />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuCategories').filter()" style="width:300px" placeholder="Enter keyword"/>
                                     </p:outputPanel>
