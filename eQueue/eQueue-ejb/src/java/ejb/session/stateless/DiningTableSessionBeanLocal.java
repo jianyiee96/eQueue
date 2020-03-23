@@ -12,7 +12,9 @@ import util.exceptions.UnknownPersistenceException;
 @Local
 public interface DiningTableSessionBeanLocal {
 
-    public Long createNewDiningTable(DiningTable diningTable) throws UnknownPersistenceException, InputDataValidationException;
+    public Long createNewDiningTable(DiningTable diningTable, Boolean withGenerate) throws UnknownPersistenceException, InputDataValidationException;
+    
+    public void generateQrCode(String code, String destinationPath);
 
     public List<DiningTable> retrieveAllTables();
 

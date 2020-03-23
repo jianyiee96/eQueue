@@ -84,6 +84,7 @@ public class DataInitializationSessionBean {
 
     private void initializeData() {
 
+        System.out.println("Initialiing Data...");
         try {
 
             storeManagementSessionBeanLocal.storeInitialization(new StoreVariables("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
@@ -92,13 +93,14 @@ public class DataInitializationSessionBean {
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
             Long custId4 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
 
-            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
-            diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(8L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(4L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(4L), true);
+            diningTableSessionBean.createNewDiningTable(new DiningTable(2L), true);
+            
             employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Kek", "Tan", "weekek-tan@eQueue.com", "manager", "password", EmployeeRoleEnum.MANAGER, "tan_wee_kek.jpg"));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER));

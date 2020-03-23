@@ -1,9 +1,21 @@
 package ejb.session.stateless;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import entity.Customer;
 import entity.DiningTable;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -35,11 +47,16 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     }
 
     @Override
-    public Long createNewDiningTable(DiningTable diningTable) throws UnknownPersistenceException, InputDataValidationException {
+    public Long createNewDiningTable(DiningTable diningTable, Boolean withGenerate) throws UnknownPersistenceException, InputDataValidationException {
         try {
             Set<ConstraintViolation<DiningTable>> constraintViolations = validator.validate(diningTable);
 
             if (constraintViolations.isEmpty()) {
+                
+                if(withGenerate) {
+                    diningTable.setQrCode(UUID.randomUUID().toString().substring(0, 8));
+                }
+                
                 em.persist(diningTable);
                 em.flush();
 
@@ -52,6 +69,40 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
             throw new UnknownPersistenceException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void generateQrCode(String code, String destinationPath) {
+
+        File folder = new File(destinationPath.substring(0, destinationPath.lastIndexOf('\\')));
+
+        for (File f : folder.listFiles()) {
+            if (f.isFile()) {
+                if(f.getName().equals(code+".png")){
+                    System.out.println(f.getName()+" exists in QR-Code image folder. Skipping QR generation");
+                    return;
+                }
+            }
+        }
+
+        try {
+            System.out.println("Starting generation...");
+            String charset = "UTF-8";
+            Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new HashMap<>();
+            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+            BitMatrix matrix = new MultiFormatWriter().encode(new String(code.getBytes(charset), charset),
+                    BarcodeFormat.QR_CODE, 200, 200, hintMap);
+            MatrixToImageWriter.writeToFile(matrix, destinationPath.substring(destinationPath
+                    .lastIndexOf('.') + 1), new File(destinationPath));
+            System.out.println("QR Code image created successfully!");
+
+            System.out.println("Full Destination Path: " + destinationPath);
+
+        } catch (WriterException | IOException e) {
+            System.out.println("Error in generating QR Code: " + e.getMessage());
+        }
+
+    }
+
 
     @Override
     public List<DiningTable> retrieveAllTables() {
