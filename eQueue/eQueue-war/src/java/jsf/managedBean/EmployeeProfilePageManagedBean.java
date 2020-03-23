@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -36,7 +37,8 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     private String enteredCurrentPassword;
     private String enteredNewPassword;
     private UploadedFile picturePreview;
-    private byte[] fileContents;
+    private String imageContents;
+    private String imagePreviewContents;
 
     public EmployeeProfilePageManagedBean() {
         enteredCurrentPassword = "";
@@ -47,10 +49,13 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     public void postConstruct() {
         Employee temp = (Employee) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployee");
         this.currentEmployee = new Employee(temp);
-    }
-
-    public void navigate() throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().redirect("employeeProfilePage.xhtml");
+        if (this.currentEmployee.getImagePath() != null) {
+            try {
+                imageContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(this.currentEmployee.getImagePath()).toPath()));
+            } catch (Exception ex) {
+                System.out.println("FILE DOES NOT EXIST! ===========> " + this.currentEmployee.getImagePath());
+            }
+        }
     }
 
     public void updatePersonalInformation() {
@@ -64,7 +69,8 @@ public class EmployeeProfilePageManagedBean implements Serializable {
                     while (m.find()) {
                         positions.add(m.end());
                     }
-                    newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + picturePreview.getFileName();
+                    String fileName = this.currentEmployee.getEmployeeId() + " - " + picturePreview.getFileName();
+                    newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + fileName;
 
                     File file = new File(newFilePath);
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -90,11 +96,13 @@ public class EmployeeProfilePageManagedBean implements Serializable {
                     inputStream.close();
 
                     String oldPath = this.currentEmployee.getImagePath();
-                    this.currentEmployee.setImagePath(picturePreview.getFileName());
+                    this.currentEmployee.setImagePath(fileName);
                     if (oldPath != null) {
                         deteleFileInDir(oldPath);
                     }
                     this.picturePreview = null;
+                    this.imageContents = imagePreviewContents;
+                    imagePreviewContents = null;
 
                     FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Profile picture uploaded successfully", ""));
                 } catch (IOException ex) {
@@ -130,11 +138,11 @@ public class EmployeeProfilePageManagedBean implements Serializable {
 
     public void updatePersonalProfilePhoto(FileUploadEvent event) {
         setPicturePreview(event.getFile());
-        fileContents = picturePreview.getContents();
+        imagePreviewContents = getImageContentsAsBase64(picturePreview.getContents());
     }
 
-    public String getImageContentsAsBase64() {
-        return Base64.getEncoder().encodeToString(fileContents);
+    public String getImageContentsAsBase64(byte[] contents) {
+        return Base64.getEncoder().encodeToString(contents);
     }
 
     private boolean deteleFileInDir(String imagePath) {
@@ -147,6 +155,18 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + imagePath;
         File file = new File(newFilePath);
         return file.delete();
+    }
+
+    private File getFileInDir(String imagePath) {
+        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + imagePath;
+        File file = new File(newFilePath);
+        return file;
     }
 
     public void removeProfilePhoto() {
@@ -167,6 +187,14 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
+    }
+
+    public String getImageContents() {
+        return imageContents;
+    }
+
+    public String getImagePreviewContents() {
+        return imagePreviewContents;
     }
 
     public UploadedFile getPicturePreview() {
