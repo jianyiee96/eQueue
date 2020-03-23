@@ -63,13 +63,16 @@
                             <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null || employeeProfilePageManagedBean.picturePreview != null}">
                                 <p:column colspan="2">
                                     <div style='text-align: center;'>
-                                        <p:graphicImage rendered="#{empty employeeProfilePageManagedBean.picturePreview}" style="margin: 15px;" width="180" height="180" library="images" name="profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture" />
+                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview == null and employeeProfilePageManagedBean.imageContents != null}" >
+                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="margin: 15px; width: 180px; height: 180px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
+                                            <br/>
+                                            <p:commandButton rendered="#{empty employeeProfilePageManagedBean.picturePreview}" icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
+                                        </ui:fragment>
                                         <ui:fragment rendered="#{not empty employeeProfilePageManagedBean.picturePreview}" >
-                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContentsAsBase64}" style="margin: 15px;"/>
+                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imagePreviewContents}" style="margin: 15px; width: 180px; height: 180px;"/>
+                                            <br/>
                                             <h4>Picture Preview</h4>
                                         </ui:fragment>
-                                        <br/>
-                                        <p:commandButton rendered="#{empty employeeProfilePageManagedBean.picturePreview}" icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
                                     </div>
                                 </p:column>
                             </p:row>
@@ -189,7 +192,7 @@
                             <p:row>
                                 <p:column colspan="2">
                                     <div style="text-align: center;">
-                                        <p:commandButton icon='fa fa-save' update="@form sidebar1" actionListener="#{employeeProfilePageManagedBean.updatePersonalInformation}" />&nbsp;
+                                        <p:commandButton icon='fa fa-save' oncomplete="" update="@form sidebar1" actionListener="#{employeeProfilePageManagedBean.updatePersonalInformation}" />&nbsp;
                                     </div>
                                 </p:column>
                             </p:row>
