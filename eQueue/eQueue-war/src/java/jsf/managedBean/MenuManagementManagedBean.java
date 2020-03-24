@@ -4,8 +4,17 @@ import ejb.session.stateless.MenuCategorySessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
 import entity.MenuCategory;
 import entity.MenuItem;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -13,10 +22,14 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Inject;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.CroppedImage;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
+import org.primefaces.model.UploadedFile;
 import util.enumeration.MenuItemAvailabilityEnum;
 import util.exceptions.CreateNewMenuCategoryException;
 import util.exceptions.CreateNewMenuItemException;
@@ -28,6 +41,7 @@ import util.exceptions.MenuItemNotFoundException;
 import util.exceptions.MenuItemNotUniqueException;
 import util.exceptions.UnknownPersistenceException;
 import util.exceptions.UpdateMenuCategoryException;
+import util.exceptions.UpdateMenuItemException;
 
 @Named(value = "menuManagementManagedBean")
 @ViewScoped
@@ -68,6 +82,16 @@ public class MenuManagementManagedBean implements Serializable {
 
     private TreeNode treeNode;
     private TreeNode selectedTreeNode;
+
+    private UploadedFile createMenuItemPreviewPhoto;
+    private String createMenuItemPreviewPhotoContents;
+
+    private UploadedFile updateMenuItemPreviewPhoto;
+    private String updateMenuItemPreviewPhotoContents;
+    private String updateMenuItemCurrentPhotoContents;
+
+    private Boolean updateMenuItemDeleteOldPhoto;
+    private String updateMenuItemOldPhotoPath;
 
     public MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
@@ -177,14 +201,25 @@ public class MenuManagementManagedBean implements Serializable {
         }
     }
 
+    public void doCreateMenuItem() {
+        this.createMenuItemPreviewPhoto = null;
+        this.createMenuItemPreviewPhotoContents = null;
+    }
+
     public void createNewMenuItem() {
         if (menuCategoryIdToCreate == 0) {
             menuCategoryIdToCreate = null;
         }
 
         try {
+
             Long menuItemId = menuItemSessionBean.createNewMenuItem(menuItemToCreate, menuCategoryIdToCreate);
             menuItemToCreate = menuItemSessionBean.retrieveMenuItemById(menuItemId);
+
+            if (createMenuItemPreviewPhoto != null) {
+                createPhotoforMenuItem(createMenuItemPreviewPhoto, menuItemToCreate);
+                menuItemSessionBean.updateMenuItem(menuItemToCreate, menuItemToCreate.getMenuCategory().getMenuCategoryId());
+            }
 
             menuItems.add(menuItemToCreate);
             if (filteredMenuItems != null) {
@@ -197,10 +232,118 @@ public class MenuManagementManagedBean implements Serializable {
 
             menuItemToCreate = new MenuItem();
             menuCategoryIdToCreate = null;
-        } catch (InputDataValidationException | CreateNewMenuItemException | UnknownPersistenceException | MenuItemNotFoundException | MenuItemNotUniqueException ex) {
+        } catch (InputDataValidationException | CreateNewMenuItemException | UnknownPersistenceException | MenuItemNotFoundException | MenuItemNotUniqueException | MenuCategoryNotFoundException | UpdateMenuItemException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating the new menu item: " + ex.getMessage(), null));
         }
 
+    }
+
+    public void uploadCreateMenuItemPreviewPhoto(FileUploadEvent event) {
+        setCreateMenuItemPreviewPhoto(event.getFile());
+        createMenuItemPreviewPhotoContents = getImageContentsAsBase64(createMenuItemPreviewPhoto.getContents());
+    }
+
+    private boolean cropAndCreatePhoto(MenuItem menuItem) {
+        if (croppedImage == null) {
+            return false;
+        }
+
+        String filePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(filePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        filePath = filePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + menuItem.getImagePath();
+        System.out.println("FILE PATH ==================> " + filePath);
+        FileImageOutputStream imageOutput;
+        try {
+            imageOutput = new FileImageOutputStream(new File(filePath));
+            imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
+            imageOutput.close();
+        } catch (Exception e) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Cropping failed."));
+            return false;
+        }
+
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Cropping finished."));
+        return true;
+    }
+
+    private boolean createPhotoforMenuItem(UploadedFile uploadedFile, MenuItem menuItem) {
+        try {
+            String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+            Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+            List<Integer> positions = new ArrayList<>();
+            while (m.find()) {
+                positions.add(m.end());
+            }
+            String fileName = menuItem.getMenuItemId() + " - " + uploadedFile.getFileName();
+            newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + fileName;
+
+            File file = new File(newFilePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            int a;
+            int BUFFER_SIZE = 8192;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            InputStream inputStream = uploadedFile.getInputstream();
+
+            while (true) {
+                a = inputStream.read(buffer);
+
+                if (a < 0) {
+                    break;
+                }
+
+                fileOutputStream.write(buffer, 0, a);
+                fileOutputStream.flush();
+            }
+
+            fileOutputStream.close();
+            inputStream.close();
+
+            String oldPath = menuItem.getImagePath();
+            menuItem.setImagePath(fileName);
+            if (oldPath != null) {
+                deteleFileInDir(oldPath);
+            }
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu Item picture uploaded successfully", ""));
+            return true;
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Menu Item picture upload error: " + ex.getMessage(), ""));
+            return false;
+        }
+    }
+
+    private String getImageContentsAsBase64(byte[] contents) {
+        return Base64.getEncoder().encodeToString(contents);
+    }
+
+    private boolean deteleFileInDir(String imagePath) {
+        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + imagePath;
+        File file = new File(newFilePath);
+        return file.delete();
+    }
+
+    private File getFileInDir(String imagePath) {
+        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + imagePath;
+        File file = new File(newFilePath);
+        return file;
     }
 
     public void createNewMenuCategory() {
@@ -230,11 +373,23 @@ public class MenuManagementManagedBean implements Serializable {
     }
 
     public void doUpdateMenuItem(ActionEvent event) {
+        this.updateMenuItemDeleteOldPhoto = false;
+        this.updateMenuItemPreviewPhoto = null;
+        this.updateMenuItemPreviewPhotoContents = null;
+        this.updateMenuItemCurrentPhotoContents = null;
+        this.cropMode = false;
 
         menuItemToUpdate = (MenuItem) event.getComponent().getAttributes().get("menuItemToUpdate");
 
         menuCategoryIdToUpdate = menuItemToUpdate.getMenuCategory().getMenuCategoryId();
 
+        if (this.menuItemToUpdate.getImagePath() != null) {
+            try {
+                updateMenuItemCurrentPhotoContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(this.menuItemToUpdate.getImagePath()).toPath()));
+            } catch (Exception ex) {
+                System.out.println("FILE DOES NOT EXIST! ===========> " + this.menuItemToUpdate.getImagePath());
+            }
+        }
     }
 
     public void updateMenuItem(ActionEvent event) {
@@ -247,13 +402,30 @@ public class MenuManagementManagedBean implements Serializable {
             MenuItem menuItemBeforeUpdating = menuItemSessionBean.retrieveMenuItemById(menuItemToUpdate.getMenuItemId());
             Long parentCategoryBeforeUpdating = menuItemBeforeUpdating.getMenuCategory().getMenuCategoryId();
 
+            if (this.updateMenuItemDeleteOldPhoto) {
+                this.menuItemToUpdate.setImagePath(null);
+                if (updateMenuItemOldPhotoPath != null) {
+                    deteleFileInDir(updateMenuItemOldPhotoPath);
+                }
+                this.updateMenuItemDeleteOldPhoto = false;
+            }
+
             menuItemSessionBean.updateMenuItem(menuItemToUpdate, menuCategoryIdToUpdate);
 
-            for (MenuCategory mc : menuCategories) {
-                if (mc.getMenuCategoryId().equals(menuCategoryIdToUpdate)) {
-                    menuItemToUpdate.setMenuCategory(mc);
-                    break;
-                }
+            if (updateMenuItemPreviewPhoto != null) {
+                createPhotoforMenuItem(updateMenuItemPreviewPhoto, menuItemToUpdate);
+                menuItemSessionBean.updateMenuItem(menuItemToUpdate, menuCategoryIdToUpdate);
+                this.updateMenuItemPreviewPhoto = null;
+                this.updateMenuItemCurrentPhotoContents = this.updateMenuItemPreviewPhotoContents;
+                this.updateMenuItemPreviewPhotoContents = null;
+            }
+
+            if (cropMode && croppedImage != null) {
+                cropAndCreatePhoto(menuItemToUpdate);
+                menuItemSessionBean.updateMenuItem(menuItemToUpdate, menuCategoryIdToUpdate);
+                this.updateMenuItemCurrentPhotoContents = this.getImageContentsAsBase64(croppedImage.getBytes());
+                this.croppedImage = null;
+                this.cropMode = false;
             }
 
             postConstruct();
@@ -264,6 +436,17 @@ public class MenuManagementManagedBean implements Serializable {
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
+    }
+
+    public void removeMenuItemPhoto() {
+        this.updateMenuItemOldPhotoPath = menuItemToUpdate.getImagePath();
+        this.updateMenuItemDeleteOldPhoto = true;
+        this.updateMenuItemCurrentPhotoContents = null;
+    }
+
+    public void uploadUpdateMenuItemPreviewPhoto(FileUploadEvent event) {
+        setUpdateMenuItemPreviewPhoto(event.getFile());
+        updateMenuItemPreviewPhotoContents = getImageContentsAsBase64(updateMenuItemPreviewPhoto.getContents());
     }
 
     public void doUpdateMenuCategory(ActionEvent event) {
@@ -296,9 +479,13 @@ public class MenuManagementManagedBean implements Serializable {
     public void deleteMenuItem(ActionEvent event) {
         try {
             MenuItem menuItemToDelete = (MenuItem) event.getComponent().getAttributes().get("menuItemToDelete");
+            String menuItemPhotoToDelete = menuItemToDelete.getImagePath();
             menuItemSessionBean.deleteMenuItem(menuItemToDelete.getMenuItemId());
 
-            menuItems.remove(menuItemToDelete);
+            if (menuItemPhotoToDelete != null) {
+                deteleFileInDir(menuItemPhotoToDelete);
+            }
+
             if (filteredMenuItems != null) {
                 filteredMenuItems.remove(menuItemToDelete);
             }
@@ -332,14 +519,58 @@ public class MenuManagementManagedBean implements Serializable {
         }
     }
 
-//    private void refreshCategories() {
-//        menuCategories = menuCategorySessionBean.retrieveAllMenuCategories();
-//        leafMenuCategories = menuCategorySessionBean.retrieveAllLeafMenuCategories();
-//        menuCategoriesWithoutItems = menuCategorySessionBean.retrieveAllMenuCateogoriesWithoutMenuItems();
-//        rootMenuCategories = menuCategorySessionBean.retrieveAllRootMenuCategories();
-//        
-//        menuItems = menuItemSessionBean.retrieveAllMenuItems();
-//    }
+    private CroppedImage croppedImage;
+    private Boolean cropMode;
+
+    public Boolean getCropMode() {
+        return cropMode;
+    }
+
+    public CroppedImage getCroppedImage() {
+        return croppedImage;
+    }
+
+    public void setCroppedImage(CroppedImage croppedImage) {
+        this.croppedImage = croppedImage;
+    }
+
+    public void doCropMenuItemPhoto() {
+        this.cropMode = true;
+    }
+
+    public void doExitCropMenuItemPhoto() {
+        this.croppedImage = null;
+        this.cropMode = false;
+    }
+
+    public UploadedFile getUpdateMenuItemPreviewPhoto() {
+        return updateMenuItemPreviewPhoto;
+    }
+
+    public void setUpdateMenuItemPreviewPhoto(UploadedFile updateMenuItemPreviewPhoto) {
+        this.updateMenuItemPreviewPhoto = updateMenuItemPreviewPhoto;
+    }
+
+    public String getUpdateMenuItemPreviewPhotoContents() {
+        return updateMenuItemPreviewPhotoContents;
+    }
+
+    public String getUpdateMenuItemCurrentPhotoContents() {
+        return updateMenuItemCurrentPhotoContents;
+    }
+
+    public UploadedFile getCreateMenuItemPreviewPhoto() {
+        return createMenuItemPreviewPhoto;
+    }
+
+    public void setCreateMenuItemPreviewPhoto(UploadedFile createMenuItemPreviewPhoto) {
+        this.createMenuItemPreviewPhoto = createMenuItemPreviewPhoto;
+    }
+
+    public String getCreateMenuItemPreviewPhotoContents() {
+        return createMenuItemPreviewPhotoContents;
+    }
+
     public ViewMenuItemManagedBean getViewMenuItemManagedBean() {
         return viewMenuItemManagedBean;
     }
