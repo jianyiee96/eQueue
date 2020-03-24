@@ -39,6 +39,7 @@
                             <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath != null}" library="images" 
                                             name="profiles/#{sessionScope.currentEmployee.imagePath}" height="75" width="75" 
                                             alt="#{sessionScope.currentEmployee.lastName} #{sessionScope.currentEmployee.firstName}'s Profile Picture" 
+                                            cache="false"
                                             />
                             <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath == null}" library="images" 
                                             name="default-user-profile-picture.png" height="75" width="75" alt="User Profile Picture"
@@ -51,26 +52,6 @@
                     </div>
                 </p:commandLink>
 
-                <!--
-                <div class="menu-user-container-inner">
-                    <div class="profile-picture-container" >
-                        <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath != null}" library="images" 
-                                        name="profiles/#{sessionScope.currentEmployee.imagePath}" height="60" width="60" 
-                                        alt="#{sessionScope.currentEmployee.lastName} #{sessionScope.currentEmployee.firstName}'s Profile Picture" 
-                                        />
-                        <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath == null}" library="images" 
-                                        name="default-user-profile-picture.png" height="60" width="60" alt="User Profile Picture"
-                                        />
-                    </div>
-                    <div class="profile-container-text">
-                        <p:commandLink id="profileNameText">
-                            <h:outputText style="font-size: 18px; margin: 8px;" value="#{sessionScope.currentEmployee.lastName} #{sessionScope.currentEmployee.firstName}" />
-                            <br/>
-                            <h:outputText style="font-size: 16px; margin: 8px;" value="#{sessionScope.currentEmployee.employeeRole}" />
-                        </p:commandLink>
-                    </div>
-                </div>
-                -->
             </div>
         </div>
     </p:sidebar>
