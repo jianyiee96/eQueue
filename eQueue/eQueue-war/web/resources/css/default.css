@@ -51,6 +51,22 @@ div.ui-growl {
     left: 10;  
 }
 
+.nav-burger {
+    align-self: center
+}
+
+.nav-burger:hover{
+    transform: scale(1.1);
+}
+
+.nav-logout {
+    align-self: center
+}
+
+.nav-logout:hover{
+    transform: scale(1.1);
+}
+
 /*
 Remove this as it messes up the components
 * {
