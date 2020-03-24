@@ -63,12 +63,20 @@
                             <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null || employeeProfilePageManagedBean.picturePreview != null}">
                                 <p:column colspan="2">
                                     <div style='text-align: center;'>
-                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview == null and employeeProfilePageManagedBean.imageContents != null}" >
+                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview == null and employeeProfilePageManagedBean.cropOldPhoto == false and employeeProfilePageManagedBean.deleteOldPhoto == false and employeeProfilePageManagedBean.imageContents != null}" >
                                             <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="margin: 15px; width: 180px; height: 180px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
                                             <br/>
-                                            <p:commandButton rendered="#{empty employeeProfilePageManagedBean.picturePreview}" icon='fa fa-trash' update='@form sidebar1' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
+                                            <p:commandButton icon='fa fa-trash' update='@form' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
+                                            <p:commandButton icon='fa fa-edit' update='@form' actionListener="#{employeeProfilePageManagedBean.cropProfilePhoto}" />
                                         </ui:fragment>
-                                        <ui:fragment rendered="#{not empty employeeProfilePageManagedBean.picturePreview}" >
+                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.cropOldPhoto == true}" >
+                                            <p:imageCropper id="profilePageImageCropper" value="#{employeeProfilePageManagedBean.croppedImage}" image="/resources/images/profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" initialCoords="0,0,0,0" minSize="50,50" maxSize="180,180" boxHeight="180" aspectRatio="1.0"/>
+                                            <br/>
+                                            <p:commandButton icon='fa fa-times' update='@form'>
+                                                <f:setPropertyActionListener target="#{employeeProfilePageManagedBean.cropOldPhoto}" value="false"/>
+                                            </p:commandButton>
+                                        </ui:fragment>
+                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview != null}" >
                                             <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imagePreviewContents}" style="margin: 15px; width: 180px; height: 180px;"/>
                                             <br/>
                                             <h4>Picture Preview</h4>
@@ -175,7 +183,7 @@
                                 </p:column>
                             </p:row>
 
-                            <p:row>
+                            <p:row rendered="#{employeeProfilePageManagedBean.cropOldPhoto == false}">
                                 <p:column>
                                     <div style="text-align: right;">
                                         <p:outputLabel value="Profile Picture" style="font-weight: bold;" />

@@ -93,6 +93,9 @@ public class MenuManagementManagedBean implements Serializable {
     private Boolean updateMenuItemDeleteOldPhoto;
     private String updateMenuItemOldPhotoPath;
 
+    private CroppedImage croppedImage;
+    private Boolean cropMode;
+
     public MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
         menuItemToUpdate = new MenuItem();
@@ -518,9 +521,6 @@ public class MenuManagementManagedBean implements Serializable {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
     }
-
-    private CroppedImage croppedImage;
-    private Boolean cropMode;
 
     public Boolean getCropMode() {
         return cropMode;
