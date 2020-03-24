@@ -7,6 +7,8 @@
                 xmlns:ez="http://xmlns.jcp.org/jsf/composite/ezcomp"
                 xmlns:p="http://primefaces.org/ui">
 
+    <h:outputStylesheet library="css" name="menuManagement.css" />
+
     <ui:define name="content">
         <p:layout>
             <p:layoutUnit minSize="300" position="west"  header="Menu Management" collapsible="true">
@@ -270,13 +272,21 @@
                                     <p:row rendered="#{menuManagementManagedBean.menuItemToUpdate.imagePath != null || menuManagementManagedBean.updateMenuItemPreviewPhoto != null}">
                                         <p:column colspan="3">
                                             <div style='text-align: center;'>
-                                                <ui:fragment rendered="#{menuManagementManagedBean.updateMenuItemPreviewPhoto == null and menuManagementManagedBean.updateMenuItemCurrentPhotoContents != null}" >
+                                                <ui:fragment rendered="#{menuManagementManagedBean.updateMenuItemPreviewPhoto == null  and menuManagementManagedBean.cropMode == false and menuManagementManagedBean.updateMenuItemCurrentPhotoContents != null}" >
                                                     <img src="data:image/png;base64,#{menuManagementManagedBean.updateMenuItemCurrentPhotoContents}" style="margin: 15px; width: 180px; height: 180px;" alt="Picture not loaded"/>
                                                     <br/>
                                                     <p:commandButton icon='fa fa-trash' update='@form' actionListener="#{menuManagementManagedBean.removeMenuItemPhoto}" oncomplete="PF('dialogUpdateMenuItem').show();"/>
+                                                    <p:commandButton icon='fa fa-edit' update='@form' actionListener="#{menuManagementManagedBean.doCropMenuItemPhoto}" oncomplete="PF('dialogUpdateMenuItem').show();"/>
                                                 </ui:fragment>
+                                                <!--CROPPER-->
+                                                <ui:fragment rendered="#{menuManagementManagedBean.cropMode == true}">
+                                                    <p:imageCropper id="menuItemImageCropper" value="#{menuManagementManagedBean.croppedImage}" image="/resources/images/food/#{menuManagementManagedBean.menuItemToUpdate.imagePath}" initialCoords="0,0,0,0" minSize="50,50" maxSize="180,180" boxHeight="180" aspectRatio="1.0"/>
+                                                    <br/>
+                                                    <p:commandButton icon='fa fa-times' update='@form' actionListener="#{menuManagementManagedBean.doExitCropMenuItemPhoto}" oncomplete="PF('dialogUpdateMenuItem').show();"/>
+                                                </ui:fragment>
+
                                                 <ui:fragment rendered="#{menuManagementManagedBean.updateMenuItemPreviewPhoto != null}" >
-                                                    <img src="data:image/png;base64,#{menuManagementManagedBean.updateMenuItemPreviewPhotoContents}" style="margin: 15px; width: 180px; height: 180px;"/>
+                                                    <img src="data:image/png;base64,#{menuManagementManagedBean.updateMenuItemPreviewPhotoContents}" style="margin: 15px; height: 180px;"/>
                                                     <br/>
                                                     <h4>Picture Preview</h4>
                                                 </ui:fragment>
@@ -385,7 +395,7 @@
                                         </p:column>
                                     </p:row>
 
-                                    <p:row>
+                                    <p:row rendered="#{menuManagementManagedBean.cropMode == false}">
                                         <p:column>
                                             <p:outputLabel value="Picture Upload" style="font-weight: bold;" />
                                         </p:column>
