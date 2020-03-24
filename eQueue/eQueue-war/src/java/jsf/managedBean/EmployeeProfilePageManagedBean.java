@@ -3,9 +3,7 @@ package jsf.managedBean;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import entity.Employee;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -18,8 +16,10 @@ import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.inject.Named;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.CroppedImage;
 import org.primefaces.model.UploadedFile;
 import util.exceptions.EmployeeInvalidEnteredCurrentPasswordException;
 import util.exceptions.EmployeeNotFoundException;
@@ -36,6 +36,10 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     private Employee currentEmployee;
     private String enteredCurrentPassword;
     private String enteredNewPassword;
+
+    private Boolean deleteOldPhoto;
+    private Boolean cropOldPhoto;
+    private CroppedImage croppedImage;
     private UploadedFile picturePreview;
     private String imageContents;
     private String imagePreviewContents;
@@ -52,67 +56,66 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         if (this.currentEmployee.getImagePath() != null) {
             try {
                 imageContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(this.currentEmployee.getImagePath()).toPath()));
+                System.out.println("FILE: " + this.currentEmployee.getImagePath() + " successfully retrieved!");
             } catch (Exception ex) {
                 System.out.println("FILE DOES NOT EXIST! ===========> " + this.currentEmployee.getImagePath());
             }
         }
+        this.deleteOldPhoto = false;
+        this.cropOldPhoto = false;
     }
 
     public void updatePersonalInformation() {
         try {
-            // Handling the picture upload
+            String oldPath = this.currentEmployee.getImagePath();
+
+            // Handling the picture upload of preview
             if (picturePreview != null) {
-                try {
-                    String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
-                    Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
-                    List<Integer> positions = new ArrayList<>();
-                    while (m.find()) {
-                        positions.add(m.end());
-                    }
-                    String fileName = this.currentEmployee.getEmployeeId() + " - " + picturePreview.getFileName();
-                    newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + fileName;
+                System.out.println("Uploading picture preview.....");
+                String fileName = this.currentEmployee.getEmployeeId() + " - " + picturePreview.getFileName();
+                createFileInDirWithByte(picturePreview.getContents(), fileName);
 
-                    File file = new File(newFilePath);
-                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+                this.currentEmployee.setImagePath(fileName);
+                if (oldPath != null && !oldPath.equals(fileName)) {
+                    deteleFileInDir(oldPath);
+                } else if (oldPath == null) {
+                    System.out.println("Employee " + this.currentEmployee.getFirstName() + " does not have an old photo...");
+                } else if (oldPath.equals(fileName)) {
+                    System.out.println("File: " + oldPath + " was overriden!");
+                }
+                this.imageContents = imagePreviewContents;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Profile picture uploaded successfully", ""));
+            } else if (cropOldPhoto && croppedImage != null) {
+                System.out.println("Uploading cropped image.....");
+                createFileInDirWithByte(croppedImage.getBytes(), oldPath);
+                this.imageContents = getImageContentsAsBase64(croppedImage.getBytes());
+            }
 
-                    int a;
-                    int BUFFER_SIZE = 8192;
-                    byte[] buffer = new byte[BUFFER_SIZE];
-
-                    InputStream inputStream = picturePreview.getInputstream();
-
-                    while (true) {
-                        a = inputStream.read(buffer);
-
-                        if (a < 0) {
-                            break;
-                        }
-
-                        fileOutputStream.write(buffer, 0, a);
-                        fileOutputStream.flush();
-                    }
-
-                    fileOutputStream.close();
-                    inputStream.close();
-
-                    String oldPath = this.currentEmployee.getImagePath();
-                    this.currentEmployee.setImagePath(fileName);
-                    if (oldPath != null) {
+            if (deleteOldPhoto) {
+                if (oldPath != null) {
+                    System.out.println("Deleting Old Photo.....");
+                    if (picturePreview != null) {
+                        System.out.println("=====> Picture deletion already handled by picture preview");
+                    } else if (picturePreview == null) {
+                        System.out.println("=====> No picture preview detected");
                         deteleFileInDir(oldPath);
+                        this.currentEmployee.setImagePath(null);
                     }
-                    this.picturePreview = null;
-                    this.imageContents = imagePreviewContents;
-                    imagePreviewContents = null;
-
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Profile picture uploaded successfully", ""));
-                } catch (IOException ex) {
-                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Profile picture upload error: " + ex.getMessage(), ""));
+                } else {
+                    System.out.println("Employee " + this.currentEmployee.getFirstName() + " does not have an old photo...");
                 }
             }
-            employeeSessionBeanLocal.updateEmployee(this.currentEmployee);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", this.currentEmployee);
 
+            employeeSessionBeanLocal.updateEmployee(this.currentEmployee);
+            this.picturePreview = null;
+            this.imagePreviewContents = null;
+            this.deleteOldPhoto = false;
+            this.cropOldPhoto = false;
+            this.croppedImage = null;
+            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", this.currentEmployee);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Employee updated successfully", null));
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Profile picture upload error: " + ex.getMessage(), ""));
         } catch (EmployeeNotFoundException | UpdateEmployeeException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating employee: " + ex.getMessage(), null));
         } catch (Exception ex) {
@@ -137,8 +140,20 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     }
 
     public void updatePersonalProfilePhoto(FileUploadEvent event) {
-        setPicturePreview(event.getFile());
-        imagePreviewContents = getImageContentsAsBase64(picturePreview.getContents());
+        this.picturePreview = event.getFile();
+        this.imagePreviewContents = getImageContentsAsBase64(picturePreview.getContents());
+    }
+
+    private void createFileInDirWithByte(byte[] bytes, String fileName) throws IOException {
+        FileImageOutputStream imageOutput;
+        String newFilePath = getWorkingDirPath() + fileName;
+
+        File newFile = new File(newFilePath);
+
+        imageOutput = new FileImageOutputStream(newFile);
+        imageOutput.write(bytes, 0, bytes.length);
+        imageOutput.close();
+        System.out.println("File: " + fileName + " created successfully!");
     }
 
     public String getImageContentsAsBase64(byte[] contents) {
@@ -146,47 +161,61 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     }
 
     private boolean deteleFileInDir(String imagePath) {
-        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
-        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
-        List<Integer> positions = new ArrayList<>();
-        while (m.find()) {
-            positions.add(m.end());
+        String filePath = getWorkingDirPath() + imagePath;
+        File file = new File(filePath);
+        Boolean fileDeletedSuccessfully = file.delete();
+        if (fileDeletedSuccessfully) {
+            System.out.println("File: " + imagePath + " was successfully deleted!");
+        } else {
+            System.out.println("File: " + imagePath + " was not deleted!");
         }
-        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + imagePath;
-        File file = new File(newFilePath);
-        return file.delete();
+        return fileDeletedSuccessfully;
     }
 
     private File getFileInDir(String imagePath) {
+        String filePath = getWorkingDirPath() + imagePath;
+        File file = new File(filePath);
+        return file;
+    }
+
+    private String getWorkingDirPath() {
         String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
         Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
         List<Integer> positions = new ArrayList<>();
         while (m.find()) {
             positions.add(m.end());
         }
-        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/" + imagePath;
-        File file = new File(newFilePath);
-        return file;
+        return newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/";
     }
 
     public void removeProfilePhoto() {
-        try {
+        this.deleteOldPhoto = true;
+        System.out.println("=====> Set to remove Profile Photo!");
+    }
 
-            String oldPath = currentEmployee.getImagePath();
-            this.currentEmployee.setImagePath(null);
-            if (oldPath != null) {
-                deteleFileInDir(oldPath);
-            }
+    public void cropProfilePhoto() {
+        this.cropOldPhoto = true;
+        System.out.println("=====> Set to crop Profile Photo!");
+    }
 
-            employeeSessionBeanLocal.updateEmployee(this.currentEmployee);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", this.currentEmployee);
+    public CroppedImage getCroppedImage() {
+        return croppedImage;
+    }
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Profile picture removed successfully", ""));
-        } catch (EmployeeNotFoundException | UpdateEmployeeException | InputDataValidationException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating employee: " + ex.getMessage(), null));
-        } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
-        }
+    public void setCroppedImage(CroppedImage croppedImage) {
+        this.croppedImage = croppedImage;
+    }
+
+    public Boolean getCropOldPhoto() {
+        return cropOldPhoto;
+    }
+
+    public void setCropOldPhoto(Boolean cropOldPhoto) {
+        this.cropOldPhoto = cropOldPhoto;
+    }
+
+    public Boolean getDeleteOldPhoto() {
+        return deleteOldPhoto;
     }
 
     public String getImageContents() {
