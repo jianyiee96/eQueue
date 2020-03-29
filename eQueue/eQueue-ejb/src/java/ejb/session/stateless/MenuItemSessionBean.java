@@ -26,11 +26,11 @@ import util.exceptions.UpdateMenuItemException;
 @Stateless
 public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
 
-    @EJB
-    private MenuCategorySessionBeanLocal menuCategorySessionBean;
-
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
+
+    @EJB
+    private MenuCategorySessionBeanLocal menuCategorySessionBean;
 
     private final ValidatorFactory validatorFactory;
     private final Validator validator;
@@ -142,7 +142,7 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
         MenuItem menuItemToRemove = retrieveMenuItemById(menuItemId);
         menuItemToRemove.getMenuCategory().getMenuItems().remove(menuItemToRemove);
         em.remove(menuItemToRemove);
-        
+
         // SELECT DISTINCT O.orderlineitems.product.id FROM Orders O
 //        List<SaleTransactionLineItemEntity> saleTransactionLineItemEntities = saleTransactionEntitySessionBeanLocal.retrieveSaleTransactionLineItemsByProductId(productId);
 //
