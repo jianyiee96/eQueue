@@ -51,12 +51,12 @@ public class Employee implements Serializable {
     @Size(min = 4, max = 64, message = "Password must be between length 4 to 64")
     private String password;
 
-    @Column()
-    private String imagePath;
-
     @Column(columnDefinition = "CHAR(64) NOT NULL")
     @NotNull
     private String salt;
+
+    @Column()
+    private String imagePath;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -81,7 +81,7 @@ public class Employee implements Serializable {
         this.employeeRole = employeeRole;
         this.imagePath = imagePath;
     }
-    
+
     public Employee(Employee another) {
         this();
         this.employeeId = another.employeeId;
@@ -93,7 +93,7 @@ public class Employee implements Serializable {
         this.employeeRole = another.employeeRole;
         this.imagePath = another.imagePath;
     }
-    
+
     public Employee(String firstName, String lastName, String email, String username, String password, EmployeeRoleEnum employeeRole) {
         this();
         this.firstName = firstName;

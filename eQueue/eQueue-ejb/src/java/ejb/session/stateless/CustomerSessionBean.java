@@ -45,10 +45,8 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
             Set<ConstraintViolation<Customer>> constraintViolations = validator.validate(newCustomer);
 
             if (constraintViolations.isEmpty()) {
-                em.persist(newCustomer);
-                
                 Long shoppingCartId = shoppingCartSessionBean.createNewShoppingCart(newCustomer);
-
+                em.persist(newCustomer);
                 em.flush();
                 return newCustomer.getCustomerId();
             } else {

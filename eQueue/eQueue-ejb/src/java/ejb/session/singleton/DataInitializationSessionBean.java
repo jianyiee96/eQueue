@@ -6,7 +6,6 @@ import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import ejb.session.stateless.MenuCategorySessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
-import ejb.session.stateless.OrderLineItemSessionBean;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
@@ -16,7 +15,7 @@ import entity.Employee;
 import entity.MenuCategory;
 import entity.MenuItem;
 import entity.OrderLineItem;
-import entity.StoreVariables;
+import entity.Store;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -47,15 +46,13 @@ import util.exceptions.UnknownPersistenceException;
 
 public class DataInitializationSessionBean {
 
-    @EJB
-    private CustomerOrderSessionBeanLocal customerOrderSessionBean;
-
-    @EJB
-    private OrderLineItemSessionBeanLocal orderLineItemSessionBean;
-
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
 
+    @EJB
+    private CustomerOrderSessionBeanLocal customerOrderSessionBean;
+    @EJB
+    private OrderLineItemSessionBeanLocal orderLineItemSessionBean;
     @EJB
     private StoreManagementSessionBeanLocal storeManagementSessionBeanLocal;
     @EJB
@@ -76,7 +73,7 @@ public class DataInitializationSessionBean {
     @PostConstruct
     public void postConstruct() {
         try {
-            storeManagementSessionBeanLocal.retrieveStoreVariables();
+            storeManagementSessionBeanLocal.retrieveStore();
         } catch (StoreNotInitializedException ex) {
             initializeData();
         }
@@ -87,7 +84,7 @@ public class DataInitializationSessionBean {
         System.out.println("Initialiing Data...");
         try {
 
-            storeManagementSessionBeanLocal.storeInitialization(new StoreVariables("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
+            storeManagementSessionBeanLocal.storeInitialization(new Store("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
             Long custId1 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
             Long custId2 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));

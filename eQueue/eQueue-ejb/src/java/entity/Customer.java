@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
@@ -53,7 +54,7 @@ public class Customer implements Serializable {
     @OneToOne (mappedBy = "customer", optional = true)
     private Queue currentQueue;
     
-    @OneToOne (optional = true)
+    @OneToOne (mappedBy = "customer", optional = true)
     private CreditCard creditCard;
     
     @OneToMany(mappedBy = "customer")
@@ -62,7 +63,8 @@ public class Customer implements Serializable {
     @OneToMany(mappedBy = "customer")
     private List<CustomerOrder> customerOrders;
     
-    @OneToOne (optional = true)
+    @OneToOne (optional = false)
+    @JoinColumn (nullable = false)
     private ShoppingCart shoppingCart;
     
     public Customer() {

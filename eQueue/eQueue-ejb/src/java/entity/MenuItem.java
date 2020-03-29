@@ -46,6 +46,9 @@ public class MenuItem implements Serializable {
     @Digits(integer = 9, fraction = 2)
     private Double menuItemPrice;
 
+    @Column()
+    private String imagePath;
+
     @Column(nullable = true)
     @Positive
     @Min(1)
@@ -56,14 +59,10 @@ public class MenuItem implements Serializable {
     @NotNull
     private MenuItemAvailabilityEnum availability;
 
-    @Column()
-    private String imagePath;
-
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private MenuCategory menuCategory;
 
-    //private String menuItemImagePath;
     public MenuItem() {
 
         this.availability = MenuItemAvailabilityEnum.UNAVAILABLE;
