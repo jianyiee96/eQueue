@@ -6,12 +6,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
-
 
 @Entity
 public class CreditCard implements Serializable {
@@ -26,38 +27,42 @@ public class CreditCard implements Serializable {
     @NotNull
     @Size(min = 19, max = 19)
     private String creditCardNumber;
-    
+
     @Column(nullable = false, length = 3)
     @NotNull
     @Size(min = 3, max = 3)
     private String cvv;
-    
+
     @Column(nullable = false)
     @NotNull
     @Min(1)
     @Max(12)
     @Positive
     private Long expiryMonth;
-    
+
     @Column(nullable = false)
     @NotNull
     @Min(1)
     @Max(31)
     @Positive
     private Long expiryDay;
-    
-    public CreditCard(){
-        
+
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private Customer customer;
+
+    public CreditCard() {
+
     }
-    
-    public CreditCard(String creditCardNumber, String cvv, Long expiryMonth, Long expiryDay){
+
+    public CreditCard(String creditCardNumber, String cvv, Long expiryMonth, Long expiryDay) {
         this();
         this.creditCardNumber = creditCardNumber;
         this.cvv = cvv;
         this.expiryMonth = expiryMonth;
         this.expiryDay = expiryDay;
     }
-    
+
     public Long getCreditCardId() {
         return creditCardId;
     }
@@ -98,8 +103,14 @@ public class CreditCard implements Serializable {
         this.expiryDay = expiryDay;
     }
 
-    
-    
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -124,5 +135,5 @@ public class CreditCard implements Serializable {
     public String toString() {
         return "entity.CreditCard[ id=" + creditCardId + " ]";
     }
-    
+
 }

@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Store management</title>
+        <h:outputStylesheet library="css" name="default.css" />
+    </h:head>
+    <h:body>
+        <h2>Store Management</h2>
+
+        #{viewStoreManagedBean.foo()}
+
+        <h:panelGrid style="border-style: dotted;" columns="2" rendered="#{viewStoreManagedBean.storeToView != null}">
+
+            <h:outputText style="font-weight: bold; width: 30%;" value="Store Name"/>
+            <h:outputText style="width: 70%;" value="#{viewStoreManagedBean.storeToView.storeName}"/>
+
+            <h:outputText style="font-weight: bold;" value="Email"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.storeEmail}"/>
+
+            <h:outputText style="font-weight: bold;" value="Address"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.storeAddress}"/>
+
+            <h:outputText style="font-weight: bold;" value="Contact"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.storeContact}"/>
+
+            <h:outputText style="font-weight: bold;" value="Queue Waiting Time(Minutes)"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.estimatedQueueUnitWaitingMinutes}"/>
+
+            <h:outputText style="font-weight: bold;" value="Allocation Response Time(Minutes)"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.allocationGraceWaitingMinutes}"/>
+
+            <h:outputText style="font-weight: bold;" value="Message of the Day"/>
+            <h:outputText value="#{viewStoreManagedBean.storeToView.messageOfTheDay}"/>
+
+        </h:panelGrid>
+        <h:form rendered="#{viewStoreManagedBean.storeToView != null}">
+            <h:commandLink value="Back" actionListener="#{viewStoreManagedBean.back}" />&nbsp;|
+            <h:commandLink value="Update" actionListener="#{viewStoreManagedBean.updateStore}" />
+        </h:form>
+    </h:body>
+</html>
+

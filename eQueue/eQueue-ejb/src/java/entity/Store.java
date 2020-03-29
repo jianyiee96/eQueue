@@ -13,12 +13,12 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Entity
-public class StoreVariables implements Serializable {
+public class Store implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long storeVariableId;
+    private Long storeId;
 
     @Column(nullable = false, length = 32)
     @NotNull
@@ -43,26 +43,26 @@ public class StoreVariables implements Serializable {
     @NotNull
     private String storeContact;
 
-    
+    // To be left out? (Wee Keat)
     @Column(nullable = false)
     @NotNull
     @Positive
     @Min(1)
     private Long estimatedQueueUnitWaitingMinutes;
     
-    
+    // To be left out? (Wee Keat)
     @Column(nullable = false)
     @NotNull
     @Positive
     @Min(1)
     private Long allocationGraceWaitingMinutes;
     
-    public StoreVariables(){
+    public Store(){
         this.estimatedQueueUnitWaitingMinutes = 1l;
         this.allocationGraceWaitingMinutes = 15l;
     }
     
-    public StoreVariables(String storeName, String storeEmail, String storeAddress, String messageOfTheDay, String storeContact) {
+    public Store(String storeName, String storeEmail, String storeAddress, String messageOfTheDay, String storeContact) {
         this();
         this.storeName = storeName;
         this.storeEmail = storeEmail;
@@ -72,12 +72,12 @@ public class StoreVariables implements Serializable {
         
     }
     
-    public Long getStoreVariableId() {
-        return storeVariableId;
+    public Long getStoreId() {
+        return storeId;
     }
 
-    public void setStoreVariableId(Long storeVariableId) {
-        this.storeVariableId = storeVariableId;
+    public void setStoreId(Long storeId) {
+        this.storeId = storeId;
     }
 
     public String getStoreName() {
@@ -141,18 +141,18 @@ public class StoreVariables implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (storeVariableId != null ? storeVariableId.hashCode() : 0);
+        hash += (storeId != null ? storeId.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the storeVariableId fields are not set
-        if (!(object instanceof StoreVariables)) {
+        // TODO: Warning - this method won't work in the case the storeId fields are not set
+        if (!(object instanceof Store)) {
             return false;
         }
-        StoreVariables other = (StoreVariables) object;
-        if ((this.storeVariableId == null && other.storeVariableId != null) || (this.storeVariableId != null && !this.storeVariableId.equals(other.storeVariableId))) {
+        Store other = (Store) object;
+        if ((this.storeId == null && other.storeId != null) || (this.storeId != null && !this.storeId.equals(other.storeId))) {
             return false;
         }
         return true;
@@ -160,7 +160,7 @@ public class StoreVariables implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.StoreVariables[ id=" + storeVariableId + " ]";
+        return "entity.StoreVariables[ id=" + storeId + " ]";
     }
 
 }
