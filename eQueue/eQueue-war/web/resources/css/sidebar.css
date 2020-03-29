@@ -84,5 +84,10 @@
     background-image: url("#{resource['images/icons/home_icon.svg']}") !important;
 }
 
+.cooking-icon {
+    background-image: url("#{resource['images/icons/cook_icon.svg']}") !important;
+}
 
-
+.serve-icon {
+    background-image: url("#{resource['images/icons/serve_icon.svg']}") !important;
+}

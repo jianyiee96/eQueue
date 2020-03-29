@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                template="./template/defaultTemplate.xhtml">
+
+
+    <ui:define name="content">
+        <h:outputStylesheet library="css" name="sidebar.css" />
+        <h:form>
+            <p:dataGrid id="orders" value="#{kitchenManagementManagedBean.filteredCustomerOrders}" var="order" columns="3" rows="9" paginator="true" 
+                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="9,12,15">
+                <f:facet name="header">
+                    Current Ongoing Orders
+                </f:facet>
+
+                <p:panel style="text-align: center; margin: 2.5px 2.5px 2.5px 2.5px;">
+                    <f:facet name="header">
+                        <h:outputLabel value="Order ID - #{order.orderId}" />
+                        <br />
+                        <h:outputLabel value="#{order.orderDate}">
+                            <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
+                        </h:outputLabel>
+                    </f:facet>
+
+                    <p:dataTable value="#{order.orderLineItems}" var="item" >
+                        <p:column headerText="Item Name">
+                            <h:outputText value="#{item.menuItem.menuItemName}" />
+                        </p:column>
+
+                        <p:column headerText="Quantity">
+                            <h:outputText value="#{item.quantity}" />
+                        </p:column>
+
+                        <p:column headerText="Status">
+                            <h:outputText value="#{item.status}" />
+                        </p:column>
+
+                        <p:column headerText="Action">
+                            <p:commandButton rendered="#{item.status == 'ORDERED'}" value="Prepare" icon="custom-icon cooking-icon" />
+                            <p:commandButton rendered="#{item.status == 'PREPARING'}" value="Serve" icon="custom-icon serve-icon" />
+                        </p:column>
+                    </p:dataTable>             
+
+                </p:panel>
+            </p:dataGrid>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
