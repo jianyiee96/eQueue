@@ -4,22 +4,71 @@
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
                 template="/template/defaultTemplate.xhtml"
                 xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-                xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-        <h:panelGroup style="margin-top: 50px" rendered="#{sessionScope.employeeIsLogin == true}">
-            <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
-            <ul>
-                <li><h:link value="Store Management" outcome="viewStoreVariables" /></li>
-                <li><h:link outcome="/createDiningTable.xhtml">Create dining table</h:link></li>
-                <li><h:link outcome="/viewAllDiningTables.xhtml">View all dining table</h:link></li>
-                <li><h:link outcome="/employeeManagement.xhtml">Employee Management</h:link></li>
-                <li><h:link outcome="/menuManagement.xhtml">Menu Management</h:link></li>
-            </ul>
-            <h:form id="logoutForm">
-                <h:commandButton value="Logout" actionListener="#{employeeLoginManagedBean.logout}" />
-            </h:form>
-        </h:panelGroup>
-
+        <h:outputStylesheet library="css" name="homepage.css" />
+        <div class="outer-container">
+            <p:fieldset legend="Store" style="height: 140px">
+                <h:panelGrid columns="5" cellpadding="5">
+                    <p:link>
+                        <p:panel class="link-panel-container">
+                            <h:panelGrid>
+                                <span class="store-icon custom-icon-homepage"/>
+                                <div class="link-text-styling">
+                                    <p style="margin: 0">Store</p>
+                                    <p style="margin: 0">Details</p>
+                                </div>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:link>
+                    <p:link>
+                        <p:panel class="link-panel-container">
+                            <h:panelGrid>
+                                <span class="queue-icon custom-icon-homepage"/>
+                                <div class="link-text-styling">
+                                    <p style="margin: 0">Queue</p>
+                                    <p style="margin: 0">Mgmt</p>
+                                </div>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:link>
+                    <p:link outcome="menuManagement.xhtml">
+                        <p:panel class="link-panel-container">
+                            <h:panelGrid>
+                                <span class="menu-icon custom-icon-homepage"/>
+                                <div class="link-text-styling">
+                                    <p style="margin: 0">Menu</p>
+                                    <p style="margin: 0">Mgmt</p>
+                                </div>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:link>
+                    <p:link outcome="diningTableManagement.xhtml">
+                        <p:panel class="link-panel-container">
+                            <h:panelGrid>
+                                <span class="table-icon custom-icon-homepage"/>
+                                <div class="link-text-styling">
+                                    <p style="margin: 0">Table</p>
+                                    <p style="margin: 0">Mgmt</p>
+                                </div>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:link>
+                    <p:link>
+                        <p:panel class="link-panel-container">
+                            <h:panelGrid>
+                                <span class="kitchen-icon custom-icon-homepage"/>
+                                <div class="link-text-styling">
+                                    <p style="margin: 0">Kitchen</p>
+                                    <p style="margin: 0">Mgmt</p>
+                                </div>
+                            </h:panelGrid>
+                        </p:panel>
+                    </p:link>
+                </h:panelGrid>
+            </p:fieldset>
+        </div>
     </ui:define>
 </ui:composition>
