@@ -98,6 +98,18 @@ div.ui-growl {
 .home-icon {
     background-image: url("#{resource['images/icons/home_icon.svg']}") !important;
 }
+
+.header-text:hover {
+    text-decoration: none;
+}
+
+.header-text {
+    font-family: Georgia, serif;
+    color: #515151;
+    font-weight: 700;
+    font-style: normal;
+}
+
 /*
 Remove this as it messes up the components
 * {
