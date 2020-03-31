@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.application.FacesMessage;
@@ -42,8 +40,6 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     private List<TableStatusEnum> tableStatuses = new ArrayList();
 
-    private String filePath;
-
     public DiningTableManagementManagedBean() {
         newDiningTable = new DiningTable();
         selectedDiningTableToUpdate = new DiningTable();
@@ -58,30 +54,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     @PostConstruct
     public void postConstruct() {
 
-        try {
-            diningTables = diningTableSessionBeanLocal.retrieveAllTables();
-            generateTableQrCodes();
-        } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error in loading resources, please refresh the page.", null));
-
-        }
-    }
-
-    private void generateTableQrCodes() {
-
-        filePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
-        FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
-        Matcher m = Pattern.compile("eQueue").matcher(filePath);
-        List<Integer> positions = new ArrayList<>();
-        while (m.find()) {
-            positions.add(m.end());
-        }
-        filePath = filePath.substring(0, positions.get(positions.size() - 3)) + "\\eQueue-war\\web\\resources\\images\\qrcode\\";
-
-        for (DiningTable t : diningTables) {
-            diningTableSessionBeanLocal.generateQrCode(t.getQrCode(), filePath + t.getQrCode() + ".png");
-        }
-
+        diningTables = diningTableSessionBeanLocal.retrieveAllTables();
     }
 
     public void viewDiningTableDetails(ActionEvent event) throws IOException {
@@ -93,8 +66,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void createNewDiningTable(ActionEvent event) {
 
         try {
-            diningTableSessionBeanLocal.generateQrCode(newDiningTable.getQrCode(), filePath + newDiningTable.getQrCode() + ".png");
-            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(newDiningTable, false);
+            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(newDiningTable);
             DiningTable dt = diningTableSessionBeanLocal.retrieveDiningTableById(diningTableId);
             diningTables.add(dt);
 
@@ -116,7 +88,6 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     public void updateDiningTable(ActionEvent event) {
         try {
-            diningTableSessionBeanLocal.generateQrCode(selectedDiningTableToUpdate.getQrCode(), filePath + selectedDiningTableToUpdate.getQrCode() + ".png");
             diningTableSessionBeanLocal.updateDiningTableInformation(selectedDiningTableToUpdate);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dining Table updated successfully", null));
