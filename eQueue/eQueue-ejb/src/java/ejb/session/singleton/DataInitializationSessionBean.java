@@ -132,21 +132,29 @@ public class DataInitializationSessionBean {
 
             for (int i = 0; i < 20; i++) {
                 List<OrderLineItem> orderLineItems = new ArrayList<>();
-                Long oliId1 = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(2L, "Less salty please", OrderLineItemStatusEnum.ORDERED), miId1);
-                Long oliId2 = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(1L, null, OrderLineItemStatusEnum.ORDERED), miId2);
-                Long oliId3 = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(1L, null, OrderLineItemStatusEnum.ORDERED), miId5);
-                Long oliId4 = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(1L, null, OrderLineItemStatusEnum.ORDERED), miId7);
-                OrderLineItem oli1 = orderLineItemSessionBean.retrieveOrderLineItemById(oliId1);
-                OrderLineItem oli2 = orderLineItemSessionBean.retrieveOrderLineItemById(oliId2);
-                OrderLineItem oli3 = orderLineItemSessionBean.retrieveOrderLineItemById(oliId3);
-                OrderLineItem oli4 = orderLineItemSessionBean.retrieveOrderLineItemById(oliId4);
-                orderLineItems.add(oli1);
-                orderLineItems.add(oli2);
-                orderLineItems.add(oli3);
-                orderLineItems.add(oli4);
+
+                Integer numItems = (int) (Math.random() * 3) + 1;
+//                System.out.println("numItems --> " + numItems);
+                
+                for (int x = 0; numItems > x; x++) {
+                    Long quantity = (long) (Math.random() * 10) + 1L;
+                    Long menuItemId = (long) (Math.random() * 8) + 1L;
+
+                    Long oliId = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(quantity, remarksRandomiser(), lineItemStatusRandomiser()), menuItemId);
+                    OrderLineItem oli = orderLineItemSessionBean.retrieveOrderLineItemById(oliId);
+                    orderLineItems.add(oli);
+                }
                 CustomerOrder customerOrder = new CustomerOrder();
                 customerOrder.setTotalAmount(calculateTotalPrice(orderLineItems));
-                customerOrderSessionBean.createCustomerOrder(customerOrder, custId1, orderLineItems);
+
+                customerOrderSessionBean.createCustomerOrder(customerOrder, (long) (Math.random() * 4) + 1L, orderLineItems);
+                
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+                
             }
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
@@ -154,7 +162,36 @@ public class DataInitializationSessionBean {
                 | CreateNewCustomerOrderException ex) {
             ex.printStackTrace();
         }
+    }
 
+    private String remarksRandomiser() {
+        Integer remarksRandomiser = (int)(Math.random() * 5);
+        switch (remarksRandomiser) {
+            case 0:
+                return "Less salty please";
+            case 1:
+                return "More spicy please";
+            case 2:
+                return "Less spicy aight?";
+            case 3:
+                return "Less sweet";
+            default:
+                return "Faster!!";
+        }
+    }
+    
+    private OrderLineItemStatusEnum lineItemStatusRandomiser() {
+        Integer lineItemStatusRandomiser = (int)(Math.random() * 4);
+        switch (lineItemStatusRandomiser) {
+            case 0:
+                return OrderLineItemStatusEnum.ORDERED;
+            case 1:
+                return OrderLineItemStatusEnum.PREPARING;
+            case 2:
+                return OrderLineItemStatusEnum.SERVED;
+            default:
+                return OrderLineItemStatusEnum.CANCELLED;
+        }
     }
 
     private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {

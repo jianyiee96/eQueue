@@ -10,7 +10,7 @@
     <ui:define name="content">
         <h:outputStylesheet library="css" name="homepage.css" />
         <div class="outer-container">
-            <p:panel header="Store">
+            <p:panel header="Menu">
                 <h:panelGrid class="panel-grid-container" columns="5" cellpadding="10">
                     <p:link>
                         <p:panel class="link-panel-container">
@@ -56,7 +56,7 @@
                             </h:panelGrid>
                         </p:panel>
                     </p:link>
-                    <p:link>
+                    <p:link outcome="kitchenManagement.xhtml">
                         <p:panel class="link-panel-container">
                             <h:panelGrid>
                                 <span class="kitchen-icon custom-icon-homepage"/>
@@ -70,6 +70,5 @@
                 </h:panelGrid>
             </p:panel>
         </div>
-
     </ui:define>
 </ui:composition>

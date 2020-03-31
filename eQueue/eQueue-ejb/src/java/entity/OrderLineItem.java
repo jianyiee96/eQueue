@@ -27,38 +27,38 @@ public class OrderLineItem implements Serializable {
     @NotNull
     @Min(1)
     private Long quantity;
-    
+
     @Column(nullable = true, length = 128)
     @Size(max = 128)
     private String remarks;
-    
+
     @Column(nullable = false)
     @NotNull
     private boolean isEdited;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
     private OrderLineItemStatusEnum status;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private MenuItem menuItem;
-    
-    public OrderLineItem(){
-        
+
+    public OrderLineItem() {
+
         this.status = OrderLineItemStatusEnum.IN_CART;
         this.isEdited = false;
-        
+
     }
-    
-    public OrderLineItem(Long quantity, String remarks, OrderLineItemStatusEnum status){
+
+    public OrderLineItem(Long quantity, String remarks, OrderLineItemStatusEnum status) {
         this();
         this.quantity = quantity;
         this.remarks = remarks;
         this.status = status;
     }
-    
+
     public Long getOrderLineItemId() {
         return orderLineItemId;
     }
@@ -107,8 +107,14 @@ public class OrderLineItem implements Serializable {
         this.menuItem = menuItem;
     }
 
-    
-    
+    public int compareTo(OrderLineItem i2) {
+        if (this.status == i2.getStatus()) {
+            return this.menuItem.getMenuItemName().compareTo(i2.getMenuItem().getMenuItemName());
+        } else {
+            return this.status.compareTo(i2.getStatus());
+        }
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -133,5 +139,5 @@ public class OrderLineItem implements Serializable {
     public String toString() {
         return "entity.OrderLineItem[ id=" + orderLineItemId + " ]";
     }
-    
+
 }

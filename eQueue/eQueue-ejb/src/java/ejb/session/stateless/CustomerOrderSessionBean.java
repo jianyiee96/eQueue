@@ -16,7 +16,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-import util.enumeration.OrderStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.InputDataValidationException;
@@ -43,7 +42,6 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         validator = validatorFactory.getValidator();
     }
 
-    
     // Call this at shopping cart checkout [TO DISSASSOCIATE SHOPPING CART AND ORDERLINEITEMS THERE]
     @Override
     public Long createCustomerOrder(CustomerOrder newCustomerOrder, Long customerId, List<OrderLineItem> orderLineItems) throws InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException {
@@ -82,6 +80,64 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         } else {
             throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
         }
+    }
+
+    @Override
+    public List<CustomerOrder> retrieveOngoingOrders() {
+        Query query = em.createQuery(
+                "SELECT DISTINCT o " + 
+                "FROM CustomerOrder o " +
+                "JOIN o.orderLineItems li " +
+                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.ORDERED " +
+                "OR li.status = util.enumeration.OrderLineItemStatusEnum.PREPARING " + 
+                "ORDER BY o.orderDate ASC, o.orderId ASC"
+        );
+
+        List<CustomerOrder> ongoingOrders = query.getResultList();
+        
+        for (CustomerOrder o : ongoingOrders) {
+            o.getOrderLineItems().size();
+        }
+        
+        return ongoingOrders;
+    }
+    
+    @Override
+    public List<CustomerOrder> retrieveOrdersWithOrderedLineItems() {
+        Query query = em.createQuery(
+                "SELECT DISTINCT o " + 
+                "FROM CustomerOrder o " +
+                "JOIN o.orderLineItems li " +
+                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.ORDERED " +
+                "ORDER BY o.orderDate ASC, o.orderId ASC"
+        );
+        
+        List<CustomerOrder> ordersWithOrderedLineItems = query.getResultList();
+        
+        for (CustomerOrder o : ordersWithOrderedLineItems) {
+            o.getOrderLineItems().size();
+        }    
+    
+        return ordersWithOrderedLineItems;
+    }
+    
+    @Override
+    public List<CustomerOrder> retrieveOrdersWithPreparingLineItems() {
+        Query query = em.createQuery(
+                "SELECT DISTINCT o " + 
+                "FROM CustomerOrder o " +
+                "JOIN o.orderLineItems li " +
+                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.PREPARING " +
+                "ORDER BY o.orderDate ASC, o.orderId ASC"
+        );
+        
+        List<CustomerOrder> ordersWithPreparingLineItems = query.getResultList();
+        
+        for (CustomerOrder o : ordersWithPreparingLineItems) {
+            o.getOrderLineItems().size();
+        }
+        
+        return ordersWithPreparingLineItems;
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CustomerOrder>> constraintViolations) {
