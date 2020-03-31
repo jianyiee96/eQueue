@@ -1,6 +1,7 @@
 package jsf.managedBean;
 
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
+import ejb.session.stateless.OrderLineItemSessionBeanLocal;
 import entity.CustomerOrder;
 import entity.OrderLineItem;
 import java.io.Serializable;
@@ -10,7 +11,13 @@ import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.inject.Named;
 import javax.enterprise.context.ApplicationScoped;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import util.enumeration.OrderLineItemStatusEnum;
+import util.exceptions.InputDataValidationException;
+import util.exceptions.OrderLineItemNotFoundException;
+import util.exceptions.UpdateOrderLineItemException;
 
 @Named(value = "kitchenManagementManagedBean")
 @ApplicationScoped
@@ -18,15 +25,25 @@ public class KitchenManagementManagedBean implements Serializable {
 
     @EJB(name = "CustomerOrderSessionBeanLocal")
     private CustomerOrderSessionBeanLocal customerOrderSessionBeanLocal;
+    @EJB(name = "OrderLineItemSessionBeanLocal")
+    private OrderLineItemSessionBeanLocal orderLineItemSessionBeanLocal;
 
     private List<CustomerOrder> ongoingCustomerOrders;
     private List<CustomerOrder> filteredCustomerOrders;
 
+    private OrderLineItem orderItemToPrepare;
+    private OrderLineItem orderItemToServe;
+
     public KitchenManagementManagedBean() {
+        orderItemToPrepare = new OrderLineItem();
+        orderItemToServe = new OrderLineItem();
     }
 
     @PostConstruct
     public void postConstruct() {
+    }
+
+    public void filterOrderLineItems() {
         ongoingCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
         filteredCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
 
@@ -40,10 +57,6 @@ public class KitchenManagementManagedBean implements Serializable {
         //                System.out.println("-------------------------------");
         //            }
         //        }
-    }
-
-
-    public void filterOrderLineItems() {
         for (int i = 0; ongoingCustomerOrders.size() > i; i++) {
             List<OrderLineItem> items = ongoingCustomerOrders.get(i).getOrderLineItems();
             List<OrderLineItem> filteredItems = filteredCustomerOrders.get(i).getOrderLineItems();
@@ -59,6 +72,45 @@ public class KitchenManagementManagedBean implements Serializable {
         }
     }
 
+    public void prepare(ActionEvent event) {
+        orderItemToPrepare = (OrderLineItem) event.getComponent().getAttributes().get("orderItemToPrepare");
+
+        orderItemToPrepare.setStatus(OrderLineItemStatusEnum.PREPARING);
+
+        try {
+            orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(orderItemToPrepare);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderItemToPrepare.getMenuItem().getMenuItemName() + " is being prepared.", null));
+
+            orderItemToPrepare = new OrderLineItem();
+        } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
+        }
+
+//        System.out.println("orderItemToPrepare --> " + orderItemToPrepare.getMenuItem().getMenuItemName() + " with quantity "+ orderItemToPrepare.getQuantity());
+    }
+
+    public void serve(ActionEvent event) {
+        orderItemToServe = (OrderLineItem) event.getComponent().getAttributes().get("orderItemToServe");
+
+        orderItemToServe.setStatus(OrderLineItemStatusEnum.SERVED);
+
+        try {
+            orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(orderItemToServe);
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderItemToServe.getMenuItem().getMenuItemName() + " is being served.", null));
+
+            orderItemToServe = new OrderLineItem();
+        } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
+        }
+//        System.out.println("  orderItemToServe --> " + orderItemToServe.getMenuItem().getMenuItemName() + " with quantity "+ orderItemToServe.getQuantity());
+    }
+
     public List<CustomerOrder> getOngoingCustomerOrders() {
         return ongoingCustomerOrders;
     }
@@ -68,13 +120,28 @@ public class KitchenManagementManagedBean implements Serializable {
     }
 
     public List<CustomerOrder> getFilteredCustomerOrders() {
-        postConstruct();
         filterOrderLineItems();
         return filteredCustomerOrders;
     }
 
     public void setFilteredCustomerOrders(List<CustomerOrder> filteredCustomerOrders) {
         this.filteredCustomerOrders = filteredCustomerOrders;
+    }
+
+    public OrderLineItem getOrderItemToPrepare() {
+        return orderItemToPrepare;
+    }
+
+    public void setOrderItemToPrepare(OrderLineItem orderItemToPrepare) {
+        this.orderItemToPrepare = orderItemToPrepare;
+    }
+
+    public OrderLineItem getOrderItemToServe() {
+        return orderItemToServe;
+    }
+
+    public void setOrderItemToServe(OrderLineItem orderItemToServe) {
+        this.orderItemToServe = orderItemToServe;
     }
 
 }
