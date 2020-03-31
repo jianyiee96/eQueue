@@ -36,7 +36,7 @@ public class CreateNewDiningTableManagedBean {
     public void createNewDiningTable(ActionEvent event) {
 
         try {
-            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(getNewDiningTable());
+            Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(getNewDiningTable(), false);
             setNewDiningTable(new DiningTable());
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New dining table created successfully (Dining Table ID: " + diningTableId + ")", null));
