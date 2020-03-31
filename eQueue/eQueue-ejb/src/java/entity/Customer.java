@@ -129,6 +129,10 @@ public class Customer implements Serializable {
     public String getSalt() {
         return salt;
     }
+    
+    public void setSalt(String salt) {
+        this.salt = salt;
+    }
 
     public DiningTable getAllocatedDiningTable() {
         return allocatedDiningTable;
