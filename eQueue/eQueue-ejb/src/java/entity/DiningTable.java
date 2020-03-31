@@ -45,6 +45,7 @@ public class DiningTable implements Serializable {
     public DiningTable(){
         
         this.tableStatus = TableStatusEnum.FROZEN_UNOCCUPIED;
+        this.qrCode = "default";
         
     }
     
