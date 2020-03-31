@@ -101,6 +101,44 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         
         return ongoingOrders;
     }
+    
+    @Override
+    public List<CustomerOrder> retrieveOrdersWithOrderedLineItems() {
+        Query query = em.createQuery(
+                "SELECT DISTINCT o " + 
+                "FROM CustomerOrder o " +
+                "JOIN o.orderLineItems li " +
+                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.ORDERED " +
+                "ORDER BY o.orderDate ASC, o.orderId ASC"
+        );
+        
+        List<CustomerOrder> ordersWithOrderedLineItems = query.getResultList();
+        
+        for (CustomerOrder o : ordersWithOrderedLineItems) {
+            o.getOrderLineItems().size();
+        }    
+    
+        return ordersWithOrderedLineItems;
+    }
+    
+    @Override
+    public List<CustomerOrder> retrieveOrdersWithPreparingLineItems() {
+        Query query = em.createQuery(
+                "SELECT DISTINCT o " + 
+                "FROM CustomerOrder o " +
+                "JOIN o.orderLineItems li " +
+                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.PREPARING " +
+                "ORDER BY o.orderDate ASC, o.orderId ASC"
+        );
+        
+        List<CustomerOrder> ordersWithPreparingLineItems = query.getResultList();
+        
+        for (CustomerOrder o : ordersWithPreparingLineItems) {
+            o.getOrderLineItems().size();
+        }
+        
+        return ordersWithPreparingLineItems;
+    }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CustomerOrder>> constraintViolations) {
         String msg = "Input data validation error!:";

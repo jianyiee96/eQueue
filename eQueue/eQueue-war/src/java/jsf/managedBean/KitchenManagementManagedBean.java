@@ -5,6 +5,8 @@ import ejb.session.stateless.OrderLineItemSessionBeanLocal;
 import entity.CustomerOrder;
 import entity.OrderLineItem;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -31,6 +33,12 @@ public class KitchenManagementManagedBean implements Serializable {
     private List<CustomerOrder> ongoingCustomerOrders;
     private List<CustomerOrder> filteredCustomerOrders;
 
+    private List<CustomerOrder> ordersWithOrderedItems;
+    private List<CustomerOrder> filteredOrdersWithOrderedItems;
+
+    private List<CustomerOrder> ordersWithPreparingItems;
+    private List<CustomerOrder> filteredOrdersWithPreparingItems;
+
     private OrderLineItem orderItemToPrepare;
     private OrderLineItem orderItemToServe;
 
@@ -41,11 +49,7 @@ public class KitchenManagementManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-    }
-
-    public void filterOrderLineItems() {
-        ongoingCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
-        filteredCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
+        //        ongoingCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
 
         //        for (CustomerOrder o : ongoingCustomerOrders) {
         //            System.out.println("========== Customer Order " + o.getOrderId() + " ==========");
@@ -57,6 +61,13 @@ public class KitchenManagementManagedBean implements Serializable {
         //                System.out.println("-------------------------------");
         //            }
         //        }
+    }
+
+    // To keep all Orders with Line Items with Statuses "ORDERED/PREPARING"
+    public void filterAllOngoingOrderLineItems() {
+        ongoingCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
+        filteredCustomerOrders = customerOrderSessionBeanLocal.retrieveOngoingOrders();
+
         for (int i = 0; ongoingCustomerOrders.size() > i; i++) {
             List<OrderLineItem> items = ongoingCustomerOrders.get(i).getOrderLineItems();
             List<OrderLineItem> filteredItems = filteredCustomerOrders.get(i).getOrderLineItems();
@@ -69,6 +80,49 @@ public class KitchenManagementManagedBean implements Serializable {
                 }
             }
             Collections.sort(filteredItems, (i1, i2) -> i1.compareTo(i2));
+        }
+    }
+
+    // To keep all Orders with Line Items with Status "ORDERED"
+    public void filterOrderedLineItems() {
+        ordersWithOrderedItems = customerOrderSessionBeanLocal.retrieveOrdersWithOrderedLineItems();
+        filteredOrdersWithOrderedItems = customerOrderSessionBeanLocal.retrieveOrdersWithOrderedLineItems();
+
+        for (int i = 0; ordersWithOrderedItems.size() > i; i++) {
+
+            // To get all order line items in Order i
+            List<OrderLineItem> items = ordersWithOrderedItems.get(i).getOrderLineItems();
+            List<OrderLineItem> filteredOrderedItems = filteredOrdersWithOrderedItems.get(i).getOrderLineItems();
+
+            for (int j = 0; items.size() > j; j++) {
+
+                if (items.get(j).getStatus() != OrderLineItemStatusEnum.ORDERED) {
+                    filteredOrderedItems.remove(items.get(j));
+                }
+
+            }
+            Collections.sort(filteredOrderedItems, (i1, i2) -> i1.compareTo(i2));
+        }
+    }
+
+    // To keep all Orders with Line Items with Status "PREPARING"
+    public void filterPreparingLineItems() {
+        ordersWithPreparingItems = customerOrderSessionBeanLocal.retrieveOrdersWithPreparingLineItems();
+        filteredOrdersWithPreparingItems = customerOrderSessionBeanLocal.retrieveOrdersWithPreparingLineItems();
+
+        for (int i = 0; ordersWithPreparingItems.size() > i; i++) {
+
+            List<OrderLineItem> items = ordersWithPreparingItems.get(i).getOrderLineItems();
+            List<OrderLineItem> filteredPreparingItems = filteredOrdersWithPreparingItems.get(i).getOrderLineItems();
+
+            for (int j = 0; items.size() > j; j++) {
+
+                if (items.get(j).getStatus() != OrderLineItemStatusEnum.PREPARING) {
+                    filteredPreparingItems.remove(items.get(j));
+                }
+
+            }
+            Collections.sort(filteredPreparingItems, (i1, i2) -> i1.compareTo(i2));
         }
     }
 
@@ -120,12 +174,30 @@ public class KitchenManagementManagedBean implements Serializable {
     }
 
     public List<CustomerOrder> getFilteredCustomerOrders() {
-        filterOrderLineItems();
+        filterAllOngoingOrderLineItems();
         return filteredCustomerOrders;
     }
 
     public void setFilteredCustomerOrders(List<CustomerOrder> filteredCustomerOrders) {
         this.filteredCustomerOrders = filteredCustomerOrders;
+    }
+
+    public List<CustomerOrder> getFilteredOrdersWithOrderedItems() {
+        filterOrderedLineItems();
+        return filteredOrdersWithOrderedItems;
+    }
+
+    public void setFilteredOrdersWithOrderedItems(List<CustomerOrder> filteredOrdersWithOrderedItems) {
+        this.filteredOrdersWithOrderedItems = filteredOrdersWithOrderedItems;
+    }
+
+    public List<CustomerOrder> getFilteredOrdersWithPreparingItems() {
+        filterPreparingLineItems();
+        return filteredOrdersWithPreparingItems;
+    }
+
+    public void setFilteredOrdersWithPreparingItems(List<CustomerOrder> filteredOrdersWithPreparingItems) {
+        this.filteredOrdersWithPreparingItems = filteredOrdersWithPreparingItems;
     }
 
     public OrderLineItem getOrderItemToPrepare() {
