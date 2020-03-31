@@ -8,11 +8,10 @@
                 xmlns:p="http://primefaces.org/ui">
 
     <ui:define name="content">
-<<<<<<< HEAD
         <h:outputStylesheet library="css" name="homepage.css" />
         <div class="outer-container">
-            <p:fieldset legend="Store" style="height: 140px">
-                <h:panelGrid columns="5" cellpadding="5">
+            <p:panel header="Store">
+                <h:panelGrid class="panel-grid-container" columns="5" cellpadding="10">
                     <p:link>
                         <p:panel class="link-panel-container">
                             <h:panelGrid>
@@ -69,20 +68,8 @@
                         </p:panel>
                     </p:link>
                 </h:panelGrid>
-            </p:fieldset>
+            </p:panel>
         </div>
-<!--=======
-        <h:panelGroup style="margin-top: 50px" rendered="#{sessionScope.employeeIsLogin == true}">
-            <h:outputText value="You are login as #{sessionScope.currentEmployee.firstName} #{sessionScope.currentEmployee.lastName} as a #{sessionScope.currentEmployee.employeeRole}" />
-            <ul>
-                <li><h:link outcome="/createDiningTable.xhtml">Create dining table</h:link></li>
-                <li><h:link outcome="/viewAllDiningTables.xhtml">View all dining table</h:link></li>
-            </ul>
-            <h:form id="logoutForm">
-                <h:commandButton value="Logout" actionListener="#{employeeLoginManagedBean.logout}" />
-            </h:form>
-        </h:panelGroup>
 
->>>>>>> d6204c33045187993fa20366998b99828839a768-->
     </ui:define>
 </ui:composition>
