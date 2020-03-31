@@ -16,18 +16,19 @@
 
         <p:layout fullPage="true">
 
-            <p:layoutUnit position="north" resizable="false" size="80" style = "text-align:center;">
-                <div style="float: left; display: flex; height: 100%; margin-left: 20px">
-                    <p:commandLink class="nav-burger" oncomplete="PF('sidebar1').show()">
+            <p:layoutUnit position="north" resizable="false" size="80">
+                <div style = "display: flex; align-content: center; align-items: center; justify-content: space-between; height: 100%;">
+                    <p:commandLink class="nav-burger" oncomplete="PF('sidebar1').show()" style="margin-left: 20px">
                         <i class="fa fa-navicon nav-burger-icon" style="font-size: 25px"/>
                     </p:commandLink>
-                </div>
-                <div style="float: right; display: flex; height: 100%; margin-right: 20px">
-                    <p:commandLink class="nav-logout" actionListener="#{employeeLoginManagedBean.logout}">
+                    
+                    <p:link class="header-text" outcome="homepage" value="eQueue Management System" style="font-size: 25px"/>
+                    
+                    <p:commandLink class="nav-logout" actionListener="#{employeeLoginManagedBean.logout}" style="margin-right: 20px; text-align: center">
                         <i class="fa fa-sign-out nav-logout-icon" style="font-size: 25px"/>
+                        <p style="margin: 0px">sign out</p>
                     </p:commandLink>
                 </div>
-                <p:link outcome="homepage"><h1>eQueue Management System</h1></p:link>
             </p:layoutUnit>
 
             <p:layoutUnit position="center" >
