@@ -24,37 +24,6 @@ nbproject/private/
 build/
 dist/
 
-# Ionic Stuffs
-EonicQueue/*~
-EonicQueue/*.sw[mnpcod]
-EonicQueue/.tmp
-EonicQueue/*.tmp
-EonicQueue/*.tmp.*
-EonicQueue/*.sublime-project
-EonicQueue/*.sublime-workspace
-EonicQueue/.DS_Store
-EonicQueue/Thumbs.db
-EonicQueue/UserInterfaceState.xcuserstate
-EonicQueue/$RECYCLE.BIN/
-
-*.log
-EonicQueue/log.txt
-EonicQueue/npm-debug.log*
-
-EonicQueue/.idea
-EonicQueue/.ionic
-EonicQueue/.sass-cache
-EonicQueue/.sourcemaps
-EonicQueue/.versions
-EonicQueue/.vscode
-EonicQueue/coverage
-EonicQueue/dist
-EonicQueue/node_modules
-EonicQueue/platforms
-EonicQueue/plugins
-EonicQueue/www
-
-
 eQueue/eQueue-ejb/nbproject/private/
 eQueue/eQueue-ejb/build/
 eQueue/eQueue-ejb/dist/
