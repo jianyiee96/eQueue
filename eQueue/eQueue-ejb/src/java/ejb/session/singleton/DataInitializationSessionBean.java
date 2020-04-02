@@ -89,6 +89,7 @@ public class DataInitializationSessionBean {
             Long custId2 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
             Long custId4 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
+            Long custId5 = customerSessionBeanLocal.createNewCustomer(new Customer("Hew", "Jian Yiee", "hew1521@hotmail.com", "password"));
 
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
