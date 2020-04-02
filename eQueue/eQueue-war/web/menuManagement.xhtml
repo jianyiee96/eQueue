@@ -101,8 +101,9 @@
                                 </p:column>
 
                                 <p:column headerText="Action" width="100">
-                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
+                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" actionListener="#{menuManagementManagedBean.doViewMenuItem}" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
                                         <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
+                                        <f:attribute name="menuItemToView" value="#{menuItem}" />
                                     </p:commandButton>
 
                                     <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuItem}" update="menuManagementTabView:formUpdateMenuItem" oncomplete="PF('dialogUpdateMenuItem').show()" icon="ui-icon-pencil" title="Update">
@@ -133,7 +134,7 @@
                                 <p:messages id="messagesCreateNewMenuItem" redisplay="false" />
 
                                 <p:panelGrid id="createNewMenuItemPanel">
-                                    <p:row rendered="#{menuManagementManagedBean.createMenuItemPreviewPhoto != null}">
+                                    <p:row id="photoRow" rendered="#{menuManagementManagedBean.createMenuItemPreviewPhoto != null}">
                                         <p:column colspan="3">
                                             <div style='text-align: center;'>
                                                 <img src="data:image/png;base64,#{menuManagementManagedBean.createMenuItemPreviewPhotoContents}" style="margin: 15px; width: 180px; height: 180px;" alt="Photo not loaded"/>
@@ -412,7 +413,7 @@
 
                                     <p:row>
                                         <p:column colspan="3">
-                                            <p:commandButton value="Update Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel treeForm" actionListener="#{menuManagementManagedBean.updateMenuItem}" oncomplete="PF('dialogUpdateMenuItem').show();" />
+                                            <p:commandButton value="Update Menu Item" update="@form menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formCreateNewMenuCategory:createNewMenuCategoryPanel ccViewMenuItem:formViewMenuItem treeForm" actionListener="#{menuManagementManagedBean.updateMenuItem}" oncomplete="PF('dialogUpdateMenuItem').show();" />
                                             <p:commandButton value="Close" oncomplete="PF('dialogUpdateMenuItem').hide();" />
                                         </p:column>
                                     </p:row>

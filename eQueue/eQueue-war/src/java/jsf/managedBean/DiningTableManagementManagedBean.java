@@ -55,7 +55,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void postConstruct() {
 
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
-        
+
     }
 
     public void viewDiningTableDetails(ActionEvent event) throws IOException {
@@ -89,7 +89,6 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     public void updateDiningTable(ActionEvent event) {
         try {
-
             diningTableSessionBeanLocal.updateDiningTableInformation(selectedDiningTableToUpdate);
 
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dining Table updated successfully", null));

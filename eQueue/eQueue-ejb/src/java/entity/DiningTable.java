@@ -50,7 +50,12 @@ public class DiningTable implements Serializable {
     public DiningTable() {
 
         this.tableStatus = TableStatusEnum.FROZEN_UNOCCUPIED;
+<<<<<<< HEAD
 
+=======
+        this.qrCode = "default";
+        
+>>>>>>> master
     }
 
     public DiningTable(Long seatingCapacity) {

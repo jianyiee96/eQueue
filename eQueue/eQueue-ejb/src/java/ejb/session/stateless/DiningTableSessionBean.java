@@ -39,9 +39,9 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
 
     @Override
     public Long createNewDiningTable(DiningTable diningTable) throws UnknownPersistenceException, InputDataValidationException {
-
+        
         diningTable.setQrCode(UUID.randomUUID().toString().substring(0, 8));
-
+        
         try {
             Set<ConstraintViolation<DiningTable>> constraintViolations = validator.validate(diningTable);
 
@@ -60,6 +60,7 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
         }
     }
 
+  
     @Override
     public List<DiningTable> retrieveAllTables() {
         Query query = em.createQuery("SELECT d FROM DiningTable d");
