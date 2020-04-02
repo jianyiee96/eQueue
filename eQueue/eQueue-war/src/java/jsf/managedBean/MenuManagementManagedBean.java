@@ -89,7 +89,6 @@ public class MenuManagementManagedBean implements Serializable {
     private UploadedFile updateMenuItemPreviewPhoto;
     private String updateMenuItemPreviewPhotoContents;
     private String updateMenuItemCurrentPhotoContents;
-    private String viewMenuItemCurrentPhotoContents;
 
     private Boolean updateMenuItemDeleteOldPhoto;
     private String updateMenuItemOldPhotoPath;
@@ -97,11 +96,7 @@ public class MenuManagementManagedBean implements Serializable {
     private CroppedImage croppedImage;
     private Boolean cropMode;
 
-    public String getViewMenuItemCurrentPhotoContents() {
-        return viewMenuItemCurrentPhotoContents;
-    }
-
-    MenuManagementManagedBean() {
+    public MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
         menuItemToUpdate = new MenuItem();
         menuCategoryToCreate = new MenuCategory();
@@ -163,14 +158,42 @@ public class MenuManagementManagedBean implements Serializable {
                 if (viewMenuItemManagedBean != null) {
                     viewMenuItemManagedBean.setMenuItemToView(mi);
                 }
-                doViewMenuItem(mi);
                 PrimeFaces.current().executeScript("PF('dialogViewMenuItem').show()");
             }
         }
     }
 
+    private TreeNode searchParentCategoryTreeNode(Long parentCategoryId, TreeNode treeNode) {
+        for (TreeNode tn : treeNode.getChildren()) {
+            if (tn.getType().equals("menuCategory")) {
+                MenuCategory mc = (MenuCategory) tn.getData();
+
+                if (mc.getMenuCategoryId().equals(parentCategoryId)) {
+                    return tn;
+                } else {
+                    return searchParentCategoryTreeNode(parentCategoryId, tn);
+                }
+            }
+        }
+        return null;
+    }
+
+    private TreeNode searchMenuItemTreeNode(Long menuItemId, Long parentCategoryId, TreeNode treeNode) {
+        TreeNode parentTreeNode = searchParentCategoryTreeNode(parentCategoryId, treeNode);
+        for (TreeNode tn : treeNode.getChildren()) {
+            if (tn.getType().equals("menuItem")) {
+                MenuItem mi = (MenuItem) tn.getData();
+
+                if (mi.getMenuItemId().equals(menuItemId)) {
+                    return tn;
+                }
+            }
+        }
+        return null;
+    }
+
     public void collapsingORexpanding(TreeNode n, boolean option) {
-        if (n.getChildren().isEmpty()) {
+        if (n.getChildren().size() == 0) {
             n.setSelected(false);
         } else {
             for (TreeNode s : n.getChildren()) {
@@ -178,78 +201,6 @@ public class MenuManagementManagedBean implements Serializable {
             }
             n.setExpanded(option);
             n.setSelected(false);
-        }
-    }
-
-    public void createNewMenuCategory() {
-        if (parentMenuCategoryIdToCreate == 0) {
-            parentMenuCategoryIdToCreate = null;
-        }
-
-        try {
-            Long menuCategoryId = menuCategorySessionBean.createNewMenuCategory(menuCategoryToCreate, parentMenuCategoryIdToCreate);
-            menuCategoryToCreate = menuCategorySessionBean.retrieveMenuCategoryById(menuCategoryId);
-
-            if (filteredMenuCategories != null) {
-                filteredMenuCategories.add(menuCategoryToCreate);
-            }
-
-            postConstruct();
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New menu category created successfully (Menu Category ID: " + menuCategoryToCreate.getMenuCategoryId() + ")", null));
-
-            menuCategoryToCreate = new MenuCategory();
-            parentMenuCategoryIdToCreate = null;
-
-        } catch (InputDataValidationException | MenuCategoryNotFoundException | CreateNewMenuCategoryException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating the new menu Category: " + ex.getMessage(), null));
-        }
-
-    }
-
-    public void doUpdateMenuCategory(ActionEvent event) {
-
-        menuCategoryToUpdate = (MenuCategory) event.getComponent().getAttributes().get("menuCategoryToUpdate");
-        if (menuCategoryToUpdate.getParentMenuCategory() != null) {
-            parentMenuCategoryIdToUpdate = menuCategoryToUpdate.getParentMenuCategory().getMenuCategoryId();
-        }
-
-    }
-
-    public void updateMenuCategory(ActionEvent event) {
-        if (parentMenuCategoryIdToUpdate == 0) {
-            parentMenuCategoryIdToUpdate = null;
-        }
-
-        try {
-            menuCategorySessionBean.updateMenuCategory(menuCategoryToUpdate, parentMenuCategoryIdToUpdate);
-
-            postConstruct();
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu category updated successfully", null));
-        } catch (InputDataValidationException | MenuCategoryNotFoundException | UpdateMenuCategoryException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating menu cateogory: " + ex.getMessage(), null));
-        } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
-        }
-    }
-
-    public void deleteMenuCategory(ActionEvent event) {
-        try {
-            MenuCategory menuCategoryToDelete = (MenuCategory) event.getComponent().getAttributes().get("menuCategoryToDelete");
-            menuCategorySessionBean.deleteMenuCategory(menuCategoryToDelete.getMenuCategoryId());
-
-            if (filteredMenuCategories != null) {
-                filteredMenuCategories.remove(menuCategoryToDelete);
-            }
-
-            postConstruct();
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu Category deleted successfully", null));
-        } catch (MenuCategoryNotFoundException | DeleteMenuCategoryException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting menu category: " + ex.getMessage(), null));
-        } catch (Exception ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
     }
 
@@ -300,8 +251,14 @@ public class MenuManagementManagedBean implements Serializable {
             return false;
         }
 
-        String filePath = getWorkingDirPath() + menuItem.getImagePath();
-        
+        String filePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(filePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        filePath = filePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + menuItem.getImagePath();
+        System.out.println("FILE PATH ==================> " + filePath);
         FileImageOutputStream imageOutput;
         try {
             imageOutput = new FileImageOutputStream(new File(filePath));
@@ -316,25 +273,106 @@ public class MenuManagementManagedBean implements Serializable {
         return true;
     }
 
-    public void doViewMenuItem(ActionEvent event) {
-        MenuItem menuItem = (MenuItem) event.getComponent().getAttributes().get("menuItemToView");
-        if (menuItem.getImagePath() != null) {
-            try {
-                viewMenuItemCurrentPhotoContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(menuItem.getImagePath()).toPath()));
-            } catch (Exception ex) {
-                System.out.println("FILE DOES NOT EXIST! ===========> " + menuItem.getImagePath());
+    private boolean createPhotoforMenuItem(UploadedFile uploadedFile, MenuItem menuItem) {
+        try {
+            String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+            Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+            List<Integer> positions = new ArrayList<>();
+            while (m.find()) {
+                positions.add(m.end());
             }
+            String fileName = menuItem.getMenuItemId() + " - " + uploadedFile.getFileName();
+            newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + fileName;
+
+            File file = new File(newFilePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+            int a;
+            int BUFFER_SIZE = 8192;
+            byte[] buffer = new byte[BUFFER_SIZE];
+
+            InputStream inputStream = uploadedFile.getInputstream();
+
+            while (true) {
+                a = inputStream.read(buffer);
+
+                if (a < 0) {
+                    break;
+                }
+
+                fileOutputStream.write(buffer, 0, a);
+                fileOutputStream.flush();
+            }
+
+            fileOutputStream.close();
+            inputStream.close();
+
+            String oldPath = menuItem.getImagePath();
+            menuItem.setImagePath(fileName);
+            if (oldPath != null) {
+                deteleFileInDir(oldPath);
+            }
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu Item picture uploaded successfully", ""));
+            return true;
+        } catch (IOException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Menu Item picture upload error: " + ex.getMessage(), ""));
+            return false;
         }
     }
 
-    public void doViewMenuItem(MenuItem menuItem) {
-        if (menuItem.getImagePath() != null) {
-            try {
-                viewMenuItemCurrentPhotoContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(menuItem.getImagePath()).toPath()));
-            } catch (Exception ex) {
-                System.out.println("FILE DOES NOT EXIST! ===========> " + menuItem.getImagePath());
-            }
+    private String getImageContentsAsBase64(byte[] contents) {
+        return Base64.getEncoder().encodeToString(contents);
+    }
+
+    private boolean deteleFileInDir(String imagePath) {
+        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
         }
+        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + imagePath;
+        File file = new File(newFilePath);
+        return file.delete();
+    }
+
+    private File getFileInDir(String imagePath) {
+        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
+        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
+        List<Integer> positions = new ArrayList<>();
+        while (m.find()) {
+            positions.add(m.end());
+        }
+        newFilePath = newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/" + imagePath;
+        File file = new File(newFilePath);
+        return file;
+    }
+
+    public void createNewMenuCategory() {
+        if (parentMenuCategoryIdToCreate == 0) {
+            parentMenuCategoryIdToCreate = null;
+        }
+
+        try {
+            Long menuCategoryId = menuCategorySessionBean.createNewMenuCategory(menuCategoryToCreate, parentMenuCategoryIdToCreate);
+            menuCategoryToCreate = menuCategorySessionBean.retrieveMenuCategoryById(menuCategoryId);
+
+            if (filteredMenuCategories != null) {
+                filteredMenuCategories.add(menuCategoryToCreate);
+            }
+
+            postConstruct();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "New menu category created successfully (Menu Category ID: " + menuCategoryToCreate.getMenuCategoryId() + ")", null));
+
+            menuCategoryToCreate = new MenuCategory();
+            parentMenuCategoryIdToCreate = null;
+
+        } catch (InputDataValidationException | MenuCategoryNotFoundException | CreateNewMenuCategoryException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating the new menu Category: " + ex.getMessage(), null));
+        }
+
     }
 
     public void doUpdateMenuItem(ActionEvent event) {
@@ -414,6 +452,33 @@ public class MenuManagementManagedBean implements Serializable {
         updateMenuItemPreviewPhotoContents = getImageContentsAsBase64(updateMenuItemPreviewPhoto.getContents());
     }
 
+    public void doUpdateMenuCategory(ActionEvent event) {
+
+        menuCategoryToUpdate = (MenuCategory) event.getComponent().getAttributes().get("menuCategoryToUpdate");
+        if (menuCategoryToUpdate.getParentMenuCategory() != null) {
+            parentMenuCategoryIdToUpdate = menuCategoryToUpdate.getParentMenuCategory().getMenuCategoryId();
+        }
+
+    }
+
+    public void updateMenuCategory(ActionEvent event) {
+        if (parentMenuCategoryIdToUpdate == 0) {
+            parentMenuCategoryIdToUpdate = null;
+        }
+
+        try {
+            menuCategorySessionBean.updateMenuCategory(menuCategoryToUpdate, parentMenuCategoryIdToUpdate);
+
+            postConstruct();
+
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu category updated successfully", null));
+        } catch (InputDataValidationException | MenuCategoryNotFoundException | UpdateMenuCategoryException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating menu cateogory: " + ex.getMessage(), null));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
+        }
+    }
+
     public void deleteMenuItem(ActionEvent event) {
         try {
             MenuItem menuItemToDelete = (MenuItem) event.getComponent().getAttributes().get("menuItemToDelete");
@@ -438,73 +503,23 @@ public class MenuManagementManagedBean implements Serializable {
         }
     }
 
-    private boolean createPhotoforMenuItem(UploadedFile uploadedFile, MenuItem menuItem) {
+    public void deleteMenuCategory(ActionEvent event) {
         try {
-            String fileName = menuItem.getMenuItemId() + " - " + uploadedFile.getFileName();
-            String newFilePath = getWorkingDirPath() + fileName;
+            MenuCategory menuCategoryToDelete = (MenuCategory) event.getComponent().getAttributes().get("menuCategoryToDelete");
+            menuCategorySessionBean.deleteMenuCategory(menuCategoryToDelete.getMenuCategoryId());
 
-            File file = new File(newFilePath);
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-
-            int a;
-            int BUFFER_SIZE = 8192;
-            byte[] buffer = new byte[BUFFER_SIZE];
-
-            InputStream inputStream = uploadedFile.getInputstream();
-
-            while (true) {
-                a = inputStream.read(buffer);
-
-                if (a < 0) {
-                    break;
-                }
-
-                fileOutputStream.write(buffer, 0, a);
-                fileOutputStream.flush();
+            if (filteredMenuCategories != null) {
+                filteredMenuCategories.remove(menuCategoryToDelete);
             }
 
-            fileOutputStream.close();
-            inputStream.close();
+            postConstruct();
 
-            String oldPath = menuItem.getImagePath();
-            menuItem.setImagePath(fileName);
-            if (oldPath != null) {
-                deteleFileInDir(oldPath);
-            }
-
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu Item picture uploaded successfully", ""));
-            return true;
-        } catch (IOException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Menu Item picture upload error: " + ex.getMessage(), ""));
-            return false;
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Menu Category deleted successfully", null));
+        } catch (MenuCategoryNotFoundException | DeleteMenuCategoryException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while deleting menu category: " + ex.getMessage(), null));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
-    }
-
-    public String getImageContentsAsBase64(byte[] contents) {
-        return Base64.getEncoder().encodeToString(contents);
-    }
-
-    private boolean deteleFileInDir(String imagePath) {
-        String newFilePath = getWorkingDirPath() + imagePath;
-        File file = new File(newFilePath);
-        return file.delete();
-    }
-
-    private File getFileInDir(String imagePath) {
-        String newFilePath = getWorkingDirPath() + imagePath;
-        File file = new File(newFilePath);
-        return file;
-    }
-
-    private String getWorkingDirPath() {
-        String newFilePath = FacesContext.getCurrentInstance().getExternalContext().getRealPath("/");
-        Matcher m = Pattern.compile("eQueue").matcher(newFilePath);
-        List<Integer> positions = new ArrayList<>();
-        while (m.find()) {
-            positions.add(m.end());
-        }
-
-        return newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/food/";
     }
 
     public Boolean getCropMode() {
@@ -553,7 +568,6 @@ public class MenuManagementManagedBean implements Serializable {
     }
 
     public String getCreateMenuItemPreviewPhotoContents() {
-        System.out.println("RETRIEVING ==============> ");
         return createMenuItemPreviewPhotoContents;
     }
 

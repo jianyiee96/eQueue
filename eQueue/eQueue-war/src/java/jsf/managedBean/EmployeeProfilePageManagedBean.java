@@ -185,7 +185,6 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         while (m.find()) {
             positions.add(m.end());
         }
-        
         return newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/";
     }
 
