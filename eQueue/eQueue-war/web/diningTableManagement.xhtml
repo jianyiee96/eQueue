@@ -49,14 +49,10 @@
                             </p:column>
 
                             <p:column headerText="Time Since Occupied" >
-<<<<<<< HEAD
                                 <h:outputText  id="timerCell" value="#{diningTable.timePassed}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
                                     <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
                                 </h:outputText>
                                 <p:poll interval="1" listener="#{diningTableManagementManagedBean.incrementDiningTableSeatedTime(diningTable.diningTableId)}" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
-=======
-                                <h:outputText value="" />
->>>>>>> master
                             </p:column>
 
                             <p:column headerText="Action" >
