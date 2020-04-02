@@ -55,7 +55,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void postConstruct() {
 
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
-
+        
     }
 
     public void viewDiningTableDetails(ActionEvent event) throws IOException {
@@ -173,6 +173,24 @@ public class DiningTableManagementManagedBean implements Serializable {
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
+    }
+
+    public void incrementDiningTableSeatedTime(Long diningTableId) {
+        try {
+            DiningTable diningTable = diningTableSessionBeanLocal.retrieveDiningTableById(diningTableId);
+            diningTableSessionBeanLocal.incrementTimePassed(diningTableId);
+//            System.out.println(diningTable + " seated " + diningTable.getSeatedTime());
+//            System.out.println(diningTable + " passed " + diningTable.getTimePassed());
+            for (DiningTable dt : diningTables) {
+                if (dt.equals(diningTable)) {
+                    dt.setSeatedTime(diningTable.getSeatedTime());
+                    dt.setTimePassed(diningTable.getTimePassed());
+                    break;
+                }
+            }
+        } catch (DiningTableNotFoundException ex) {
+            System.out.println("Unable to increase seated time for dining table id [" + diningTableId + " Error: Cannot find the dining table!");
+        } 
     }
 
     public ViewDiningTableManagedBean getViewDiningTableManagedBean() {

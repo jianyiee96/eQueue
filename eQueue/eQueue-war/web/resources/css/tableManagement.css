@@ -1,0 +1,10 @@
+.columnAlign {
+    text-align: center;
+    display: block
+}
+
+.cellAlign {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
