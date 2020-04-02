@@ -30,4 +30,6 @@ public interface DiningTableSessionBeanLocal {
     
     public List<DiningTable> retrieveAllUnfrozenUnoccupiedTables();
 
+    public void incrementTimePassed(Long diningTableId);
+
 }

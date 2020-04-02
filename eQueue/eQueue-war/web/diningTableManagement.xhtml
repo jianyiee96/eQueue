@@ -8,6 +8,8 @@
                 xmlns:ez="http://java.sun.com/jsf/composite/ezcomp"
                 template="/template/defaultTemplate.xhtml">
 
+    <h:outputStylesheet library="css" name="tableManagement.css" />
+
     <ui:define name="content">
         <p:layout>
             <p:layoutUnit position="center">
@@ -47,7 +49,10 @@
                             </p:column>
 
                             <p:column headerText="Time Since Occupied" >
-                                <h:outputText value="" />
+                                <h:outputText  id="timerCell" value="#{diningTable.timePassed}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
+                                    <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
+                                </h:outputText>
+                                <p:poll interval="1" listener="#{diningTableManagementManagedBean.incrementDiningTableSeatedTime(diningTable.diningTableId)}" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
                             </p:column>
 
                             <p:column headerText="Action" >
