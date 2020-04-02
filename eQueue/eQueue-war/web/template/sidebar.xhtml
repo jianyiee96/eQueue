@@ -3,7 +3,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:p="http://primefaces.org/ui"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:outputStylesheet library="css" name="sidebar.css" />
 
     <p:sidebar id="sidebar1" widgetVar="sidebar1" baseZIndex="10000">
@@ -35,11 +36,14 @@
                 <p:commandLink action="/employeeProfilePage.xhtml?faces-redirect=true" >
                     <div class="menu-user-container-inner">
                         <div class="profile-picture-container" >
-                            <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath != null}" library="images" 
-                                            name="profiles/#{sessionScope.currentEmployee.imagePath}" height="75" width="75" 
+<!--                            <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath != null}" 
+                                            library="images" name="profiles/#{sessionScope.currentEmployee.imagePath}" height="75" width="75" 
                                             alt="#{sessionScope.currentEmployee.lastName} #{sessionScope.currentEmployee.firstName}'s Profile Picture" 
                                             cache="false"
-                                            />
+                                            />-->
+                            <ui:fragment rendered="#{employeeProfilePageManagedBean.imageContents != null}" >
+                                <img class="profile-picture" src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="width: 75px; height: 75px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
+                            </ui:fragment>
                             <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath == null}" library="images" 
                                             name="default-user-profile-picture.png" height="75" width="75" alt="User Profile Picture"
                                             />

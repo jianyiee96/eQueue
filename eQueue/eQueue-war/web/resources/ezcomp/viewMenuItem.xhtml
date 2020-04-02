@@ -9,7 +9,7 @@
 
     <cc:interface>
     </cc:interface>
-    
+
     <cc:implementation>
 
         <h:form id="formViewMenuItem">
@@ -20,7 +20,12 @@
 
                     <p:column colspan="2">
                         <div style='text-align: center;'>
-                            <p:graphicImage rendered="#{viewMenuItemManagedBean.menuItemToView.imagePath != null}" style="margin: 15px;" width="180" height="180" library="images" name="food/#{viewMenuItemManagedBean.menuItemToView.imagePath}" alt="Picture not loaded" />
+<!--                            <p:graphicImage rendered="#{viewMenuItemManagedBean.menuItemToView.imagePath != null}" 
+                                            library="images" name="food/#{viewMenuItemManagedBean.menuItemToView.imagePath}" width="180" height="180"
+                                            style="margin: 15px;"  alt="Picture not loaded"
+                                            cache="false"
+                                            />-->
+                            <img src="data:image/png;base64,#{menuManagementManagedBean.viewMenuItemCurrentPhotoContents}" style="margin: 15px; width: 180px; height: 180px;" alt="Picture not loaded"/>
                             <p:graphicImage rendered="#{viewMenuItemManagedBean.menuItemToView.imagePath == null}" style="margin: 15px;" width="180" height="180" library="images" name="food/food-default.png" alt="Picture not loaded" />
                         </div>
                     </p:column>
