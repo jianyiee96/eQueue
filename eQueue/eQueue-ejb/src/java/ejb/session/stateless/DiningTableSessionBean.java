@@ -87,6 +87,13 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
             throw new DiningTableNotFoundException("Dining Table ID " + diningTableId + " does not exist!");
         }
     }
+    
+    @Override
+    public DiningTable retrieveDiningTableByCustomerId(Long customerId) {
+        Customer customer = em.find(Customer.class, customerId);
+        DiningTable diningTableToRetrieved = customer.getAllocatedDiningTable();
+        return diningTableToRetrieved;
+    }
 
     @Override
     public void updateDiningTableInformation(DiningTable diningTable) throws DiningTableNotFoundException, EditTableException, InputDataValidationException {
