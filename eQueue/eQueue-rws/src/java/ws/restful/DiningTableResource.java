@@ -13,7 +13,7 @@ import javax.ws.rs.core.Response.Status;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.RetrieveDiningTableResponse;
 
-@Path("Table")
+@Path("DiningTable")
 public class DiningTableResource {
 
     private final SessionBeanLookup sessionBeanLookup;
@@ -25,7 +25,7 @@ public class DiningTableResource {
         diningTableSessionBeanLocal = sessionBeanLookup.lookupDiningTableSessionBeanLocal();
     }
 
-    @Path("retrieveDiningTableByCustomerId/{customerId}")
+    @Path("retrieveDiningTableByCustomerId")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)

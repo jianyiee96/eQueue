@@ -40,7 +40,7 @@ public class QueueResource {
 
     }
 
-    @Path("retrieveQueueByCustomerId/{customerId}")
+    @Path("retrieveQueueByCustomerId")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
