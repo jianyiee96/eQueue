@@ -1,17 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package ws.restful;
 
 import java.util.Set;
 import javax.ws.rs.core.Application;
 
-/**
- *
- * @author User
- */
+
 @javax.ws.rs.ApplicationPath("Resources")
 public class ApplicationConfig extends Application {
 
@@ -30,6 +23,7 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ws.restful.CustomerResource.class);
+        resources.add(ws.restful.TableResource.class);
     }
     
 }
