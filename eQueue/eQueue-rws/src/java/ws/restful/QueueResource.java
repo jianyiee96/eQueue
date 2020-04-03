@@ -19,6 +19,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import util.exceptions.QueueNotFoundException;
+import ws.datamodel.ErrorRsp;
+import ws.datamodel.RetrieveQueueResponse;
 
 
 @Path("Queue")
@@ -38,27 +40,22 @@ public class QueueResource {
 
     }
 
-    @Path("queueProbe")
+    @Path("retrieveQueueByCustomerId/{customerId}")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response customerLogin(@QueryParam("customerId") String customerId) {
+    public Response retrieveQueueByCustomerId(@QueryParam("customerId") String customerId) {
         
         try {
             Queue queue = queueSessionBeanLocal.retrieveQueueByCustomerId(Long.parseLong(customerId));
 
-            customer.setPassword(null);
-            customer.setSalt(null);
-            customer.getCustomerOrders().clear();
-            customer.getNotifications().clear();
-            customer.setAllocatedDiningTable(null);
-            customer.setCurrentQueue(null);
-
-            return Response.status(Response.Status.OK).entity(new CustomerLoginRsp(customer)).build();
-        } catch (QueueNotFoundException ex) {
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-
-            return Response.status(Response.Status.UNAUTHORIZED).entity(errorRsp).build();
+            if(queue == null) {
+                return Response.status(Response.Status.OK).entity(new RetrieveQueueResponse(queue)).build();
+            }
+            
+            queue.setCustomer(null);
+            return Response.status(Response.Status.OK).entity(new RetrieveQueueResponse(queue)).build();
+            
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
 

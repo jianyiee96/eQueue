@@ -2,14 +2,14 @@ package ws.datamodel;
 
 import entity.DiningTable;
 
-public class RetrieveTableResponse {
+public class RetrieveDiningTableResponse {
 
     private DiningTable diningTable;
 
-    public RetrieveTableResponse() {
+    public RetrieveDiningTableResponse() {
     }
 
-    public RetrieveTableResponse(DiningTable diningTable) {
+    public RetrieveDiningTableResponse(DiningTable diningTable) {
         this.diningTable = diningTable;
     }
 

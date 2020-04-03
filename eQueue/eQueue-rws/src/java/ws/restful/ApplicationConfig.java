@@ -23,8 +23,8 @@ public class ApplicationConfig extends Application {
      */
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ws.restful.CustomerResource.class);
+        resources.add(ws.restful.DiningTableResource.class);
         resources.add(ws.restful.QueueResource.class);
-        resources.add(ws.restful.TableResource.class);
     }
     
 }
