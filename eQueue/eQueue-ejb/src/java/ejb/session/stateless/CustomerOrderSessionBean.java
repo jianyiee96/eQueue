@@ -4,6 +4,7 @@ import entity.Customer;
 import entity.CustomerOrder;
 import entity.OrderLineItem;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -12,12 +13,14 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.Query;
+import javax.persistence.TemporalType;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CustomerNotFoundException;
+import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.UnknownPersistenceException;
@@ -83,61 +86,65 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
     }
 
     @Override
-    public List<CustomerOrder> retrieveOngoingOrders() {
+    public List<CustomerOrder> retrieveCurrentDayOrders() {
+        Date currentDay = new Date();
+        currentDay.setHours(0);
+        currentDay.setMinutes(0);
+        currentDay.setSeconds(0);
         Query query = em.createQuery(
-                "SELECT DISTINCT o " + 
-                "FROM CustomerOrder o " +
-                "JOIN o.orderLineItems li " +
-                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.ORDERED " +
-                "OR li.status = util.enumeration.OrderLineItemStatusEnum.PREPARING " + 
-                "ORDER BY o.orderDate ASC, o.orderId ASC"
+                "SELECT DISTINCT o "
+                + "FROM CustomerOrder o "
+                + "JOIN o.orderLineItems li "
+                + "WHERE o.orderDate > :today "
+                + "AND o.isCompleted = false "
+                + "AND li.status <> util.enumeration.OrderLineItemStatusEnum.IN_CART "
+                + "ORDER BY o.orderDate ASC, o.orderId ASC"
         );
+        query.setParameter("today", currentDay, TemporalType.TIMESTAMP);
 
-        List<CustomerOrder> ongoingOrders = query.getResultList();
-        
-        for (CustomerOrder o : ongoingOrders) {
-            o.getOrderLineItems().size();
-        }
-        
-        return ongoingOrders;
+        List<CustomerOrder> currentDayOrders = query.getResultList();
+
+//        for (CustomerOrder o : currentDayOrders) {
+//            System.out.println("============================");
+//            System.out.println("Order ID   - " + o.getOrderId());
+//            System.out.println("Order Date - " + o.getOrderDate());
+//            System.out.println("============================");
+//            o.getOrderLineItems().size();
+//            for (OrderLineItem li : o.getOrderLineItems()) {
+//                System.out.println("ID - " + li.getOrderLineItemId() + " ||| Name - " + li.getMenuItem().getMenuItemName() + " ||| Status - " + li.getStatus());
+//            }
+//            System.out.println();
+//        }
+        return currentDayOrders;
     }
     
     @Override
-    public List<CustomerOrder> retrieveOrdersWithOrderedLineItems() {
-        Query query = em.createQuery(
-                "SELECT DISTINCT o " + 
-                "FROM CustomerOrder o " +
-                "JOIN o.orderLineItems li " +
-                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.ORDERED " +
-                "ORDER BY o.orderDate ASC, o.orderId ASC"
-        );
+    public CustomerOrder retrieveCustomerOrderById(Long customerOrderId) throws CustomerOrderNotFoundException {
+        CustomerOrder customerOrder = em.find(CustomerOrder.class, customerOrderId);
         
-        List<CustomerOrder> ordersWithOrderedLineItems = query.getResultList();
-        
-        for (CustomerOrder o : ordersWithOrderedLineItems) {
-            o.getOrderLineItems().size();
-        }    
-    
-        return ordersWithOrderedLineItems;
-    }
-    
-    @Override
-    public List<CustomerOrder> retrieveOrdersWithPreparingLineItems() {
-        Query query = em.createQuery(
-                "SELECT DISTINCT o " + 
-                "FROM CustomerOrder o " +
-                "JOIN o.orderLineItems li " +
-                "WHERE li.status = util.enumeration.OrderLineItemStatusEnum.PREPARING " +
-                "ORDER BY o.orderDate ASC, o.orderId ASC"
-        );
-        
-        List<CustomerOrder> ordersWithPreparingLineItems = query.getResultList();
-        
-        for (CustomerOrder o : ordersWithPreparingLineItems) {
-            o.getOrderLineItems().size();
+        if (customerOrder != null) {
+            return customerOrder;
+        } else {
+            throw new CustomerOrderNotFoundException("Customer Order ID " + customerOrderId + " does not exist!");
         }
-        
-        return ordersWithPreparingLineItems;
+    }
+
+    @Override
+    public void updateCustomerOrder(CustomerOrder customerOrder) throws CustomerOrderNotFoundException, InputDataValidationException {
+        if (customerOrder != null && customerOrder.getOrderId() != null) {
+            Set<ConstraintViolation<CustomerOrder>> constraintViolations = validator.validate(customerOrder);
+            if (constraintViolations.isEmpty()) {
+                CustomerOrder customerOrderToUpdate = retrieveCustomerOrderById(customerOrder.getOrderId());
+                
+                customerOrderToUpdate.setIsCompleted(customerOrder.getIsCompleted());
+                customerOrderToUpdate.setStatus(customerOrder.getStatus());
+                customerOrderToUpdate.setTotalAmount(customerOrder.getTotalAmount());
+            } else {
+                throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
+            }
+        } else {
+            throw new CustomerOrderNotFoundException("Customer Order ID not provided for customer order to be updated!");
+        }
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CustomerOrder>> constraintViolations) {
