@@ -1,6 +1,7 @@
 package entity;
 
 import java.io.Serializable;
+import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,6 +35,10 @@ public class DiningTable implements Serializable {
     @Max(8)
     private Long seatingCapacity;
 
+    private LocalTime seatedTime;
+
+    private LocalTime timePassed;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
@@ -41,21 +46,22 @@ public class DiningTable implements Serializable {
 
     @OneToOne(optional = true)
     private Customer customer;
-    
-    public DiningTable(){
-        
+
+    public DiningTable() {
+
         this.tableStatus = TableStatusEnum.FROZEN_UNOCCUPIED;
+
         this.qrCode = "default";
-        
+
     }
-    
-    public DiningTable(Long seatingCapacity){
-        
+
+    public DiningTable(Long seatingCapacity) {
+
         this();
         this.seatingCapacity = seatingCapacity;
-        
+
     }
-    
+
     public Long getDiningTableId() {
         return diningTableId;
     }
@@ -104,8 +110,22 @@ public class DiningTable implements Serializable {
         }
     }
 
+    public LocalTime getSeatedTime() {
+        return seatedTime;
+    }
+
+    public void setSeatedTime(LocalTime seatedTime) {
+        this.seatedTime = seatedTime;
+    }
     
-    
+    public LocalTime getTimePassed() {
+        return timePassed;
+    }
+
+    public void setTimePassed(LocalTime timePassed) {
+        this.timePassed = timePassed;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;

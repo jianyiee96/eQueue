@@ -2,6 +2,8 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import entity.DiningTable;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -85,6 +87,13 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
             throw new DiningTableNotFoundException("Dining Table ID " + diningTableId + " does not exist!");
         }
     }
+    
+    @Override
+    public DiningTable retrieveDiningTableByCustomerId(Long customerId) {
+        Customer customer = em.find(Customer.class, customerId);
+        DiningTable diningTableToRetrieved = customer.getAllocatedDiningTable();
+        return diningTableToRetrieved;
+    }
 
     @Override
     public void updateDiningTableInformation(DiningTable diningTable) throws DiningTableNotFoundException, EditTableException, InputDataValidationException {
@@ -137,6 +146,8 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
             diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
 
         }
+        diningTable.setSeatedTime(null);
+        diningTable.setTimePassed(null);
 
     }
 
@@ -144,6 +155,14 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     public void seatCustomerToDiningTable(Long diningTableId) {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
         diningTable.setTableStatus(TableStatusEnum.UNFROZEN_OCCUPIED);
+        diningTable.setSeatedTime(LocalTime.now(ZoneId.of("Asia/Singapore")));
+    }
+
+    @Override
+    public void incrementTimePassed(Long diningTableId) {
+        DiningTable diningTable = em.find(DiningTable.class, diningTableId);
+
+        diningTable.setTimePassed(LocalTime.now(ZoneId.of("Asia/Singapore")).minusNanos(diningTable.getSeatedTime().toNanoOfDay()));
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<DiningTable>> constraintViolations) {

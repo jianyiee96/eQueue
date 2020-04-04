@@ -18,6 +18,8 @@ public interface DiningTableSessionBeanLocal {
 
     public DiningTable retrieveDiningTableById(Long diningTableId) throws DiningTableNotFoundException;
 
+    public DiningTable retrieveDiningTableByCustomerId(Long customerId);
+    
     public void updateDiningTableInformation(DiningTable diningTable) throws DiningTableNotFoundException, EditTableException, InputDataValidationException;
 
     public void deleteDiningTable(Long diningTableId) throws DiningTableNotFoundException, DeleteDiningTableException;
@@ -29,5 +31,7 @@ public interface DiningTableSessionBeanLocal {
     public void seatCustomerToDiningTable(Long diningTableId);
     
     public List<DiningTable> retrieveAllUnfrozenUnoccupiedTables();
+
+    public void incrementTimePassed(Long diningTableId);
 
 }

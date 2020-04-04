@@ -48,25 +48,25 @@ public class Customer implements Serializable {
     @NotNull
     private String salt;
 
-    @OneToOne (mappedBy = "customer", optional = true)
+    @OneToOne(mappedBy = "customer", optional = true)
     private DiningTable allocatedDiningTable;
-    
-    @OneToOne (mappedBy = "customer", optional = true)
+
+    @OneToOne(mappedBy = "customer", optional = true)
     private Queue currentQueue;
-    
-    @OneToOne (mappedBy = "customer", optional = true)
+
+    @OneToOne(mappedBy = "customer", optional = true)
     private CreditCard creditCard;
-    
+
     @OneToMany(mappedBy = "customer")
     private List<Notification> notifications;
-    
+
     @OneToMany(mappedBy = "customer")
     private List<CustomerOrder> customerOrders;
-    
-    @OneToOne (optional = false)
-    @JoinColumn (nullable = false)
+
+    @OneToOne(optional = false)
+    @JoinColumn(nullable = false)
     private ShoppingCart shoppingCart;
-    
+
     public Customer() {
 
         this.salt = CryptographicHelper.getInstance().generateRandomString(32);
@@ -117,7 +117,7 @@ public class Customer implements Serializable {
     public String getPassword() {
         return password;
     }
-    
+
     public void setPassword(String password) {
         if (password != null) {
             this.password = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(password + this.salt));
@@ -125,9 +125,13 @@ public class Customer implements Serializable {
             this.password = null;
         }
     }
-    
+
     public String getSalt() {
         return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public DiningTable getAllocatedDiningTable() {
@@ -177,8 +181,6 @@ public class Customer implements Serializable {
     public void setShoppingCart(ShoppingCart shoppingCart) {
         this.shoppingCart = shoppingCart;
     }
-    
-    
 
     @Override
     public int hashCode() {

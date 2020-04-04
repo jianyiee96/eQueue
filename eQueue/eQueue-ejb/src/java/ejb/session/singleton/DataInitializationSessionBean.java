@@ -59,7 +59,7 @@ public class DataInitializationSessionBean {
     private CustomerSessionBeanLocal customerSessionBeanLocal;
     @EJB
     private DiningTableSessionBeanLocal diningTableSessionBean;
-    @EJB(name = "EmployeeSessionBeanLocal")
+    @EJB
     private EmployeeSessionBeanLocal employeeSessionBeanLocal;
     @EJB
     private MenuItemSessionBeanLocal menuItemSessionBean;
@@ -89,6 +89,7 @@ public class DataInitializationSessionBean {
             Long custId2 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
             Long custId4 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
+            Long custId5 = customerSessionBeanLocal.createNewCustomer(new Customer("Hew", "Jian Yiee", "hew1521@hotmail.com", "password"));
 
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
@@ -111,9 +112,11 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Staff", "staff-two@eQueue.com", "staff2", "password", EmployeeRoleEnum.DEFAULT));
 
             diningTableSessionBean.allocateTableToCustomer(1l, 1l);
+            diningTableSessionBean.seatCustomerToDiningTable(1l);
+            
             diningTableSessionBean.allocateTableToCustomer(2l, 2l);
             diningTableSessionBean.seatCustomerToDiningTable(2l);
-            diningTableSessionBean.seatCustomerToDiningTable(5l);
+            
 
             Long mcId1 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
             Long mcId2 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mcId1);
