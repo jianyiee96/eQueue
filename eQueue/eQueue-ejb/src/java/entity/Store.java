@@ -58,8 +58,8 @@ public class Store implements Serializable {
     private Long allocationGraceWaitingMinutes;
     
     public Store(){
-        this.estimatedQueueUnitWaitingMinutes = 1l;
-        this.allocationGraceWaitingMinutes = 15l;
+        this.estimatedQueueUnitWaitingMinutes = 5l;
+        this.allocationGraceWaitingMinutes = 1l;
     }
     
     public Store(String storeName, String storeEmail, String storeAddress, String messageOfTheDay, String storeContact) {
