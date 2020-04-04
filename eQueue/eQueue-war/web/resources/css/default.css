@@ -107,6 +107,10 @@ div.ui-growl {
     background-image: url("#{resource['images/icons/serve_icon.svg']}") !important;
 }
 
+.alert-icon {
+    background-image: url("#{resource['images/icons/alert_icon.svg']}") !important;
+}
+
 .header-text:hover {
     text-decoration: none;
 }

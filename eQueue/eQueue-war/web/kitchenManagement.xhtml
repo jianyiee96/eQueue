@@ -10,7 +10,7 @@
 
     <ui:define name="content">
         <h:outputStylesheet library="css" name="default.css" />
-        <style>
+        <style type="text/css">
             .ui-datagrid-header {
                 font-size: medium;
             }
@@ -20,10 +20,23 @@
             .ui-datagrid-column {
                 vertical-align: top;
             }
-            .txtAlignCenter {
-                text-align: center;
+            .ui-button-text-only {
+                font-size: 14px;
+            }
+            .ordered {
+                background-color: indianred;
+            }
+            .preparing {
+                background-color: lightgoldenrodyellow;
+            }
+            .served {
+                background-color: aquamarine;
+            }
+            .cancelled {
+                background-color: gainsboro;
             }
         </style>
+
 
         <p:layout>
             <p:layoutUnit minSize="300" position="west"  header="Kitchen Overview" collapsible="true">
@@ -33,101 +46,131 @@
                                  itemLabel="#{ongoingCustomerOrder.orderId}"/>
                 </div>
             </p:layoutUnit>
-
             <p:layoutUnit position="center" >
-                <p:tabView id="kitchenTabView" effect="fade">
-                    <p:tab title="ORDERED">
-                        <h:form>
-                            <p:growl redisplay="false" life="2500" />
-                            <p:dataGrid id="orders" value="#{kitchenManagementManagedBean.filteredOrdersWithOrderedItems}" var="order" columns="3" rows="9" paginator="true" 
-                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        rowsPerPageTemplate="9,12,15">
-                                <p:panel style="text-align: center; margin: 2px 2px 2px 2px;">
+                <h:form id="formCurrentDayOrders">
+                    <p:growl redisplay="false" life="2500" />
+                    <p:dataGrid id="orders" value="#{kitchenManagementManagedBean.currentDayCustomerOrders}" var="order" columns="3" rows="9" paginator="true" 
+                                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                rowsPerPageTemplate="9,12,15">
+                        <p:panel style="text-align: center; margin: 2px 2px 2px 2px;">
 
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Order ID - #{order.orderId}" />
-                                        <br />
-                                        <h:outputLabel value="#{order.orderDate}">
-                                            <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
-                                        </h:outputLabel>
-                                    </f:facet>
+                            <f:facet name="header">
+                                <h:outputText value="Order [ #{order.orderId} ]" />&nbsp;
+                                <h:outputText value="Table [ #{order.customer.allocatedDiningTable.diningTableId} ]" />&nbsp;
+                                <h:outputText value="Customer [ #{order.customer.firstName} ]" />
+                                <br />
+                                <h:outputText value="#{order.orderDate}">
+                                    <f:convertDateTime pattern="hh:mm a" />
+                                </h:outputText>&nbsp;
+                            </f:facet>
 
-                                    <p:dataTable value="#{order.orderLineItems}" var="item" >
-                                        <p:column headerText="Item Name">
-                                            <h:outputText value="#{item.menuItem.menuItemName}" />
-                                        </p:column>
+                            <p:dataTable rowIndexVar="index" value="#{order.orderLineItems}" var="item" scrollable="true" >
+                                <p:column headerText="Idx" style="width: 15px; text-align: center;">
+                                    <h:outputText value="#{index + 1}" />
+                                </p:column>
 
-                                        <p:column headerText="Quantity">
-                                            <div class="txtAlignCenter">
-                                                <h:outputText value="#{item.quantity}" />
-                                            </div>
-                                        </p:column>
+                                <p:column headerText="Item Name" style="width: 100px; text-align: center;">
+                                    <h:outputText value="#{item.menuItem.menuItemName}" />
+                                </p:column>
 
-                                        <p:column headerText="Remarks">
-                                            <h:outputText value="#{item.remarks}" />
-                                        </p:column>
+                                <p:column headerText="Quantity" style="width: 50px; text-align: center;">
+                                    <h:outputText value="#{item.quantity}" />
+                                </p:column>
 
-                                        <p:column headerText="Action">
-                                            <div class="txtAlignCenter">
-                                                <p:commandButton update="@form kitchenTabView" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}" >
-                                                    <f:attribute name="orderItemToPrepare" value="#{item}" />
-                                                    <!--<f:setPropertyActionListener value="{item}" target="{kitchenManagementManagedBean.orderItemToPrepare}" />-->
-                                                </p:commandButton>
-                                            </div>
-                                        </p:column>
-                                    </p:dataTable>             
+                                <p:column headerText="Status" style="text-align: center;" styleClass="#{item.status == 'ORDERED' ? 'ordered' : item.status == 'PREPARING' ? 'preparing' : item.status == 'SERVED' ? 'served' : 'cancelled'}">
+                                    <h:outputText value="#{item.status}" />
+                                </p:column>
 
-                                </p:panel>
-                            </p:dataGrid>
-                        </h:form>
-                    </p:tab>
+                                <p:column headerText="Action" style="text-align: center;">
+                                    <p:commandButton rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="formViewOrderLineItem" oncomplete="PF('dialogViewOrderLineItem').show()" title="Remarks" icon="custom-icon alert-icon">
+                                        <f:setPropertyActionListener value="#{item}" target="#{kitchenManagementManagedBean.orderItemToView}" />
+                                    </p:commandButton>
 
-                    <p:tab id="preparingTab" title="PREPARING">
-                        <h:form>
-                            <p:growl redisplay="false" life="2500" />
-                            <p:dataGrid id="orders" value="#{kitchenManagementManagedBean.filteredOrdersWithPreparingItems}" var="order" columns="3" rows="9" paginator="true" 
-                                        paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
-                                        rowsPerPageTemplate="9,12,15">
-                                <p:panel style="text-align: center; margin: 2px 2px 2px 2px;">
+                                    <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form" title="Prepare" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}">
+                                        <f:attribute name="orderItemToPrepare" value="#{item}" />
+                                    </p:commandButton>
 
-                                    <f:facet name="header">
-                                        <h:outputLabel value="Order ID - #{order.orderId}" />
-                                        <br />
-                                        <h:outputLabel value="#{order.orderDate}">
-                                            <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
-                                        </h:outputLabel>
-                                    </f:facet>
+                                    <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form" title="Serve" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
+                                        <f:attribute name="orderItemToServe" value="#{item}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
 
-                                    <p:dataTable value="#{order.orderLineItems}" var="item" >
-                                        <p:column headerText="Item Name">
-                                            <h:outputText value="#{item.menuItem.menuItemName}" />
-                                        </p:column>
+                            <br />
+                            <p:commandButton rendered="#{order.isAllServed == true}" update="@form" value="Complete" actionListener="#{kitchenManagementManagedBean.completeOrder}">
+                                <f:attribute name="orderToComplete" value="#{order}" />
+                            </p:commandButton>
 
-                                        <p:column headerText="Quantity">
-                                            <div class="txtAlignCenter">
-                                                <h:outputText value="#{item.quantity}" />
-                                            </div>
-                                        </p:column>
+                        </p:panel>
+                    </p:dataGrid>
+                </h:form>
 
-                                        <p:column headerText="Remarks">
-                                            <h:outputText value="#{item.remarks}" />
-                                        </p:column>
+                <h:form id="formViewOrderLineItem">
+                    <p:dialog id="dialogViewOrderLineItem" widgetVar="dialogViewOrderLineItem" responsive="true" header="View Order Item Details" closable="true" showEffect="clip" hideEffect="clip">
+                        <p:panelGrid>
+                            <p:row rendered="#{kitchenManagementManagedBean.orderItemToView.menuItem.imagePath != null}">
+                                <p:column colspan="2">
+                                    <div style='text-align: center;'>
+                                        <p:graphicImage style="margin: 15px;" width="180" height="180" library="images" name="food/#{kitchenManagementManagedBean.orderItemToView.menuItem.imagePath}" alt="#{kitchenManagementManagedBean.orderItemToView.menuItem.menuItemName} (#{kitchenManagementManagedBean.orderItemToView.menuItem.menuItemCode}) is not loaded" />
+                                    </div>
+                                </p:column>
+                            </p:row>
 
-                                        <p:column headerText="Action">
-                                            <div class="txtAlignCenter">
-                                                <p:commandButton update="@form" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
-                                                    <f:attribute name="orderItemToServe" value="#{item}" />
-                                                    <!--<f:setPropertyActionListener value="{item}" target="{kitchenManagementManagedBean.orderItemToServe}" />-->
-                                                </p:commandButton>
-                                            </div>
-                                        </p:column>
-                                    </p:dataTable>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Code" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.orderItemToView.menuItem.menuItemCode}" />
+                                </p:column>
+                            </p:row>
 
-                                </p:panel>
-                            </p:dataGrid>
-                        </h:form>
-                    </p:tab>
-                </p:tabView>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.orderItemToView.menuItem.menuItemName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Description" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.orderItemToView.menuItem.menuItemDescription}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Quantity" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.orderItemToView.quantity}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Remarks" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.orderItemToView.remarks}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <div style="text-align: center;">
+                                        <p:commandButton icon="fa fa-close" oncomplete="PF('dialogViewOrderLineItem').hide();" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
             </p:layoutUnit>
         </p:layout>
     </ui:define>
