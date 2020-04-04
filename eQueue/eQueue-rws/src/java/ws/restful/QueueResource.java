@@ -5,6 +5,7 @@
  */
 package ws.restful;
 
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import entity.Customer;
 import entity.Queue;
@@ -14,14 +15,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import util.exceptions.QueueNotFoundException;
+import util.exceptions.UnableToJoinQueueException;
 import ws.datamodel.ErrorRsp;
-import ws.datamodel.RetrieveQueueResponse;
-
+import ws.datamodel.JoinQueueRsp;
+import ws.datamodel.RetrieveQueueRsp;
 
 @Path("Queue")
 public class QueueResource {
@@ -32,11 +32,13 @@ public class QueueResource {
     private final SessionBeanLookup sessionBeanLookup;
 
     private final QueueSessionBeanLocal queueSessionBeanLocal;
+    private final CustomerSessionBeanLocal customerSessionBeanLocal;
 
     public QueueResource() {
 
         sessionBeanLookup = new SessionBeanLookup();
         queueSessionBeanLocal = sessionBeanLookup.lookupQueueSessionBeanLocal();
+        customerSessionBeanLocal = sessionBeanLookup.lookupCustomerSessionBeanLocal();
 
     }
 
@@ -49,17 +51,49 @@ public class QueueResource {
         try {
             Queue queue = queueSessionBeanLocal.retrieveQueueByCustomerId(Long.parseLong(customerId));
 
-            if(queue == null) {
-                return Response.status(Response.Status.OK).entity(new RetrieveQueueResponse(queue)).build();
+            if (queue == null) {
+                return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue)).build();
             }
-            
             queue.setCustomer(null);
-            return Response.status(Response.Status.OK).entity(new RetrieveQueueResponse(queue)).build();
-            
+            return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue)).build();
+
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
 
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
+    }
+
+    @Path("joinQueue")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response joinQueue(@QueryParam("customerId") String customerId, @QueryParam("pax") String pax) {
+
+        try {
+
+            Customer customer = customerSessionBeanLocal.retrieveCustomerById(Long.parseLong(customerId));
+
+            if (customer == null || customer.getCurrentQueue() != null || customer.getAllocatedDiningTable() != null) {
+                ErrorRsp errorRsp = new ErrorRsp("Invalid join queue request; customer does not exist or customer has existing queue/allocated table.");
+                return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+            }
+            
+            Long queueId = queueSessionBeanLocal.joinQueue(customer.getCustomerId(), Long.parseLong(pax));
+            JoinQueueRsp joinQueueRsp = new JoinQueueRsp(queueId);
+
+            return Response.status(Response.Status.OK).entity(joinQueueRsp).build();
+
+        } catch (UnableToJoinQueueException ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+        } catch (Exception ex) {
+
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+
     }
 }

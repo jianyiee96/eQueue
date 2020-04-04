@@ -9,15 +9,14 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import ws.datamodel.ErrorRsp;
-import ws.datamodel.RetrieveDiningTableResponse;
+import ws.datamodel.RetrieveDiningTableRsp;
 
 @Path("DiningTable")
 public class DiningTableResource {
 
     private final SessionBeanLookup sessionBeanLookup;
-
+    
     private final DiningTableSessionBeanLocal diningTableSessionBeanLocal;
 
     public DiningTableResource() {
@@ -30,16 +29,15 @@ public class DiningTableResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveDiningTableByCustomerId(@QueryParam("customerId") String customerId) {
-
         try {
             DiningTable diningTable = diningTableSessionBeanLocal.retrieveDiningTableByCustomerId(Long.parseLong(customerId));
-
+            
             if (diningTable == null) {
-                return Response.status(Response.Status.OK).entity(new RetrieveDiningTableResponse(diningTable)).build();
+                return Response.status(Response.Status.OK).entity(new RetrieveDiningTableRsp(diningTable)).build();
+                
             }
-
             diningTable.setCustomer(null);
-            return Response.status(Response.Status.OK).entity(new RetrieveDiningTableResponse(diningTable)).build();
+            return Response.status(Response.Status.OK).entity(new RetrieveDiningTableRsp(diningTable)).build();
 
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());

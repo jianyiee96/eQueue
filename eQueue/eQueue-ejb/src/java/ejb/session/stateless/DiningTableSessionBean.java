@@ -141,13 +141,18 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
 
         if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED) {
             diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
-
         } else if (diningTable.getTableStatus() == TableStatusEnum.FROZEN_ALLOCATED) {
             diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
-
+        } else if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_OCCUPIED) {
+            diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
+        } else if (diningTable.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED) {
+            diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
         }
+        
+        
         diningTable.setSeatedTime(null);
         diningTable.setTimePassed(null);
+        diningTable.setCustomer(null);
 
     }
 
