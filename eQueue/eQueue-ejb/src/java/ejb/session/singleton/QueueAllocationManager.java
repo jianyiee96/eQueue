@@ -80,7 +80,7 @@ public class QueueAllocationManager {
                     allocated++;
 
                     TimerConfig timerConfig = new TimerConfig(queue.getCustomer().getCustomerId().toString(), true);
-                    Timer timer = timerService.createSingleActionTimer(20000, timerConfig); // to be change to store variable timeout duration.
+                    Timer timer = timerService.createSingleActionTimer(100000, timerConfig); // to be change to store variable timeout duration.
                     System.out.println("- Created Queue Invalidation Timer to trigger at : " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timer.getNextTimeout()) + " Timer info(Customer id): " + timer.getInfo());
 
                 } else {

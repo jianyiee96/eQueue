@@ -7,8 +7,10 @@ package ws.restful;
 
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
+import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
 import entity.Queue;
+import entity.Store;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
@@ -39,6 +41,7 @@ public class QueueResource {
         sessionBeanLookup = new SessionBeanLookup();
         queueSessionBeanLocal = sessionBeanLookup.lookupQueueSessionBeanLocal();
         customerSessionBeanLocal = sessionBeanLookup.lookupCustomerSessionBeanLocal();
+        
 
     }
 
@@ -47,15 +50,18 @@ public class QueueResource {
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     public Response retrieveQueueByCustomerId(@QueryParam("customerId") String customerId) {
-        
+
         try {
             Queue queue = queueSessionBeanLocal.retrieveQueueByCustomerId(Long.parseLong(customerId));
 
             if (queue == null) {
-                return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue)).build();
+                return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(null,null)).build();
             }
             queue.setCustomer(null);
-            return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue)).build();
+            
+            Long queuePosition = queueSessionBeanLocal.getPositionByQueueId(queue.getQueueId());
+            
+            return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue, queuePosition)).build();
 
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -78,7 +84,7 @@ public class QueueResource {
                 ErrorRsp errorRsp = new ErrorRsp("Invalid join queue request; customer does not exist or customer has existing queue/allocated table.");
                 return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
             }
-            
+
             Long queueId = queueSessionBeanLocal.joinQueue(customer.getCustomerId(), Long.parseLong(pax));
             JoinQueueRsp joinQueueRsp = new JoinQueueRsp(queueId);
 
@@ -96,6 +102,5 @@ public class QueueResource {
         }
 
     }
-    
-    
+
 }

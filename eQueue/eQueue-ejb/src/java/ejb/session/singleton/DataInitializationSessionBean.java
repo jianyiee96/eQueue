@@ -111,13 +111,7 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("One", "Staff", "staff-one@eQueue.com", "staff1", "password", EmployeeRoleEnum.DEFAULT));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Staff", "staff-two@eQueue.com", "staff2", "password", EmployeeRoleEnum.DEFAULT));
 
-            diningTableSessionBean.allocateTableToCustomer(1l, 1l);
-            diningTableSessionBean.seatCustomerToDiningTable(1l);
-            
-            diningTableSessionBean.allocateTableToCustomer(2l, 2l);
-            diningTableSessionBean.seatCustomerToDiningTable(2l);
-            
-
+           
             Long mcId1 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
             Long mcId2 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mcId1);
             Long mcId3 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Malay"), mcId1);

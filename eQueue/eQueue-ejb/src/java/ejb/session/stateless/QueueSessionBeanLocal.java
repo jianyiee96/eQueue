@@ -27,5 +27,8 @@ public interface QueueSessionBeanLocal {
     public void allocateQueue(Long queueId) ;
 
     public void invalidateCustomerQueue(Long customerId) throws QueueDoesNotExistException;
+
+    public Long getPositionByQueueId(Long queueId);
+
     
 }

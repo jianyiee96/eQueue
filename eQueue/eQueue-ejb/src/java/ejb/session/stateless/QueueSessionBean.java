@@ -87,13 +87,30 @@ public class QueueSessionBean implements QueueSessionBeanLocal {
         } else {
 
             diningTableSessionBeanLocal.removeCustomerTableRelationship(customerId);
-            
+
             queue.getCustomer().setCurrentQueue(null);
             //queue.setCustomer(null);
 
             em.remove(queue);
         }
 
+    }
+
+    @Override
+    public Long getPositionByQueueId(Long queueId) {
+
+        Queue queue = em.find(Queue.class, queueId);
+
+        List<Queue> queues = retrieveAllActiveQueues();
+
+        Long position = 1l;
+
+        for (Queue q : queues) {
+            if (q.getStartDateTime().before(queue.getStartDateTime())) {
+                position++;
+            }
+        }
+        return position;
     }
 
 }
