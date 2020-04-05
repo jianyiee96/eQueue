@@ -5,6 +5,7 @@ import entity.OrderLineItem;
 import java.util.List;
 import javax.ejb.Local;
 import util.exceptions.CreateNewCustomerOrderException;
+import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.UnknownPersistenceException;
 
@@ -13,11 +14,10 @@ public interface CustomerOrderSessionBeanLocal {
 
     public Long createCustomerOrder(CustomerOrder newCustomerOrder, Long customerId, List<OrderLineItem> orderLineItems) throws InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException;
 
-    public List<CustomerOrder> retrieveOngoingOrders();
+    public List<CustomerOrder> retrieveCurrentDayOrders();
 
-    public List<CustomerOrder> retrieveOrdersWithOrderedLineItems();
+    public void updateCustomerOrder(CustomerOrder customerOrder) throws CustomerOrderNotFoundException, InputDataValidationException;
 
-    public List<CustomerOrder> retrieveOrdersWithPreparingLineItems();
-    
-    
+    public CustomerOrder retrieveCustomerOrderById(Long customerOrderId) throws CustomerOrderNotFoundException;
+
 }

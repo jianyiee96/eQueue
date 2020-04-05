@@ -89,17 +89,12 @@ public class MenuManagementManagedBean implements Serializable {
     private UploadedFile updateMenuItemPreviewPhoto;
     private String updateMenuItemPreviewPhotoContents;
     private String updateMenuItemCurrentPhotoContents;
-    private String viewMenuItemCurrentPhotoContents;
 
     private Boolean updateMenuItemDeleteOldPhoto;
     private String updateMenuItemOldPhotoPath;
 
     private CroppedImage croppedImage;
     private Boolean cropMode;
-
-    public String getViewMenuItemCurrentPhotoContents() {
-        return viewMenuItemCurrentPhotoContents;
-    }
 
     MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
@@ -163,7 +158,6 @@ public class MenuManagementManagedBean implements Serializable {
                 if (viewMenuItemManagedBean != null) {
                     viewMenuItemManagedBean.setMenuItemToView(mi);
                 }
-                doViewMenuItem(mi);
                 PrimeFaces.current().executeScript("PF('dialogViewMenuItem').show()");
             }
         }
@@ -301,7 +295,7 @@ public class MenuManagementManagedBean implements Serializable {
         }
 
         String filePath = getWorkingDirPath() + menuItem.getImagePath();
-        
+
         FileImageOutputStream imageOutput;
         try {
             imageOutput = new FileImageOutputStream(new File(filePath));
@@ -314,27 +308,6 @@ public class MenuManagementManagedBean implements Serializable {
 
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Cropping finished."));
         return true;
-    }
-
-    public void doViewMenuItem(ActionEvent event) {
-        MenuItem menuItem = (MenuItem) event.getComponent().getAttributes().get("menuItemToView");
-        if (menuItem.getImagePath() != null) {
-            try {
-                viewMenuItemCurrentPhotoContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(menuItem.getImagePath()).toPath()));
-            } catch (Exception ex) {
-                System.out.println("FILE DOES NOT EXIST! ===========> " + menuItem.getImagePath());
-            }
-        }
-    }
-
-    public void doViewMenuItem(MenuItem menuItem) {
-        if (menuItem.getImagePath() != null) {
-            try {
-                viewMenuItemCurrentPhotoContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(menuItem.getImagePath()).toPath()));
-            } catch (Exception ex) {
-                System.out.println("FILE DOES NOT EXIST! ===========> " + menuItem.getImagePath());
-            }
-        }
     }
 
     public void doUpdateMenuItem(ActionEvent event) {

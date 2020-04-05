@@ -101,7 +101,7 @@
                                 </p:column>
 
                                 <p:column headerText="Action" width="100">
-                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" actionListener="#{menuManagementManagedBean.doViewMenuItem}" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
+                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
                                         <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
                                         <f:attribute name="menuItemToView" value="#{menuItem}" />
                                     </p:commandButton>

@@ -19,6 +19,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
+import util.enumeration.OrderLineItemStatusEnum;
 import util.enumeration.OrderStatusEnum;
 
 @Entity
@@ -33,40 +34,53 @@ public class CustomerOrder implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Date orderDate;
-    
+
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isCompleted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @NotNull
+    private OrderStatusEnum status;
+
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
     @DecimalMin("0.00")
     @Digits(integer = 9, fraction = 2)
     private Double totalAmount;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    @NotNull
-    private OrderStatusEnum status;
-    
-    
+
     @OneToMany
     private List<OrderLineItem> orderLineItems;
-    
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
-    
+
     @ManyToOne(optional = true)
     private PaymentTransaction paymentTransaction;
-    
-    public CustomerOrder(){
-        
+
+    public CustomerOrder() {
+
         this.orderDate = new Date();
+        this.isCompleted = Boolean.FALSE;
         this.status = OrderStatusEnum.UNPAID;
-        this.orderLineItems = new ArrayList<>();
         this.totalAmount = 0.0;
+
+        this.orderLineItems = new ArrayList<>();
         this.paymentTransaction = null;
-        
+
     }
-    
-    
+
+    public Boolean getIsAllServed() {
+        for (OrderLineItem li : orderLineItems) {
+            if (li.getStatus() == OrderLineItemStatusEnum.ORDERED || li.getStatus() == OrderLineItemStatusEnum.PREPARING) {
+                return Boolean.FALSE;
+            }
+        }
+        return Boolean.TRUE;
+    }
+
     public Long getOrderId() {
         return orderId;
     }
@@ -83,12 +97,12 @@ public class CustomerOrder implements Serializable {
         this.orderDate = orderDate;
     }
 
-    public Double getTotalAmount() {
-        return totalAmount;
+    public Boolean getIsCompleted() {
+        return isCompleted;
     }
 
-    public void setTotalAmount(Double totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setIsCompleted(Boolean isCompleted) {
+        this.isCompleted = isCompleted;
     }
 
     public OrderStatusEnum getStatus() {
@@ -97,6 +111,14 @@ public class CustomerOrder implements Serializable {
 
     public void setStatus(OrderStatusEnum status) {
         this.status = status;
+    }
+
+    public Double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(Double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public List<OrderLineItem> getOrderLineItems() {
@@ -112,17 +134,14 @@ public class CustomerOrder implements Serializable {
     }
 
     public void setCustomer(Customer customer) {
-        if(this.customer != null)
-        {
+        if (this.customer != null) {
             this.customer.getCustomerOrders().remove(this);
         }
-        
+
         this.customer = customer;
-        
-        if(this.customer != null)
-        {
-            if(!this.customer.getCustomerOrders().contains(this))
-            {
+
+        if (this.customer != null) {
+            if (!this.customer.getCustomerOrders().contains(this)) {
                 this.customer.getCustomerOrders().add(this);
             }
         }
@@ -133,24 +152,19 @@ public class CustomerOrder implements Serializable {
     }
 
     public void setPaymentTransaction(PaymentTransaction paymentTransaction) {
-        if(this.paymentTransaction != null)
-        {
+        if (this.paymentTransaction != null) {
             this.paymentTransaction.getCustomerOrders().remove(this);
         }
-        
+
         this.paymentTransaction = paymentTransaction;
-        
-        if(this.paymentTransaction != null)
-        {
-            if(!this.paymentTransaction.getCustomerOrders().contains(this))
-            {
+
+        if (this.paymentTransaction != null) {
+            if (!this.paymentTransaction.getCustomerOrders().contains(this)) {
                 this.paymentTransaction.getCustomerOrders().add(this);
             }
         }
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;
@@ -175,5 +189,5 @@ public class CustomerOrder implements Serializable {
     public String toString() {
         return "entity.Order[ id=" + orderId + " ]";
     }
-    
+
 }
