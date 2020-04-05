@@ -61,7 +61,7 @@ public class NotificationSessionBean implements NotificationSessionBeanLocal {
 
     @Override
     public List<Notification> retrieveNotificationsByCustomerId(Long customerId) {
-        Query query = em.createQuery("SELECT n FROM Notification n WHERE n.customer.customerId = :inCustomerId ORDER BY n.notificationDate ASC");
+        Query query = em.createQuery("SELECT n FROM Notification n WHERE n.customer.customerId = :inCustomerId ORDER BY n.notificationDate DESC");
         query.setParameter("inCustomerId", customerId);
 
         return query.getResultList();
