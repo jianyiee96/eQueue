@@ -3,6 +3,7 @@ package ws.restful;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +23,16 @@ public class SessionBeanLookup {
         try {
             javax.naming.Context c = new InitialContext();
             return (CustomerSessionBeanLocal) c.lookup(ejbModuleJndiPath + "CustomerSessionBean!ejb.session.stateless.CustomerSessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+    
+    public NotificationSessionBeanLocal lookupNotificationSessionBeanLocal() {
+        try {
+            javax.naming.Context c = new InitialContext();
+            return (NotificationSessionBeanLocal) c.lookup(ejbModuleJndiPath + "NotificationSessionBean!ejb.session.stateless.NotificationSessionBeanLocal");
         } catch (NamingException ne) {
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
             throw new RuntimeException(ne);

@@ -35,7 +35,7 @@ public class Notification implements Serializable {
     @Size(max = 64)
     private String title;
 
-    @Column(nullable = false, length = 128)
+    @Column(nullable = false, length = 256)
     @NotNull
     @Size(max = 128)
     private String message;
@@ -97,7 +97,7 @@ public class Notification implements Serializable {
         this.message = message;
     }
 
-    public boolean isIsRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 

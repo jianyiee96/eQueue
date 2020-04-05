@@ -6,6 +6,7 @@ import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.EmployeeSessionBeanLocal;
 import ejb.session.stateless.MenuCategorySessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
@@ -14,6 +15,7 @@ import entity.DiningTable;
 import entity.Employee;
 import entity.MenuCategory;
 import entity.MenuItem;
+import entity.Notification;
 import entity.OrderLineItem;
 import entity.Store;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import util.enumeration.EmployeeRoleEnum;
 import util.enumeration.MenuItemAvailabilityEnum;
+import util.enumeration.NotificationTypeEnum;
 import util.enumeration.OrderLineItemStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CreateNewMenuCategoryException;
@@ -38,6 +41,7 @@ import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotUniqueException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.StoreNotInitializedException;
+import util.exceptions.UnableToCreateNotificationException;
 import util.exceptions.UnknownPersistenceException;
 
 @Singleton
@@ -65,6 +69,8 @@ public class DataInitializationSessionBean {
     private MenuItemSessionBeanLocal menuItemSessionBean;
     @EJB
     private MenuCategorySessionBeanLocal menuCategorySessionBean;
+    @EJB
+    private NotificationSessionBeanLocal notificationSessionBeanLocal;
 
     public DataInitializationSessionBean() {
 
@@ -73,11 +79,11 @@ public class DataInitializationSessionBean {
     @PostConstruct
     public void postConstruct() {
         try {
-            customerOrderSessionBean.retrieveCurrentDayOrders();
+            //customerOrderSessionBean.retrieveCurrentDayOrders();
             storeManagementSessionBeanLocal.retrieveStore();
         } catch (StoreNotInitializedException ex) {
             initializeData();
-            customerOrderSessionBean.retrieveCurrentDayOrders();
+            //customerOrderSessionBean.retrieveCurrentDayOrders();
         }
     }
 
@@ -92,7 +98,15 @@ public class DataInitializationSessionBean {
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
             Long custId4 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
             Long custId5 = customerSessionBeanLocal.createNewCustomer(new Customer("Hew", "Jian Yiee", "hew1521@hotmail.com", "password"));
-
+            
+            notificationSessionBeanLocal.createNewNotification(new Notification("Welcome", "Welcome to eQueue :)", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction", "For instructions on how to use this app, please refer to google.com", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 2", "To go google.com first you need a browser and an internet connection", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 3", "After installing your browser and connecting to the internet, start the brower", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 4", "Now enter google.com on the URL bar", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 5", "On google search bar, simply key in eQueue - documentation. Click on the first item in the result", NotificationTypeEnum.GENERAL), custId5);
+            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 6", "Now you will have able to access our app's full documentation. ", NotificationTypeEnum.GENERAL), custId5);
+            
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(8L));
@@ -157,7 +171,7 @@ public class DataInitializationSessionBean {
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
                 | MenuItemNotUniqueException | CreateNewOrderLineItemException | OrderLineItemNotFoundException
-                | CreateNewCustomerOrderException ex) {
+                | CreateNewCustomerOrderException | UnableToCreateNotificationException ex) {
             ex.printStackTrace();
         }
     }

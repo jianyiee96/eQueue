@@ -90,7 +90,6 @@ public class QueueSessionBean implements QueueSessionBeanLocal {
 
             queue.getCustomer().setCurrentQueue(null);
             //queue.setCustomer(null);
-
             em.remove(queue);
         }
 

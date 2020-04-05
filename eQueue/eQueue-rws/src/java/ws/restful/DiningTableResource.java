@@ -2,9 +2,11 @@ package ws.restful;
 
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import entity.Customer;
 import entity.DiningTable;
+import entity.Notification;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -12,6 +14,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import util.enumeration.NotificationTypeEnum;
 import util.exceptions.CustomerNotFoundException;
 import ws.datamodel.CheckInRsp;
 import ws.datamodel.ErrorRsp;
@@ -24,11 +27,13 @@ public class DiningTableResource {
 
     private final DiningTableSessionBeanLocal diningTableSessionBeanLocal;
     private final CustomerSessionBeanLocal customerSessionBeanLocal;
+    private final NotificationSessionBeanLocal notificationSessionBeanLocal;
 
     public DiningTableResource() {
         sessionBeanLookup = new SessionBeanLookup();
         customerSessionBeanLocal = sessionBeanLookup.lookupCustomerSessionBeanLocal();
         diningTableSessionBeanLocal = sessionBeanLookup.lookupDiningTableSessionBeanLocal();
+        notificationSessionBeanLocal = sessionBeanLookup.lookupNotificationSessionBeanLocal();
 
     }
 
@@ -73,6 +78,11 @@ public class DiningTableResource {
             if (customer.getAllocatedDiningTable().getQrCode().equals(code)) {
 
                 diningTableSessionBeanLocal.seatCustomerToDiningTable(customer.getAllocatedDiningTable().getDiningTableId());
+                
+                Notification n = new Notification("Successfully Checked In","You have successfully checked in. Please enjoy your meal :)", NotificationTypeEnum.QUEUE_UPDATE);
+                notificationSessionBeanLocal.createNewNotification(n, customer.getCustomerId());
+                
+                
                 CheckInRsp checkInRsp = new CheckInRsp(true);
                 return Response.status(Response.Status.OK).entity(checkInRsp).build();
 
