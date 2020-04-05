@@ -100,6 +100,7 @@ public class EmployeeProfilePageManagedBean implements Serializable {
                         System.out.println("=====> No picture preview detected");
                         deteleFileInDir(oldPath);
                         this.currentEmployee.setImagePath(null);
+                        imageContents = null;
                     }
                 } else {
                     System.out.println("Employee " + this.currentEmployee.getFirstName() + " does not have an old photo...");
