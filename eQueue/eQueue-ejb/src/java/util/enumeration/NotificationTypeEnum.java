@@ -7,6 +7,7 @@ public enum NotificationTypeEnum {
     QUEUE_ALLOCATED,
     QUEUE_STARTED,
     ORDER_EDITED,
-    ORDER_CANCELLED
+    ORDER_CANCELLED,
+    GENERAL
     
 }

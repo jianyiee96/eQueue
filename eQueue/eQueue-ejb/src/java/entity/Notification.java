@@ -97,7 +97,7 @@ public class Notification implements Serializable {
         this.message = message;
     }
 
-    public boolean isIsRead() {
+    public boolean getIsRead() {
         return isRead;
     }
 
