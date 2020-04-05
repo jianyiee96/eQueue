@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import entity.DiningTable;
+import entity.Queue;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.List;
@@ -141,13 +142,18 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
 
         if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED) {
             diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
-
         } else if (diningTable.getTableStatus() == TableStatusEnum.FROZEN_ALLOCATED) {
             diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
-
+        } else if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_OCCUPIED) {
+            diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
+        } else if (diningTable.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED) {
+            diningTable.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
         }
+        
+        
         diningTable.setSeatedTime(null);
         diningTable.setTimePassed(null);
+        diningTable.setCustomer(null);
 
     }
 
@@ -156,6 +162,10 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
         diningTable.setTableStatus(TableStatusEnum.UNFROZEN_OCCUPIED);
         diningTable.setSeatedTime(LocalTime.now(ZoneId.of("Asia/Singapore")));
+        
+        Queue queue = diningTable.getCustomer().getCurrentQueue();
+        diningTable.getCustomer().setCurrentQueue(null);
+        em.remove(queue);
     }
 
     @Override

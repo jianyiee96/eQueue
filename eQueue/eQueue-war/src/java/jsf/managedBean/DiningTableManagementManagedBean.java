@@ -135,20 +135,17 @@ public class DiningTableManagementManagedBean implements Serializable {
         try {
             selectedDiningTableToUpdate = (DiningTable) event.getComponent().getAttributes().get("diningTableToUpdate");
 
-            if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED) {
-                selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
-            } else if (selectedDiningTableToUpdate.getTableStatus() == TableStatusEnum.UNFROZEN_OCCUPIED) {
-                selectedDiningTableToUpdate.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);
-            } else {
+            if (selectedDiningTableToUpdate.getTableStatus() != TableStatusEnum.FROZEN_OCCUPIED && selectedDiningTableToUpdate.getTableStatus() != TableStatusEnum.UNFROZEN_OCCUPIED) {
+
                 throw new InvalidTableStatusException("Table [ID" + selectedDiningTableToUpdate.getDiningTableId() + "] is already cleaned");
             }
 
-            diningTableSessionBeanLocal.updateDiningTableInformation(selectedDiningTableToUpdate);
-
+            diningTableSessionBeanLocal.removeCustomerTableRelationship(selectedDiningTableToUpdate.getCustomer().getCustomerId());
+            
+            postConstruct();
+            
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID " + selectedDiningTableToUpdate.getDiningTableId() + "] status changed successfully.", null));
         } catch (InvalidTableStatusException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating dining table status: " + ex.getMessage(), null));
-        } catch (DiningTableNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating dining table status: " + ex.getMessage(), null));
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
@@ -189,7 +186,7 @@ public class DiningTableManagementManagedBean implements Serializable {
             }
         } catch (DiningTableNotFoundException ex) {
             System.out.println("Unable to increase seated time for dining table id [" + diningTableId + " Error: Cannot find the dining table!");
-        } 
+        }
     }
 
     public ViewDiningTableManagedBean getViewDiningTableManagedBean() {

@@ -56,9 +56,9 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         if (this.currentEmployee.getImagePath() != null) {
             try {
                 imageContents = getImageContentsAsBase64(Files.readAllBytes(getFileInDir(this.currentEmployee.getImagePath()).toPath()));
-                System.out.println("FILE: " + this.currentEmployee.getImagePath() + " successfully retrieved!");
+                //System.out.println("FILE: " + this.currentEmployee.getImagePath() + " successfully retrieved!");
             } catch (Exception ex) {
-                System.out.println("FILE DOES NOT EXIST! ===========> " + this.currentEmployee.getImagePath());
+                //System.out.println("FILE DOES NOT EXIST! ===========> " + this.currentEmployee.getImagePath());
             }
         }
         this.deleteOldPhoto = false;

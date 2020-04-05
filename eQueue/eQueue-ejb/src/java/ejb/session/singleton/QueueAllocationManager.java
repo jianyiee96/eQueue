@@ -3,6 +3,7 @@ package ejb.session.singleton;
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
+import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.CustomerOrder;
 import entity.DiningTable;
 import entity.Queue;
@@ -23,6 +24,7 @@ import javax.ejb.TimerService;
 import util.enumeration.QueueStatusEnum;
 import util.enumeration.TableStatusEnum;
 import util.exceptions.QueueDoesNotExistException;
+import util.exceptions.StoreNotInitializedException;
 
 @Singleton
 @LocalBean
@@ -34,6 +36,8 @@ public class QueueAllocationManager {
     private QueueSessionBeanLocal queueSessionBeanLocal;
     @EJB
     private DiningTableSessionBeanLocal diningTableSessionBeanLocal;
+    @EJB
+    private StoreManagementSessionBeanLocal storeManagementSessionBeanLocal;
 
     @Resource
     private TimerService timerService;
@@ -80,8 +84,18 @@ public class QueueAllocationManager {
                     allocated++;
 
                     TimerConfig timerConfig = new TimerConfig(queue.getCustomer().getCustomerId().toString(), true);
-                    Timer timer = timerService.createSingleActionTimer(20000, timerConfig); // to be change to store variable timeout duration.
-                    System.out.println("- Created Queue Invalidation Timer to trigger at : " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timer.getNextTimeout()) + " Timer info(Customer id): " + timer.getInfo());
+
+                    try {
+
+                        int timeOutMillis = storeManagementSessionBeanLocal.retrieveStore().getAllocationGraceWaitingMinutes().intValue() * 60000;
+                        Timer timer = timerService.createSingleActionTimer(timeOutMillis, timerConfig); // to be change to store variable timeout duration.
+                        System.out.println("- Grace time: " + (timeOutMillis/60000) + " minutes.");
+                        System.out.println("- Created Queue Invalidation Timer to trigger at : " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timer.getNextTimeout()) + " Timer info(Customer id): " + timer.getInfo());
+                        
+
+                    } catch (StoreNotInitializedException ex) {
+                        System.out.println("Store not initialized, unable to create Invalidation Timer");
+                    }
 
                 } else {
                     String reason = "";
@@ -94,9 +108,9 @@ public class QueueAllocationManager {
                     } else {
                         reason = "[Unknown]";
                     }
-                    
+
                     System.out.print("- (!!!) [Skipping] Queue(id): " + queue.getQueueId() + ", Customer(id): " + queue.getCustomer().getCustomerId() + " to Table(id): " + diningTable.getDiningTableId() + " " + reason);
-                    
+
                 }
             }
         }
@@ -113,12 +127,12 @@ public class QueueAllocationManager {
         System.out.println("- Queue Invalidation Timer triggered! Customer(id): " + timer.getInfo());
         try {
             queueSessionBeanLocal.invalidateCustomerQueue(Long.parseLong(timer.getInfo().toString()));
-            
+
             System.out.println("- Updated Table status: ALLOCATED -> UNOCCUPIED!");
             System.out.println("- Removed Customer to Table relationship!");
             System.out.println("- Removed Customer to Queue relationship!");
             System.out.println("- Deleted Queue!");
-            
+
             System.out.println("- Successfully invalidated and deleted queue.");
         } catch (QueueDoesNotExistException ex) {
             System.out.println("- Queue no longer exist. [Customer might have checked-in to dining table]");
