@@ -73,9 +73,11 @@ public class DataInitializationSessionBean {
     @PostConstruct
     public void postConstruct() {
         try {
+            customerOrderSessionBean.retrieveCurrentDayOrders();
             storeManagementSessionBeanLocal.retrieveStore();
         } catch (StoreNotInitializedException ex) {
             initializeData();
+            customerOrderSessionBean.retrieveCurrentDayOrders();
         }
     }
 
@@ -111,7 +113,6 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("One", "Staff", "staff-one@eQueue.com", "staff1", "password", EmployeeRoleEnum.DEFAULT));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Staff", "staff-two@eQueue.com", "staff2", "password", EmployeeRoleEnum.DEFAULT));
 
-           
             Long mcId1 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
             Long mcId2 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mcId1);
             Long mcId3 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Malay"), mcId1);
@@ -132,7 +133,7 @@ public class DataInitializationSessionBean {
 
                 Integer numItems = (int) (Math.random() * 3) + 1;
 //                System.out.println("numItems --> " + numItems);
-                
+
                 for (int x = 0; numItems > x; x++) {
                     Long quantity = (long) (Math.random() * 10) + 1L;
                     Long menuItemId = (long) (Math.random() * 8) + 1L;
@@ -145,13 +146,13 @@ public class DataInitializationSessionBean {
                 customerOrder.setTotalAmount(calculateTotalPrice(orderLineItems));
 
                 customerOrderSessionBean.createCustomerOrder(customerOrder, (long) (Math.random() * 4) + 1L, orderLineItems);
-                
+
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
-                
+
             }
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
@@ -162,7 +163,7 @@ public class DataInitializationSessionBean {
     }
 
     private String remarksRandomiser() {
-        Integer remarksRandomiser = (int)(Math.random() * 5);
+        Integer remarksRandomiser = (int) (Math.random() * 5);
         switch (remarksRandomiser) {
             case 0:
                 return "Less salty please";
@@ -176,9 +177,9 @@ public class DataInitializationSessionBean {
                 return "Faster!!";
         }
     }
-    
+
     private OrderLineItemStatusEnum lineItemStatusRandomiser() {
-        Integer lineItemStatusRandomiser = (int)(Math.random() * 4);
+        Integer lineItemStatusRandomiser = (int) (Math.random() * 4);
         switch (lineItemStatusRandomiser) {
             case 0:
                 return OrderLineItemStatusEnum.ORDERED;
