@@ -15,6 +15,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import ws.datamodel.DeleteNotificationRsp;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.ReadNotificationRsp;
 import ws.datamodel.RetrieveCustomerNotificationsRsp;
@@ -64,6 +65,24 @@ public class NotificationResource {
             Boolean change = notificationSessionBeanLocal.readNotification(Long.parseLong(notificationId));
             
             return Response.status(Response.Status.OK).entity(new ReadNotificationRsp(change)).build();
+
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("deleteNotification")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteNotification(@QueryParam("notificationId") String notificationId) {
+        try {
+
+            Boolean change = notificationSessionBeanLocal.deleteNotification(Long.parseLong(notificationId));
+            
+            return Response.status(Response.Status.OK).entity(new DeleteNotificationRsp(change)).build();
 
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());

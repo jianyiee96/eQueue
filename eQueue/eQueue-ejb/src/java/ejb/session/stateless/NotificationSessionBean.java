@@ -84,5 +84,19 @@ public class NotificationSessionBean implements NotificationSessionBeanLocal {
         }
 
     }
+    
+    @Override
+    public Boolean deleteNotification(Long notificationId){
+        Notification n = em.find(Notification.class, notificationId);
+
+        if (n != null) {
+            n.getCustomer().getNotifications().remove(n);
+            em.remove(n);
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
 }

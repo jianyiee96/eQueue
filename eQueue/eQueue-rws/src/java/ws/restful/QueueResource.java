@@ -6,9 +6,11 @@
 package ws.restful;
 
 import ejb.session.stateless.CustomerSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import entity.Customer;
+import entity.Notification;
 import entity.Queue;
 import entity.Store;
 import javax.ws.rs.core.Context;
@@ -20,6 +22,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import util.enumeration.NotificationTypeEnum;
 import util.exceptions.UnableToJoinQueueException;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.JoinQueueRsp;
@@ -35,12 +38,14 @@ public class QueueResource {
 
     private final QueueSessionBeanLocal queueSessionBeanLocal;
     private final CustomerSessionBeanLocal customerSessionBeanLocal;
+    private final NotificationSessionBeanLocal notificationSessionBeanLocal;
 
     public QueueResource() {
 
         sessionBeanLookup = new SessionBeanLookup();
         queueSessionBeanLocal = sessionBeanLookup.lookupQueueSessionBeanLocal();
         customerSessionBeanLocal = sessionBeanLookup.lookupCustomerSessionBeanLocal();
+        notificationSessionBeanLocal = sessionBeanLookup.lookupNotificationSessionBeanLocal();
         
 
     }
@@ -86,6 +91,10 @@ public class QueueResource {
             }
 
             Long queueId = queueSessionBeanLocal.joinQueue(customer.getCustomerId(), Long.parseLong(pax));
+            
+            Notification n = new Notification("Successfully Joined Queue","You have successfully joined the queue.",NotificationTypeEnum.QUEUE_STARTED);
+            notificationSessionBeanLocal.createNewNotification(n, customer.getCustomerId());
+            
             JoinQueueRsp joinQueueRsp = new JoinQueueRsp(queueId);
 
             return Response.status(Response.Status.OK).entity(joinQueueRsp).build();

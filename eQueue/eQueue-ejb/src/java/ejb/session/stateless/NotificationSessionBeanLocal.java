@@ -21,4 +21,6 @@ public interface NotificationSessionBeanLocal {
     public Long createNewNotification(Notification newNotification, Long customerId) throws UnableToCreateNotificationException;
     
     public Boolean readNotification(Long notificationId);
+    
+    public Boolean deleteNotification(Long notificationId);
 }

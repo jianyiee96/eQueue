@@ -1,11 +1,15 @@
 package ejb.session.singleton;
 
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
+import entity.Customer;
 import entity.CustomerOrder;
 import entity.DiningTable;
+import entity.Notification;
 import entity.Queue;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,10 +25,13 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import util.enumeration.NotificationTypeEnum;
 import util.enumeration.QueueStatusEnum;
 import util.enumeration.TableStatusEnum;
+import util.exceptions.CustomerNotFoundException;
 import util.exceptions.QueueDoesNotExistException;
 import util.exceptions.StoreNotInitializedException;
+import util.exceptions.UnableToCreateNotificationException;
 
 @Singleton
 @LocalBean
@@ -38,6 +45,10 @@ public class QueueAllocationManager {
     private DiningTableSessionBeanLocal diningTableSessionBeanLocal;
     @EJB
     private StoreManagementSessionBeanLocal storeManagementSessionBeanLocal;
+    @EJB
+    private NotificationSessionBeanLocal notificationSessionBeanLocal;
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @Resource
     private TimerService timerService;
@@ -81,6 +92,7 @@ public class QueueAllocationManager {
 
                     diningTableSessionBeanLocal.allocateTableToCustomer(diningTable.getDiningTableId(), queue.getCustomer().getCustomerId());
                     queueSessionBeanLocal.allocateQueue(queue.getQueueId());
+
                     allocated++;
 
                     TimerConfig timerConfig = new TimerConfig(queue.getCustomer().getCustomerId().toString(), true);
@@ -89,12 +101,17 @@ public class QueueAllocationManager {
 
                         int timeOutMillis = storeManagementSessionBeanLocal.retrieveStore().getAllocationGraceWaitingMinutes().intValue() * 60000;
                         Timer timer = timerService.createSingleActionTimer(timeOutMillis, timerConfig); // to be change to store variable timeout duration.
-                        System.out.println("- Grace time: " + (timeOutMillis/60000) + " minutes.");
+                        System.out.println("- Grace time: " + (timeOutMillis / 60000) + " minutes.");
                         System.out.println("- Created Queue Invalidation Timer to trigger at : " + new SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(timer.getNextTimeout()) + " Timer info(Customer id): " + timer.getInfo());
-                        
 
+                        
+                    Notification n = new Notification("Queue Allocated", "You have been allocated to table no: " + diningTable.getDiningTableId() + " and may check in now.", NotificationTypeEnum.QUEUE_EXPIRED);
+                    notificationSessionBeanLocal.createNewNotification(n, queue.getCustomer().getCustomerId());
+                        
                     } catch (StoreNotInitializedException ex) {
                         System.out.println("Store not initialized, unable to create Invalidation Timer");
+                    } catch (UnableToCreateNotificationException ex) {
+                        System.out.println("Unable to create notification: " + ex.getMessage());
                     }
 
                 } else {
@@ -126,14 +143,16 @@ public class QueueAllocationManager {
         System.out.println("----------------------------------------------------------------------------");
         System.out.println("- Queue Invalidation Timer triggered! Customer(id): " + timer.getInfo());
         try {
+
+            Notification n = new Notification("Queue Expired", "You have failed to check in to your table on time. Thus, your queue has been invalidated.", NotificationTypeEnum.QUEUE_EXPIRED);
+
             queueSessionBeanLocal.invalidateCustomerQueue(Long.parseLong(timer.getInfo().toString()));
+            notificationSessionBeanLocal.createNewNotification(n, Long.parseLong(timer.getInfo().toString()));
 
-            System.out.println("- Updated Table status: ALLOCATED -> UNOCCUPIED!");
-            System.out.println("- Removed Customer to Table relationship!");
-            System.out.println("- Removed Customer to Queue relationship!");
-            System.out.println("- Deleted Queue!");
-
+            System.out.println("- Sent notification to customer.");
             System.out.println("- Successfully invalidated and deleted queue.");
+        } catch (UnableToCreateNotificationException ex) {
+            System.out.println("- Unable to create notification: " + ex.toString());
         } catch (QueueDoesNotExistException ex) {
             System.out.println("- Queue no longer exist. [Customer might have checked-in to dining table]");
             System.out.println("- Nothing to do");
