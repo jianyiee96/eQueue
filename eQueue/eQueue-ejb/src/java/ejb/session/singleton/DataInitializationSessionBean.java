@@ -134,14 +134,14 @@ public class DataInitializationSessionBean {
             
             Long mcId5 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Original"), mcId4);
 
-            Long miId1 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI001", "Chicken Rice", 3.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "1 - Chicken Rice.jpg"), mcId2);
-            Long miId2 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "2 - Char Kway Teow.jpg"), mcId2);
-            Long miId3 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "3 - Hokkien Noodles.jpg"), mcId2);
-            Long miId4 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI004", "Ayam Buah Keluak", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "4 - Ayam Buah Keluak.jpg"), mcId3);
-            Long miId5 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI005", "Chap Chai", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "5 - Chap Chai.JPG"), mcId3);
-            Long miId6 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI006", "Chicken Chop", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "6 - Chicken Chop.jpg"), mcId5);
-            Long miId7 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI007", "Fish and Chips", 6.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "7 - Fish and Chips.jpg"), mcId5);
-            Long miId8 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI008", "Fries", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "8 - Fries.jpg"), mcId5);
+            Long miId1 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI001", "Chicken Rice", 3.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "1 - Chicken Rice.jpg", "Fragrant and steamy Chicken Rice"), mcId2);
+            Long miId2 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "2 - Char Kway Teow.jpg", "Singapore award winning Char Kway Teow"), mcId2);
+            Long miId3 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "3 - Hokkien Noodles.jpg", "Penang best Hokkien Mee"), mcId2);
+            Long miId4 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI004", "Ayam Buah Keluak", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "4 - Ayam Buah Keluak.jpg", "Made with fresh kampung chicken"), mcId3);
+            Long miId5 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI005", "Chap Chai", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "5 - Chap Chai.JPG", "Chap Chai Chop Ching Chong"), mcId3);
+            Long miId6 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI006", "Chicken Chop", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "6 - Chicken Chop.jpg", "Freshly chopped chicken served with chopsticks"), mcId5);
+            Long miId7 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI007", "Fish and Chips", 6.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "7 - Fish and Chips.jpg", "Original recipe from Sanji"), mcId5);
+            Long miId8 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI008", "Fries", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "8 - Fries.jpg", "Golden Potato Fries, Served with Curry Sauce, BBQ Sauce and Mayo Sauce"), mcId5);
 
             for (int i = 0; i < 20; i++) {
                 List<OrderLineItem> orderLineItems = new ArrayList<>();

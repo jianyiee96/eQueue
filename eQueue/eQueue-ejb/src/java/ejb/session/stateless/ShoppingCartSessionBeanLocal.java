@@ -12,4 +12,6 @@ public interface ShoppingCartSessionBeanLocal {
 
     public ShoppingCart retrieveShoppingCartById(Long shoppingCartId) throws ShoppingCartNotFoundException;
     
+    public ShoppingCart retrieveShoppingCartByCustomerId(Long customerId);
+    
 }

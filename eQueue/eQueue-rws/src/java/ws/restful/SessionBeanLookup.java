@@ -6,6 +6,7 @@ import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.MenuCategorySessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
+import ejb.session.stateless.ShoppingCartSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +15,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 public class SessionBeanLookup {
+
 
     private final String ejbModuleJndiPath;
 
@@ -90,5 +92,17 @@ public class SessionBeanLookup {
             throw new RuntimeException(ne);
         }
     }
+
+    public ShoppingCartSessionBeanLocal lookupShoppingCartSessionBeanLocal() {
+        try {
+            Context c = new InitialContext();
+            return (ShoppingCartSessionBeanLocal) c.lookup(ejbModuleJndiPath + "ShoppingCartSessionBean!ejb.session.stateless.ShoppingCartSessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+    
+    
 
 }

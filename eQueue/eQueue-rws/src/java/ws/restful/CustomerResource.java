@@ -46,6 +46,7 @@ public class CustomerResource {
             customer.getNotifications().clear();
             customer.setAllocatedDiningTable(null);
             customer.setCurrentQueue(null);
+            customer.getShoppingCart().getOrderLineItems().forEach(oli -> oli.getMenuItem().setMenuCategory(null));
 
             return Response.status(Response.Status.OK).entity(new CustomerLoginRsp(customer)).build();
         } catch (CustomerInvalidLoginCredentialException ex) {
