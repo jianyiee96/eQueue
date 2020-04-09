@@ -91,6 +91,19 @@ public class MenuItem implements Serializable {
         this.imagePath = imagePath;
 
     }
+    
+    public MenuItem(String menuItemCode, String menuItemName, Double menuItemPrice, Long waitingTimeMinutes, MenuItemAvailabilityEnum availability, String imagePath, String menuItemDescription) {
+
+        this();
+        this.menuItemCode = menuItemCode;
+        this.menuItemName = menuItemName;
+        this.menuItemPrice = menuItemPrice;
+        this.waitingTimeMinutes = waitingTimeMinutes;
+        this.availability = availability;
+        this.imagePath = imagePath;
+        this.menuItemDescription = menuItemDescription;
+
+    }
 
     public Long getMenuItemId() {
         return menuItemId;
