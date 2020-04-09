@@ -88,7 +88,7 @@ public class CustomerResource {
             }
         } else {
 
-            ErrorRsp errorRsp = new ErrorRsp("Invalid create new product request");
+            ErrorRsp errorRsp = new ErrorRsp("Invalid register customer request");
 
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         }
