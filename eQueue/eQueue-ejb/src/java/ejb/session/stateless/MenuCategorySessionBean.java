@@ -95,7 +95,22 @@ public class MenuCategorySessionBean implements MenuCategorySessionBeanLocal {
 
         return rootMenuCategories;
     }
+    
+    @Override
+    public List<MenuCategory> retrieveAllMenuCategoriesByParentCategory(Long parentMenuCategoryId) {
+        Query query = em.createQuery("SELECT c FROM MenuCategory c WHERE c.parentMenuCategory.menuCategoryId = :inParentMenuCategoryId ORDER BY c.categoryName ASC");
+        query.setParameter("inParentMenuCategoryId", parentMenuCategoryId);
+        
+        List<MenuCategory> menuCategories = query.getResultList();
+        
+        for (MenuCategory rootMenuCategory : menuCategories) {
+            lazilyLoadSubMenuCategories(rootMenuCategory);
+            rootMenuCategory.getMenuItems().size();
+        }
 
+        return menuCategories;
+    }
+    
     @Override
     public List<MenuCategory> retrieveAllLeafMenuCategories() {
         Query query = em.createQuery("SELECT c FROM MenuCategory c WHERE c.subMenuCategories IS EMPTY ORDER BY c.categoryName ASC");

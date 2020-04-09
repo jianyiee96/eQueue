@@ -98,6 +98,15 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
 
         return menuItems;
     }
+    
+    @Override
+    public List<MenuItem> retrieveAllMenuItemsByCategory(Long categoryId) {
+        Query query = em.createQuery("SELECT m FROM MenuItem m WHERE m.menuCategory.menuCategoryId = :inCategoryId ORDER BY m.menuItemName ASC");
+        query.setParameter("inCategoryId", categoryId);
+        List<MenuItem> menuItems = query.getResultList();
+
+        return menuItems;
+    }
 
     @Override
     public void updateMenuItem(MenuItem menuItem, Long menuCategoryId) throws MenuItemNotFoundException, MenuCategoryNotFoundException, UpdateMenuItemException, InputDataValidationException {

@@ -33,6 +33,8 @@ public interface MenuCategorySessionBeanLocal {
 
     public List<MenuCategory> retrieveAllRootMenuCategories();
 
+    public List<MenuCategory> retrieveAllMenuCategoriesByParentCategory(Long parentMenuCategoryId);
+    
     public List<MenuCategory> retrieveAllMenuCategories();
 
     public Long createNewMenuCategory(MenuCategory newMenuCategory, Long parentMenuCategoryId) throws InputDataValidationException, CreateNewMenuCategoryException;
