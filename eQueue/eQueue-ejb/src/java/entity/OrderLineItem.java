@@ -62,7 +62,7 @@ public class OrderLineItem implements Serializable {
     public Long getOrderLineItemId() {
         return orderLineItemId;
     }
-
+    
     public void setOrderLineItemId(Long orderLineItemId) {
         this.orderLineItemId = orderLineItemId;
     }

@@ -20,7 +20,6 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Inject;
-import org.primefaces.PrimeFaces;
 import util.enumeration.OrderLineItemStatusEnum;
 import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
@@ -45,9 +44,12 @@ public class KitchenManagementManagedBean implements Serializable {
     private List<Map.Entry<MenuItem, Integer>> menuItemsOverview;
     private Map.Entry<MenuItem, Integer> menuItemToViewEntry;
 
-    private OrderLineItem orderItemToView;
+    private OrderLineItem selectedOrderItem;
     private OrderLineItem orderItemToPrepare;
     private OrderLineItem orderItemToServe;
+
+    private Integer numOrdered;
+    private Integer numPreparing;
 
     private CustomerOrder orderToComplete;
 
@@ -60,7 +62,7 @@ public class KitchenManagementManagedBean implements Serializable {
     public void postConstruct() {
         currentDayCustomerOrders = customerOrderSessionBeanLocal.retrieveCurrentDayOrders();
         sortAllCurrentDayOrderLineItems();
-        
+
         createMenuItemsOverview();
     }
 
@@ -76,25 +78,46 @@ public class KitchenManagementManagedBean implements Serializable {
     }
 
     public void createMenuItemsOverview() {
+        numOrdered = 0;
+        numPreparing = 0;
         Map<MenuItem, Integer> map = new HashMap<>();
         for (CustomerOrder customerOrder : currentDayCustomerOrders) {
             for (OrderLineItem orderLineItem : customerOrder.getOrderLineItems()) {
-                MenuItem menuItem = orderLineItem.getMenuItem();
-                int count = map.containsKey(menuItem) ? map.get(menuItem) : 0;
-                map.put(menuItem, count + Math.toIntExact(orderLineItem.getQuantity()));
+                OrderLineItemStatusEnum status = orderLineItem.getStatus();
+                if (status == OrderLineItemStatusEnum.ORDERED || status == OrderLineItemStatusEnum.PREPARING) {
+                    MenuItem menuItem = orderLineItem.getMenuItem();
+                    int count = map.containsKey(menuItem) ? map.get(menuItem) : 0;
+                    map.put(menuItem, count + Math.toIntExact(orderLineItem.getQuantity()));
+                }
+                if (status == OrderLineItemStatusEnum.ORDERED) {
+                    numOrdered++;
+                } else if (status == OrderLineItemStatusEnum.PREPARING) {
+                    numPreparing++;
+                }
             }
         }
         menuItemsOverview = new ArrayList<>(map.entrySet());
+    }
+
+    private void reduceMenuItemOverview(OrderLineItem orderLineItem) {
+        for (Map.Entry<MenuItem, Integer> entry : menuItemsOverview) {
+            if (entry.getKey() == orderLineItem.getMenuItem()) {
+                entry.setValue(entry.getValue() - Math.toIntExact(orderLineItem.getQuantity()));
+            }
+        }
     }
 
     public void prepare(ActionEvent event) {
         orderItemToPrepare = (OrderLineItem) event.getComponent().getAttributes().get("orderItemToPrepare");
         CustomerOrder currentOrder = (CustomerOrder) event.getComponent().getAttributes().get("order");
         orderItemToPrepare.setStatus(OrderLineItemStatusEnum.PREPARING);
-        sortOrderLineItems(currentOrder);
+
         try {
             orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(orderItemToPrepare);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderItemToPrepare.getMenuItem().getMenuItemName() + " is being prepared.", null));
+            sortOrderLineItems(currentOrder);
+            numOrdered--;
+            numPreparing++;
             orderItemToPrepare = new OrderLineItem();
         } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
@@ -107,10 +130,12 @@ public class KitchenManagementManagedBean implements Serializable {
         orderItemToServe = (OrderLineItem) event.getComponent().getAttributes().get("orderItemToServe");
         CustomerOrder currentOrder = (CustomerOrder) event.getComponent().getAttributes().get("order");
         orderItemToServe.setStatus(OrderLineItemStatusEnum.SERVED);
-        sortOrderLineItems(currentOrder);
         try {
             orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(orderItemToServe);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderItemToServe.getMenuItem().getMenuItemName() + " is being served.", null));
+            reduceMenuItemOverview(orderItemToServe);
+            sortOrderLineItems(currentOrder);
+            numPreparing--;
             orderItemToServe = new OrderLineItem();
         } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
@@ -125,12 +150,21 @@ public class KitchenManagementManagedBean implements Serializable {
         try {
             customerOrderSessionBeanLocal.updateCustomerOrder(orderToComplete);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderToComplete.getCustomer().getFirstName() + "'s order (ID - " + orderToComplete.getOrderId() + ") is completed!", null));
+            currentDayCustomerOrders.remove(orderToComplete);
             orderToComplete = new CustomerOrder();
         } catch (CustomerOrderNotFoundException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating customer order: ", ex.getMessage()));
         } catch (Exception ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
         }
+    }
+
+    public Integer getNumOrdered() {
+        return numOrdered;
+    }
+
+    public Integer getNumPreparing() {
+        return numPreparing;
     }
 
     public List<Map.Entry<MenuItem, Integer>> getMenuItemsOverview() {
@@ -165,12 +199,14 @@ public class KitchenManagementManagedBean implements Serializable {
         this.currentDayCustomerOrders = currentDayCustomerOrders;
     }
 
-    public OrderLineItem getOrderItemToView() {
-        return orderItemToView;
+    public OrderLineItem getSelectedOrderItem() {
+        return selectedOrderItem;
     }
 
-    public void setOrderItemToView(OrderLineItem orderItemToView) {
-        this.orderItemToView = orderItemToView;
+    public void setSelectedOrderItem(OrderLineItem selectedOrderItem) {
+        if (selectedOrderItem != null) {
+            this.selectedOrderItem = selectedOrderItem;
+        }
     }
 
     public OrderLineItem getOrderItemToPrepare() {
