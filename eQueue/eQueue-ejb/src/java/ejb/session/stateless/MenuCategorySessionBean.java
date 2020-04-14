@@ -44,6 +44,10 @@ public class MenuCategorySessionBean implements MenuCategorySessionBeanLocal {
                     if (!parentMenuCategory.getMenuItems().isEmpty()) {
                         throw new CreateNewMenuCategoryException("Parent category cannot be associated with any product");
                     }
+                    
+                    if (parentMenuCategory.getParentMenuCategory() != null) {
+                        throw new CreateNewMenuCategoryException("Parent category must be a root category");
+                    }
 
                     newMenuCategory.setParentMenuCategory(parentMenuCategory);
                 }
@@ -172,6 +176,10 @@ public class MenuCategorySessionBean implements MenuCategorySessionBeanLocal {
 
                         if (!parentMenuCategoryToUpdate.getMenuItems().isEmpty()) {
                             throw new UpdateMenuCategoryException("Parent category cannot have any product associated with it");
+                        }
+                        
+                        if (parentMenuCategoryToUpdate.getParentMenuCategory() != null) {
+                            throw new UpdateMenuCategoryException("Parent category must be a root cateogory");
                         }
 
                         lazilyLoadSubMenuCategories(menuCategoryToUpdate);
