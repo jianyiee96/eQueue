@@ -94,7 +94,7 @@
                                     <f:facet name="filter">
                                         <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuItems').filter()">
                                             <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
-                                            <f:selectItems value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
+                                            <f:selectItems value="#{menuManagementManagedBean.leafMenuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
                                         </p:selectOneMenu>
                                     </f:facet>
                                     <h:outputText value="#{menuItem.menuCategory.categoryName}" />
@@ -458,7 +458,7 @@
                                     <f:facet name="filter">
                                         <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuCategories').filter()">
                                             <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
-                                            <f:selectItems value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
+                                            <f:selectItems value="#{menuManagementManagedBean.rootMenuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
                                         </p:selectOneMenu>
                                     </f:facet>
                                     <h:outputText value="#{menuCategory.parentMenuCategory.categoryName}" />
@@ -519,7 +519,7 @@
                                         <p:column>
                                             <p:selectOneMenu id="selCategory" value="#{menuManagementManagedBean.parentMenuCategoryIdToCreate}">
                                                 <f:selectItem itemValue="0" itemLabel="[Select One]" noSelectionOption="true" />
-                                                <f:selectItems value="#{menuManagementManagedBean.menuCategoriesWithoutItems}" var="parentMenuCategory" itemValue="#{parentMenuCategory.menuCategoryId}" itemLabel="#{parentMenuCategory.categoryName}" />
+                                                <f:selectItems value="#{menuManagementManagedBean.rootMenuCategories}" var="parentMenuCategory" itemValue="#{parentMenuCategory.menuCategoryId}" itemLabel="#{parentMenuCategory.categoryName}" />
                                             </p:selectOneMenu>
                                         </p:column>
                                         <p:column>
