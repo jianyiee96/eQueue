@@ -96,7 +96,7 @@ public class KitchenManagementManagedBean implements Serializable {
                     numPreparing++;
                 }
             }
-        }
+        }                                                     
         menuItemsOverview = new ArrayList<>(map.entrySet());
     }
 

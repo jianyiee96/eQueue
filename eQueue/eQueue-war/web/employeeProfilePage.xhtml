@@ -9,208 +9,205 @@
 
     <ui:define name="content">
 
-        <p:layout>
+        <h:form id="formChangePassword">
 
-            <p:layoutUnit style="margin-left: 10px;" position="center">
+            <p:dialog id="dialogChangePassword" widgetVar="dialogChangePassword" responsive="true" header="Change Password" closable="true" showEffect="clip" hideEffect="clip">
 
-                <div style="text-align: center; margin-top: 10px;">
-                    <p:outputLabel style="font-size: large; font-weight: bold;" value="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Page"/>
-                </div>
+                <p:panelGrid>
+                    <p:growl redisplay="false" life="3500" />
 
-                <h:form id="formChangePassword">
+                    <p:row>
+                        <p:column>
+                            <h:outputText style="font-weight: bold;" value="Current Password" />
+                        </p:column>
+                        <p:column>
+                            <p:password value="#{employeeProfilePageManagedBean.enteredCurrentPassword}" placeholder="CURRENT PASSWORD" required="true" requiredMessage="Current password is required" size="16" maxlength="64" />                                
+                        </p:column>
+                    </p:row>
 
-                    <p:dialog id="dialogChangePassword" widgetVar="dialogChangePassword" responsive="true" header="Change Password" closable="true" showEffect="clip" hideEffect="clip">
+                    <p:row>
+                        <p:column>
+                            <h:outputText style='font-weight: bold;' value='New Password' />
+                        </p:column>
+                        <p:column>
+                            <p:password value='#{employeeProfilePageManagedBean.enteredNewPassword}' placeholder="NEW PASSWORD" required="true" requiredMessage="New password is required" size='16' maxlength="64" />
+                        </p:column>
+                    </p:row>
 
-                        <p:panelGrid>
-                            <p:growl redisplay="false" life="3500" />
+                    <p:row>
+                        <p:column colspan="2">
+                            <div style="text-align: center;">
+                                <p:commandButton update="@form" icon='fa fa-save' actionListener="#{employeeProfilePageManagedBean.changePassword}" oncomplete="PF('dialogChangePassword').hide()" />&nbsp;
+                                <p:commandButton type="reset" icon="fa fa-refresh" />
+                            </div>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
 
-                            <p:row>
-                                <p:column>
-                                    <h:outputText style="font-weight: bold;" value="Current Password" />
-                                </p:column>
-                                <p:column>
-                                    <p:password value="#{employeeProfilePageManagedBean.enteredCurrentPassword}" placeholder="CURRENT PASSWORD" required="true" requiredMessage="Current password is required" size="16" maxlength="64" />                                
-                                </p:column>
-                            </p:row>
+        <div style="text-align: center; width: 100%; height: 100%; display: flex; justify-content: center; align-content: center">
+            <h:form id="employeePersonalInformation" style="margin-top: 15px">
 
-                            <p:row>
-                                <p:column>
-                                    <h:outputText style='font-weight: bold;' value='New Password' />
-                                </p:column>
-                                <p:column>
-                                    <p:password value='#{employeeProfilePageManagedBean.enteredNewPassword}' placeholder="NEW PASSWORD" required="true" requiredMessage="New password is required" size='16' maxlength="64" />
-                                </p:column>
-                            </p:row>
+                <p:growl redisplay="false" life="3500" />
 
-                            <p:row>
-                                <p:column colspan="2">
-                                    <div style="text-align: center;">
-                                        <p:commandButton update="@form" icon='fa fa-save' actionListener="#{employeeProfilePageManagedBean.changePassword}" oncomplete="PF('dialogChangePassword').hide()" />&nbsp;
-                                        <p:commandButton type="reset" icon="fa fa-refresh" />
-                                    </div>
-                                </p:column>
-                            </p:row>
-                        </p:panelGrid>
-                    </p:dialog>
-                </h:form>
+                <p:panelGrid>
 
-                <div style="text-align: center; margin-top: 10px;">
-                    <h:form id="employeePersonalInformation" style="display: inline-block;">
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2" style="font-size: large; padding: 10px">
+                                #{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Page
+                            </p:column>
+                        </p:row>
+                    </f:facet>
 
-                        <p:growl redisplay="false" life="3500" />
+                    <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.imageContents != null || employeeProfilePageManagedBean.picturePreview != null}">
+                        <p:column colspan="2">
+                            <div style='text-align: center;'>
+                                <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview == null and employeeProfilePageManagedBean.cropOldPhoto == false and employeeProfilePageManagedBean.deleteOldPhoto == false and employeeProfilePageManagedBean.imageContents != null}" >
+                                    <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="margin: 15px; width: 180px; height: 180px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
+                                    <br/>
+                                    <p:commandButton icon='fa fa-trash' update='@form' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
+                                    <p:commandButton icon='fa fa-edit' update='@form' actionListener="#{employeeProfilePageManagedBean.cropProfilePhoto}" />
+                                </ui:fragment>
+                                <ui:fragment rendered="#{employeeProfilePageManagedBean.cropOldPhoto == true}" >
+                                    <p:imageCropper id="profilePageImageCropper" value="#{employeeProfilePageManagedBean.croppedImage}" image="/resources/images/profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" initialCoords="0,0,0,0" minSize="50,50" maxSize="180,180" boxHeight="180" aspectRatio="1.0"/>
+                                    <br/>
+                                    <p:commandButton icon='fa fa-times' update='@form'>
+                                        <f:setPropertyActionListener target="#{employeeProfilePageManagedBean.cropOldPhoto}" value="false"/>
+                                    </p:commandButton>
+                                </ui:fragment>
+                                <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview != null}" >
+                                    <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imagePreviewContents}" style="margin: 15px; width: 180px; height: 180px;"/>
+                                    <br/>
+                                    <h4>Picture Preview</h4>
+                                </ui:fragment>
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                        <p:panelGrid>
-                            <p:row id="employeePersonalProfilePicture" rendered="#{employeeProfilePageManagedBean.currentEmployee.imagePath != null || employeeProfilePageManagedBean.picturePreview != null}">
-                                <p:column colspan="2">
-                                    <div style='text-align: center;'>
-                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview == null and employeeProfilePageManagedBean.cropOldPhoto == false and employeeProfilePageManagedBean.deleteOldPhoto == false and employeeProfilePageManagedBean.imageContents != null}" >
-                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="margin: 15px; width: 180px; height: 180px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
-                                            <br/>
-                                            <p:commandButton icon='fa fa-trash' update='@form' actionListener="#{employeeProfilePageManagedBean.removeProfilePhoto}" />
-                                            <p:commandButton icon='fa fa-edit' update='@form' actionListener="#{employeeProfilePageManagedBean.cropProfilePhoto}" />
-                                        </ui:fragment>
-                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.cropOldPhoto == true}" >
-                                            <p:imageCropper id="profilePageImageCropper" value="#{employeeProfilePageManagedBean.croppedImage}" image="/resources/images/profiles/#{employeeProfilePageManagedBean.currentEmployee.imagePath}" initialCoords="0,0,0,0" minSize="50,50" maxSize="180,180" boxHeight="180" aspectRatio="1.0"/>
-                                            <br/>
-                                            <p:commandButton icon='fa fa-times' update='@form'>
-                                                <f:setPropertyActionListener target="#{employeeProfilePageManagedBean.cropOldPhoto}" value="false"/>
-                                            </p:commandButton>
-                                        </ui:fragment>
-                                        <ui:fragment rendered="#{employeeProfilePageManagedBean.picturePreview != null}" >
-                                            <img src="data:image/png;base64,#{employeeProfilePageManagedBean.imagePreviewContents}" style="margin: 15px; width: 180px; height: 180px;"/>
-                                            <br/>
-                                            <h4>Picture Preview</h4>
-                                        </ui:fragment>
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Employee ID" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <h:outputText value="#{employeeProfilePageManagedBean.currentEmployee.employeeId}" />
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputText style="font-weight: bold;" value="Employee ID" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <h:outputText value="#{employeeProfilePageManagedBean.currentEmployee.employeeId}" />
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Username" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <h:outputText value="#{employeeProfilePageManagedBean.currentEmployee.username}" />
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputText style="font-weight: bold;" value="Username" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <h:outputText value="#{employeeProfilePageManagedBean.currentEmployee.username}" />
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Password" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:commandButton icon="fa fa-user-secret" value="Change Password" oncomplete="PF('dialogChangePassword').show()" />
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputText style="font-weight: bold;" value="Password" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <p:commandButton icon="fa fa-user-secret" value="Change Password" oncomplete="PF('dialogChangePassword').show()" />
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputLabel for="employeePersonalFirstName" value="First Name" style="font-weight: bold;"  />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText id="employeePersonalFirstName" value="#{employeeProfilePageManagedBean.currentEmployee.firstName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.firstName}" required="true" requiredMessage="First name is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputLabel for="employeePersonalFirstName" value="First Name" style="font-weight: bold;"  />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <p:inputText id="employeePersonalFirstName" value="#{employeeProfilePageManagedBean.currentEmployee.firstName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.firstName}" required="true" requiredMessage="First name is required" size="16" maxlength="64">
-                                            <f:validateBean />
-                                        </p:inputText>
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputLabel for="employeePersonalLastName" value="Last Name" style="font-weight: bold;" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputLabel for="employeePersonalLastName" value="Last Name" style="font-weight: bold;" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
+                                <p:inputText id="employeePersonalLastName" value="#{employeeProfilePageManagedBean.currentEmployee.lastName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.lastName}" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                                        <p:inputText id="employeePersonalLastName" value="#{employeeProfilePageManagedBean.currentEmployee.lastName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.lastName}" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
-                                            <f:validateBean />
-                                        </p:inputText>
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputLabel for="employeePersonalEmail" value="E-mail" style="font-weight: bold;" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText id="employeePersonalEmail" value="#{employeeProfilePageManagedBean.currentEmployee.email}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.email}" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <h:outputLabel for="employeePersonalEmail" value="E-mail" style="font-weight: bold;" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <p:inputText id="employeePersonalEmail" value="#{employeeProfilePageManagedBean.currentEmployee.email}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.email}" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
-                                            <f:validateBean />
-                                        </p:inputText>
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <p:outputLabel for="employeePersonalRole" value="Role" style="font-weight: bold;" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <h:outputLabel id="employeePersonalRole" value="#{employeeProfilePageManagedBean.currentEmployee.employeeRole}" />
+                            </div>
+                        </p:column>
+                    </p:row>
 
-                            <p:row>
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <p:outputLabel for="employeePersonalRole" value="Role" style="font-weight: bold;" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <div style="text-align: left;">
-                                        <h:outputLabel id="employeePersonalRole" value="#{employeeProfilePageManagedBean.currentEmployee.employeeRole}" />
-                                    </div>
-                                </p:column>
-                            </p:row>
+                    <p:row rendered="#{employeeProfilePageManagedBean.cropOldPhoto == false}">
+                        <p:column>
+                            <div style="text-align: right;">
+                                <p:outputLabel value="Profile Picture" style="font-weight: bold;" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <p:fileUpload update="@form" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}"
+                                          previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
+                                          cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false" fileLimit="1"/>
+                            <p:growl id='updatedImageMessage' life="3500" />
+                        </p:column>
+                    </p:row>
 
-                            <p:row rendered="#{employeeProfilePageManagedBean.cropOldPhoto == false}">
-                                <p:column>
-                                    <div style="text-align: right;">
-                                        <p:outputLabel value="Profile Picture" style="font-weight: bold;" />
-                                    </div>
-                                </p:column>
-                                <p:column>
-                                    <p:fileUpload update="@form" fileUploadListener="#{employeeProfilePageManagedBean.updatePersonalProfilePhoto}"
-                                                  previewWidth="1" allowTypes="/(\.|\/)(gif|jpe?g|png|GIF|JPE?G|PNG)$/" chooseIcon="fa fa-file-photo-o" label="" 
-                                                  cancelIcon="fa fa-remove" cancelLabel="" uploadIcon="fa fa-upload" uploadLabel="" multiple="false" fileLimit="1"/>
-                                    <p:growl id='updatedImageMessage' life="3500" />
-                                </p:column>
-                            </p:row>
-
-                            <p:row>
-                                <p:column colspan="2">
-                                    <div style="text-align: center;">
-                                        <p:commandButton icon='fa fa-save' oncomplete="" update="@form sidebar1" actionListener="#{employeeProfilePageManagedBean.updatePersonalInformation}" />&nbsp;
-                                    </div>
-                                </p:column>
-                            </p:row>
-                        </p:panelGrid>
-                    </h:form>
-                </div>
-
-            </p:layoutUnit>
-
-        </p:layout>
+                    <p:row>
+                        <p:column colspan="2">
+                            <div style="text-align: center;">
+                                <p:commandButton icon='fa fa-save' oncomplete="" update="@form sidebar1" actionListener="#{employeeProfilePageManagedBean.updatePersonalInformation}" />&nbsp;
+                            </div>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </div>
 
     </ui:define>
 
