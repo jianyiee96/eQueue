@@ -6,22 +6,17 @@
 package ws.restful;
 
 import ejb.session.stateless.ShoppingCartSessionBeanLocal;
-import entity.Notification;
-import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PUT;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.MenuItemNotFoundException;
 import ws.datamodel.ErrorRsp;
-import ws.datamodel.RetrieveCustomerNotificationsRsp;
 import ws.datamodel.SaveShoppingCartReq;
 
 @Path("ShoppingCart")
@@ -36,8 +31,7 @@ public class ShoppingCartResource {
 
     public ShoppingCartResource() {
         sessionBeanLookup = new SessionBeanLookup();
-
-        this.shoppingCartSessionBeanLocal = sessionBeanLookup.lookupShoppingCartSessionBeanLocal();
+        shoppingCartSessionBeanLocal = sessionBeanLookup.lookupShoppingCartSessionBeanLocal();
     }
 
     @PUT

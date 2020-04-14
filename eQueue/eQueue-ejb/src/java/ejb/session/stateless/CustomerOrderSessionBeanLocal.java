@@ -5,8 +5,14 @@ import entity.OrderLineItem;
 import java.util.List;
 import javax.ejb.Local;
 import util.exceptions.CreateNewCustomerOrderException;
+import util.exceptions.CreateNewOrderLineItemException;
+import util.exceptions.CustomerNotFoundException;
 import util.exceptions.CustomerOrderNotFoundException;
+import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
+import util.exceptions.MenuItemNotFoundException;
+import util.exceptions.OrderLineItemNotFoundException;
+import util.exceptions.PriceMismatchException;
 import util.exceptions.UnknownPersistenceException;
 
 @Local
@@ -19,5 +25,9 @@ public interface CustomerOrderSessionBeanLocal {
     public void updateCustomerOrder(CustomerOrder customerOrder) throws CustomerOrderNotFoundException, InputDataValidationException;
 
     public CustomerOrder retrieveCustomerOrderById(Long customerOrderId) throws CustomerOrderNotFoundException;
+    
+    public List<CustomerOrder> retrieveAllCustomerOrdersByCustomerId(Long customerId);
+    
+    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException;
 
 }

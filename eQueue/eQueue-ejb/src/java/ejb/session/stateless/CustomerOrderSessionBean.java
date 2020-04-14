@@ -2,7 +2,9 @@ package ejb.session.stateless;
 
 import entity.Customer;
 import entity.CustomerOrder;
+import entity.MenuItem;
 import entity.OrderLineItem;
+import entity.ShoppingCart;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -18,21 +20,27 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import util.enumeration.OrderLineItemStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
+import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.CustomerOrderNotFoundException;
+import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
+import util.exceptions.MenuItemNotFoundException;
 import util.exceptions.OrderLineItemNotFoundException;
+import util.exceptions.PriceMismatchException;
 import util.exceptions.UnknownPersistenceException;
 
 @Stateless
 public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
 
     @EJB
-    private CustomerSessionBeanLocal customerSessionBean;
-
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
     @EJB
-    private OrderLineItemSessionBeanLocal orderLineItemSessionBean;
+    private OrderLineItemSessionBeanLocal orderLineItemSessionBeanLocal;
+    @EJB
+    private ShoppingCartSessionBeanLocal shoppingCartSessionBeanLocal;
 
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
@@ -54,10 +62,10 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
                 if (customerId == null) {
                     throw new CreateNewCustomerOrderException("The new customer order must be associated with a customer");
                 }
-                Customer customer = customerSessionBean.retrieveCustomerById(customerId);
+                Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
                 List<OrderLineItem> newOrderLineItems = new ArrayList<>();
                 for (OrderLineItem oli : orderLineItems) {
-                    OrderLineItem newOrderLineItem = orderLineItemSessionBean.retrieveOrderLineItemById(oli.getOrderLineItemId());
+                    OrderLineItem newOrderLineItem = orderLineItemSessionBeanLocal.retrieveOrderLineItemById(oli.getOrderLineItemId());
                     newOrderLineItems.add(newOrderLineItem);
                 }
 
@@ -117,11 +125,11 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
 //        }
         return currentDayOrders;
     }
-    
+
     @Override
     public CustomerOrder retrieveCustomerOrderById(Long customerOrderId) throws CustomerOrderNotFoundException {
         CustomerOrder customerOrder = em.find(CustomerOrder.class, customerOrderId);
-        
+
         if (customerOrder != null) {
             return customerOrder;
         } else {
@@ -130,12 +138,28 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
     }
 
     @Override
+    public List<CustomerOrder> retrieveAllCustomerOrdersByCustomerId(Long customerId) {
+
+        try {
+            Customer c = customerSessionBeanLocal.retrieveCustomerById(customerId);
+            List<CustomerOrder> orders = c.getCustomerOrders();
+            orders.forEach(o -> o.getOrderLineItems().size());
+            
+            em.detach(c);
+            return orders;
+        } catch (CustomerNotFoundException ex) {
+            return new ArrayList<>();
+        }
+
+    }
+
+    @Override
     public void updateCustomerOrder(CustomerOrder customerOrder) throws CustomerOrderNotFoundException, InputDataValidationException {
         if (customerOrder != null && customerOrder.getOrderId() != null) {
             Set<ConstraintViolation<CustomerOrder>> constraintViolations = validator.validate(customerOrder);
             if (constraintViolations.isEmpty()) {
                 CustomerOrder customerOrderToUpdate = retrieveCustomerOrderById(customerOrder.getOrderId());
-                
+
                 customerOrderToUpdate.setIsCompleted(customerOrder.getIsCompleted());
                 customerOrderToUpdate.setStatus(customerOrder.getStatus());
                 customerOrderToUpdate.setTotalAmount(customerOrder.getTotalAmount());
@@ -145,6 +169,47 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         } else {
             throw new CustomerOrderNotFoundException("Customer Order ID not provided for customer order to be updated!");
         }
+    }
+
+    //can rename as checkoutFromCart if u guys want OWO/
+    @Override
+    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException {
+
+        Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
+        ShoppingCart cart = customer.getShoppingCart();
+
+        if (cart.getOrderLineItems().isEmpty()) {
+            throw new EmptyCartException();
+        }
+
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        for (OrderLineItem cartItem : cart.getOrderLineItems()) {
+
+            Long oliId = orderLineItemSessionBeanLocal.createNewOrderLineItem(new OrderLineItem(cartItem.getQuantity(), cartItem.getRemarks(), OrderLineItemStatusEnum.ORDERED), cartItem.getMenuItem().getMenuItemId());
+            OrderLineItem oli = orderLineItemSessionBeanLocal.retrieveOrderLineItemById(oliId);
+            orderLineItems.add(oli);
+        }
+        
+        //totalPrice validation
+        if (calculateTotalPrice(orderLineItems).doubleValue() != cart.getTotalAmount().doubleValue()) {
+            throw new PriceMismatchException("Price from client mismatch: " + calculateTotalPrice(orderLineItems) + " != " + cart.getTotalAmount());
+        }
+
+        CustomerOrder newOrder = new CustomerOrder();
+        newOrder.setTotalAmount(cart.getTotalAmount());
+        createCustomerOrder(newOrder, customerId, orderLineItems);
+        
+        shoppingCartSessionBeanLocal.saveShoppingCart(customerId, new ShoppingCart());
+        
+    }
+
+    private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {
+        double totalPrice = 0.0;
+        for (OrderLineItem oli : orderLineItems) {
+            totalPrice += oli.getQuantity() * oli.getMenuItem().getMenuItemPrice();
+        }
+        return totalPrice;
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<CustomerOrder>> constraintViolations) {
