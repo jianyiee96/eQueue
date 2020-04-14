@@ -43,14 +43,40 @@
         <p:layout>
             <p:layoutUnit minSize="300" position="west"  header="Kitchen Overview" collapsible="true">
                 <h:form id="formOrdersOverview">
-                    <div style="margin: 10 5 0 5">
-                        <h:outputText value="Number of Ongoing Orders: #{kitchenManagementManagedBean.currentDayCustomerOrders.size()}"/>
-                        <br/>
-                        <h:outputText value="Number of Ordered Line Items: #{kitchenManagementManagedBean.numOrdered}"/>
-                        <br/>
-                        <h:outputText value="Number of Preparing Line Items: #{kitchenManagementManagedBean.numPreparing}"/>
-                        <br/>
-                    </div>
+                    <p:panelGrid style="width:300px; margin:10 5 0 5">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="3">
+                                    Statistics
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Ongoing Orders:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{kitchenManagementManagedBean.currentDayCustomerOrders.size()}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Ordered Line Items:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{kitchenManagementManagedBean.numOrdered}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Preparing Line Items:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{kitchenManagementManagedBean.numPreparing}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
                     <p:dataTable style="width:300px; margin:10 5 0 5" var="entry" value="#{kitchenManagementManagedBean.menuItemsOverview}"
                                  draggableRows="true"
                                  selectionMode="single" rowKey="#{entry.key.menuItemId}" selection="#{kitchenManagementManagedBean.menuItemToViewEntry}"
@@ -126,7 +152,7 @@
 
                             <p:contextMenu for="orderLineItemsTable">
                                 <p:menuitem value="View" update="formViewOrderLineItem" icon="pi pi-search" oncomplete="PF('dialogViewOrderLineItem').show()"/>
-                                <p:menuitem value="Edit" update="formViewOrderLineItem" icon="pi pi-pencil"/>
+                                <p:menuitem value="Edit" update="formUpdateOrderLineItem" icon="pi pi-pencil" oncomplete="PF('dialogUpdateOrderLineItem').show()"/>
                             </p:contextMenu>
 
                             <br />
@@ -144,7 +170,7 @@
 
                 <h:form id="formViewOrderLineItem">
                     <p:dialog id="dialogViewOrderLineItem" widgetVar="dialogViewOrderLineItem" responsive="true" header="View Order Item Details" closable="true" showEffect="clip" hideEffect="clip">
-                        <p:panelGrid id="orderLineItemDetails">
+                        <p:panelGrid>
                             <p:row rendered="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.imagePath != null}">
                                 <p:column colspan="2">
                                     <div style='text-align: center;'>
@@ -199,9 +225,97 @@
                             </p:row>
 
                             <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Status" />
+                                </p:column>
+                                <p:column styleClass="#{kitchenManagementManagedBean.selectedOrderItem.status == 'ORDERED' ? 'ordered' : kitchenManagementManagedBean.selectedOrderItem.status == 'PREPARING' ? 'preparing' : kitchenManagementManagedBean.selectedOrderItem.status == 'SERVED' ? 'served' : 'cancelled'}">
+                                    <h:outputText value="#{kitchenManagementManagedBean.selectedOrderItem.status}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
                                 <p:column colspan="2">
                                     <div style="text-align: center;">
                                         <p:commandButton icon="fa fa-close" oncomplete="PF('dialogViewOrderLineItem').hide();" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:dialog>
+                </h:form>
+
+                <h:form id="formUpdateOrderLineItem">
+                    <p:dialog id="dialogUpdateOrderLineItem" widgetVar="dialogUpdateOrderLineItem" responsive="true" header="Update Order Item Details" closable="true">
+                        <p:panelGrid>
+                            <p:row rendered="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.imagePath != null}">
+                                <p:column colspan="2">
+                                    <div style='text-align: center;'>
+                                        <p:graphicImage style="margin: 15px;" width="180" height="180" library="images" name="food/#{kitchenManagementManagedBean.selectedOrderItem.menuItem.imagePath}" alt="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemName} (#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemCode}) is not loaded" />
+                                    </div>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Code" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemCode}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Name" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemName}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Description" />
+                                </p:column>
+                                <p:column>
+                                    <h:outputText value="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemDescription}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Quantity" />
+                                </p:column>
+                                <p:column>
+                                    <p:spinner value="#{kitchenManagementManagedBean.selectedOrderItem.quantity}" min="1" max="99" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Remarks" />
+                                </p:column>
+                                <p:column>
+                                    <h:inputTextarea value="#{kitchenManagementManagedBean.selectedOrderItem.remarks}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row rendered="#{not empty kitchenManagementManagedBean.selectedOrderItem.status}">
+                                <p:column>
+                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Status" />
+                                </p:column>
+                                <p:column>
+                                    <p:selectOneMenu value="#{kitchenManagementManagedBean.selectedOrderItem.status}">
+                                        <f:selectItems value="#{kitchenManagementManagedBean.orderLineItemStatusEnums}" var="status" itemValue="#{status}" itemLabel="#{status}"/>
+                                    </p:selectOneMenu>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <div style="text-align: center;">
+                                        <p:commandButton value="Update" update="@form formOrdersOverview formCurrentDayOrders" actionListener="#{kitchenManagementManagedBean.updateOrderLineItem}" oncomplete="PF('dialogUpdateOrderLineItem').show();" />
+                                        <p:commandButton value="Close" oncomplete="PF('dialogUpdateOrderLineItem').hide();" />
                                     </div>
                                 </p:column>
                             </p:row>

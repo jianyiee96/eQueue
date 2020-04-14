@@ -8,6 +8,7 @@ import entity.MenuItem;
 import entity.OrderLineItem;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -159,6 +160,18 @@ public class KitchenManagementManagedBean implements Serializable {
         }
     }
 
+    public void updateOrderLineItem() {
+        try {
+            orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(selectedOrderItem);
+            createMenuItemsOverview();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Order Line Item Updated Successfully", null));
+        } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
+        } catch (Exception ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
+        }
+    }
+
     public Integer getNumOrdered() {
         return numOrdered;
     }
@@ -233,4 +246,9 @@ public class KitchenManagementManagedBean implements Serializable {
         this.orderToComplete = orderToComplete;
     }
 
+    public List<OrderLineItemStatusEnum> getOrderLineItemStatusEnums() {
+        List<OrderLineItemStatusEnum> list = new ArrayList<>(Arrays.asList(OrderLineItemStatusEnum.values()));
+        list.remove(OrderLineItemStatusEnum.IN_CART);
+        return list;
+    }
 }
