@@ -458,7 +458,6 @@
                                     <f:facet name="filter">
                                         <p:selectOneMenu id="selCategory" onchange="PF('dataTableAllMenuCategories').filter()">
                                             <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
-                                            <f:selectItem  itemValue="#{null}" itemLabel="NIL" />
                                             <f:selectItems value="#{menuManagementManagedBean.menuCategories}" var="menuCategory" itemValue="#{menuCategory.categoryName}" itemLabel="#{menuCategory.categoryName}" />
                                         </p:selectOneMenu>
                                     </f:facet>
