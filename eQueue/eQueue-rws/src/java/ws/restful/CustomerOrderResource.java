@@ -22,6 +22,7 @@ import util.enumeration.TableStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.CustomerNotFoundException;
+import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
@@ -29,8 +30,8 @@ import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.PriceMismatchException;
 import util.exceptions.UnknownPersistenceException;
 import ws.datamodel.ErrorRsp;
-import ws.datamodel.RetrieveCustomerNotificationsRsp;
 import ws.datamodel.RetrieveCustomerOrdersRsp;
+import ws.datamodel.RetrieveOrderLineItemsRsp;
 
 @Path("CustomerOrder")
 public class CustomerOrderResource {
@@ -59,26 +60,49 @@ public class CustomerOrderResource {
             List<CustomerOrder> customerOrders = customerOrderSessionBeanLocal.retrieveAllCustomerOrdersByCustomerId(Long.parseLong(customerId));
 
             List<CustomerOrder> result = new ArrayList<>();
+            List<Integer> itemCount = new ArrayList<>();
 
-            for(CustomerOrder customerOrder : customerOrders) {
-                
+            for (CustomerOrder customerOrder : customerOrders) {
+
                 CustomerOrder parsedOrder = new CustomerOrder();
-                
+
                 parsedOrder.setIsCompleted(customerOrder.getIsCompleted());
                 parsedOrder.setOrderDate(customerOrder.getOrderDate());
                 parsedOrder.setOrderId(customerOrder.getOrderId());
                 parsedOrder.setStatus(customerOrder.getStatus());
                 parsedOrder.setTotalAmount(customerOrder.getTotalAmount());
-                
+
                 result.add(parsedOrder);
-                
+                itemCount.add(customerOrder.getOrderLineItems().size());
             }
 
-            return Response.status(Response.Status.OK).entity(new RetrieveCustomerOrdersRsp(result)).build();
+            return Response.status(Response.Status.OK).entity(new RetrieveCustomerOrdersRsp(result, itemCount)).build();
 
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+
+    @Path("retrieveOrderLineItemsByOrderId")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveOrderLineItemsByOrderId(@QueryParam("orderId") String orderId) {
+        try {
+
+            CustomerOrder customerOrder = customerOrderSessionBeanLocal.retrieveCustomerOrderById(Long.parseLong(orderId));
+            List<OrderLineItem> result = customerOrder.getOrderLineItems();
+
+            for (OrderLineItem o : result) {
+                o.getMenuItem().setMenuCategory(null);
+            }
+
+            return Response.status(Response.Status.OK).entity(new RetrieveOrderLineItemsRsp(result)).build();
+
+        } catch (CustomerOrderNotFoundException ex) {
+            ErrorRsp errorRsp = new ErrorRsp("Customer Order not found.");
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         }
     }
 
@@ -113,7 +137,7 @@ public class CustomerOrderResource {
             ErrorRsp errorRsp = new ErrorRsp("Empty Cart.");
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         } catch (CreateNewCustomerOrderException | CreateNewOrderLineItemException | MenuItemNotFoundException | NumberFormatException | OrderLineItemNotFoundException | UnknownPersistenceException ex) {
-            ErrorRsp errorRsp = new ErrorRsp("System Error.");
+            ErrorRsp errorRsp = new ErrorRsp("System Error: " + ex.getMessage());
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         } catch (InputDataValidationException | PriceMismatchException ex) {
             ErrorRsp errorRsp = new ErrorRsp("Cart validation error, please reset cart." + ex.getMessage());

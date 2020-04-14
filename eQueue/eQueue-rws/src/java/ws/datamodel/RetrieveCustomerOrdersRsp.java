@@ -15,12 +15,14 @@ import java.util.List;
 public class RetrieveCustomerOrdersRsp {
     
     private List<CustomerOrder> customerOrders;
+    private List<Integer> itemCount;
 
     public RetrieveCustomerOrdersRsp() {
     }
 
-    public RetrieveCustomerOrdersRsp(List<CustomerOrder> customerOrders) {
+    public RetrieveCustomerOrdersRsp(List<CustomerOrder> customerOrders, List<Integer> itemCount) {
         this.customerOrders = customerOrders;
+        this.itemCount = itemCount;
     }
 
     public List<CustomerOrder> getCustomerOrders() {
@@ -30,6 +32,15 @@ public class RetrieveCustomerOrdersRsp {
     public void setCustomerOrders(List<CustomerOrder> customerOrders) {
         this.customerOrders = customerOrders;
     }
+
+    public List<Integer> getItemCount() {
+        return itemCount;
+    }
+
+    public void setItemCount(List<Integer> itemCount) {
+        this.itemCount = itemCount;
+    }
+    
     
     
     
