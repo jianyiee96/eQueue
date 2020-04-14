@@ -102,7 +102,7 @@ public class KitchenManagementManagedBean implements Serializable {
 
     private void reduceMenuItemOverview(OrderLineItem orderLineItem) {
         for (Map.Entry<MenuItem, Integer> entry : menuItemsOverview) {
-            if (entry.getKey() == orderLineItem.getMenuItem()) {
+            if (entry.getKey().getMenuItemId() == orderLineItem.getMenuItem().getMenuItemId()) {
                 Integer numItems = entry.getValue() - Math.toIntExact(orderLineItem.getQuantity());
                 entry.setValue(numItems);
 
