@@ -1,10 +1,14 @@
 package jsf.managedBean;
 
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
+import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
+import entity.Customer;
 import entity.CustomerOrder;
 import entity.MenuItem;
+import entity.Notification;
 import entity.OrderLineItem;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +24,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import util.enumeration.NotificationTypeEnum;
 import javax.inject.Inject;
 import util.enumeration.OrderLineItemStatusEnum;
 import util.exceptions.CustomerOrderNotFoundException;
@@ -35,6 +40,10 @@ public class KitchenManagementManagedBean implements Serializable {
     private CustomerOrderSessionBeanLocal customerOrderSessionBeanLocal;
     @EJB(name = "OrderLineItemSessionBeanLocal")
     private OrderLineItemSessionBeanLocal orderLineItemSessionBeanLocal;
+    @EJB(name = "CustomerSessionBeanLocal")
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
+    @EJB(name = "NotificationSessionBeanLocal")
+    private NotificationSessionBeanLocal notificationSessionBeanLocal;
     @EJB
     private MenuItemSessionBeanLocal menuItemSessionBean;
     @Inject
@@ -176,7 +185,17 @@ public class KitchenManagementManagedBean implements Serializable {
     public void updateOrderLineItem() {
         try {
             orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(selectedOrderItem);
-            createMenuItemsOverview();
+
+            Long customerId = customerSessionBeanLocal.retrieveCustomerIdByOrderLineItemId(selectedOrderItem.getOrderLineItemId());
+            String title = "Update on Order Line Item";
+            String message = "Your order line item (" + selectedOrderItem.getMenuItem().getMenuItemName() + ") has been updated to:"
+                    + "<br />1. Quantity - " + selectedOrderItem.getQuantity()
+                    + "<br />2. Status   - " + selectedOrderItem.getStatus()
+                    + "<br />3. Remarks  - " + selectedOrderItem.getRemarks();
+
+            notificationSessionBeanLocal.createNewNotification(new Notification(title, message, NotificationTypeEnum.ORDER_EDITED), customerId);
+
+            this.retrieveIncompleteOrders();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Order Line Item Updated Successfully", null));
         } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));

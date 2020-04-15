@@ -78,6 +78,18 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
     }
 
     @Override
+    public Long retrieveCustomerIdByOrderLineItemId(Long orderLineItemId) throws CustomerNotFoundException {
+        Query query = em.createQuery("SELECT c FROM Customer c JOIN c.customerOrders co JOIN co.orderLineItems li WHERE li.orderLineItemId = :inOrderLineItemId");
+        query.setParameter("inOrderLineItemId", orderLineItemId);
+
+        try {
+            return ((Customer) query.getSingleResult()).getCustomerId();
+        } catch (NoResultException | NonUniqueResultException ex) {
+            throw new CustomerNotFoundException("Customer with order line item ID " + orderLineItemId + " does not exist!");
+        }
+    }
+
+    @Override
     public Customer retrieveCustomerByEmail(String email) throws CustomerNotFoundException {
         Query query = em.createQuery("SELECT c FROM Customer c WHERE c.email = :inEmail");
         query.setParameter("inEmail", email);
