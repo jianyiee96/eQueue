@@ -1,0 +1,136 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+
+    <ui:define name="content">
+        <div style="text-align: center; width: 100%; height: 100%; display: flex; justify-content: center; align-content: center">
+
+            <h:form id="employeePersonalInformation" style="margin-top: 15px;">
+
+                <p:growl redisplay="false" life="3500" />
+
+                <p:panelGrid rendered="#{storeDetailsManagedBean.store != null}" style="margin-bottom: 10px">
+                    <f:facet name="header">
+                        <p:row>
+                            <p:column colspan="2" style="font-size: large; padding: 10px">
+                                Store Management
+                            </p:column>
+                        </p:row>
+                    </f:facet>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Store Name" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.storeName}" placeholder="#{storeDetailsManagedBean.store.storeName}" required="true" requiredMessage="Store name is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Email" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.storeEmail}" placeholder="#{storeDetailsManagedBean.store.storeEmail}" required="true" requiredMessage="Store email is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Address" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.storeAddress}" placeholder="#{storeDetailsManagedBean.store.storeAddress}" required="true" requiredMessage="Store address is required" size="16" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Contact" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.storeContact}" placeholder="#{storeDetailsManagedBean.store.storeContact}" required="true" requiredMessage="Store contact is required" size="8" maxlength="64">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Queue Waiting Time(Minutes)" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.estimatedQueueUnitWaitingMinutes}" placeholder="#{storeDetailsManagedBean.store.estimatedQueueUnitWaitingMinutes}" required="true" requiredMessage="Estimated queue waiting minutes is required">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Allocation Response Time(Minutes)" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.allocationGraceWaitingMinutes}" placeholder="#{storeDetailsManagedBean.store.allocationGraceWaitingMinutes}" required="true" requiredMessage="Allocation grace waiting minutes is required">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+
+                    <p:row>
+                        <p:column>
+                            <div style="text-align: right;">
+                                <h:outputText style="font-weight: bold;" value="Message of the Day" />
+                            </div>
+                        </p:column>
+                        <p:column>
+                            <div style="text-align: left;">
+                                <p:inputText value="#{storeDetailsManagedBean.store.messageOfTheDay}" placeholder="#{storeDetailsManagedBean.store.messageOfTheDay}" required="true" requiredMessage="Message of the day is required">
+                                    <f:validateBean />
+                                </p:inputText>
+                            </div>
+                        </p:column>
+                    </p:row>
+                </p:panelGrid>
+                <p:commandButton update="@form" icon="fa fa-save" actionListener="#{storeDetailsManagedBean.updateStore}"/>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>
+
