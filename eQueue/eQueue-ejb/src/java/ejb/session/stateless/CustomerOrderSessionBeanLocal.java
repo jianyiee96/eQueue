@@ -30,4 +30,5 @@ public interface CustomerOrderSessionBeanLocal {
     
     public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException;
 
+    public void recalculateTotalAmount(Long customerOrderId);
 }

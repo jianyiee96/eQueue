@@ -144,7 +144,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
             Customer c = customerSessionBeanLocal.retrieveCustomerById(customerId);
             List<CustomerOrder> orders = c.getCustomerOrders();
             orders.forEach(o -> o.getOrderLineItems().size());
-            
+
             em.detach(c);
             return orders;
         } catch (CustomerNotFoundException ex) {
@@ -190,7 +190,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
             OrderLineItem oli = orderLineItemSessionBeanLocal.retrieveOrderLineItemById(oliId);
             orderLineItems.add(oli);
         }
-        
+
         //totalPrice validation
         if (calculateTotalPrice(orderLineItems).doubleValue() != cart.getTotalAmount().doubleValue()) {
             throw new PriceMismatchException("Price from client mismatch: " + calculateTotalPrice(orderLineItems) + " != " + cart.getTotalAmount());
@@ -199,15 +199,29 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
         CustomerOrder newOrder = new CustomerOrder();
         newOrder.setTotalAmount(cart.getTotalAmount());
         createCustomerOrder(newOrder, customerId, orderLineItems);
-        
+
         shoppingCartSessionBeanLocal.saveShoppingCart(customerId, new ShoppingCart());
-        
+
+    }
+
+    @Override
+    public void recalculateTotalAmount(Long customerOrderId) {
+        try {
+            CustomerOrder customerOrder = retrieveCustomerOrderById(customerOrderId);
+
+            customerOrder.setTotalAmount(calculateTotalPrice(customerOrder.getOrderLineItems()));
+
+        } catch (CustomerOrderNotFoundException ex) {
+
+        }
     }
 
     private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {
         double totalPrice = 0.0;
         for (OrderLineItem oli : orderLineItems) {
-            totalPrice += oli.getQuantity() * oli.getMenuItem().getMenuItemPrice();
+            if (oli.getStatus() != OrderLineItemStatusEnum.CANCELLED) {
+                totalPrice += oli.getQuantity() * oli.getMenuItem().getMenuItemPrice();
+            }
         }
         return totalPrice;
     }
@@ -221,4 +235,5 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
 
         return msg;
     }
+
 }
