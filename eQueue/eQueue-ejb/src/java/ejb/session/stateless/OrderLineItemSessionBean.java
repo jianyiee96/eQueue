@@ -19,6 +19,7 @@ import util.exceptions.DeleteOrderLineItemException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
 import util.exceptions.OrderLineItemNotFoundException;
+import util.exceptions.OrderStateMismatchException;
 import util.exceptions.UnknownPersistenceException;
 import util.exceptions.UpdateOrderLineItemException;
 
@@ -117,15 +118,26 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
                 orderLineItemToUpdate.setQuantity(orderLineItem.getQuantity());
                 orderLineItemToUpdate.setRemarks(orderLineItem.getRemarks());
 
-                // When customers wish to cancel their orders while in ordered state
-                orderLineItemToUpdate.setStatus(orderLineItem.getStatus());
-
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
         } else {
             throw new OrderLineItemNotFoundException("Order Line Item ID not provided for order line item to be updated");
         }
+    }
+    
+    @Override
+    public void cancelOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, OrderStateMismatchException {
+        
+        OrderLineItem orderLineItem = retrieveOrderLineItemById(orderLineItemId);
+        
+        if(orderLineItem.getStatus() == OrderLineItemStatusEnum.ORDERED) {
+            orderLineItem.setStatus(OrderLineItemStatusEnum.CANCELLED);
+        } else {
+            throw new OrderStateMismatchException("OrderLineItem is not in ORDERED state.");
+        }
+        
+        
     }
 
     // Employee - Can update everything, except ID and menu item, in whatever status

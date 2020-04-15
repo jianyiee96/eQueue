@@ -6,6 +6,7 @@ import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.DeleteOrderLineItemException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.OrderLineItemNotFoundException;
+import util.exceptions.OrderStateMismatchException;
 import util.exceptions.UnknownPersistenceException;
 import util.exceptions.UpdateOrderLineItemException;
 
@@ -21,5 +22,7 @@ public interface OrderLineItemSessionBeanLocal {
     public void updateOrderLineItemByEmployee(OrderLineItem orderLineItem) throws OrderLineItemNotFoundException, UpdateOrderLineItemException, InputDataValidationException;
 
     public void deleteOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, DeleteOrderLineItemException;
+    
+    public void cancelOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, OrderStateMismatchException;
     
 }
