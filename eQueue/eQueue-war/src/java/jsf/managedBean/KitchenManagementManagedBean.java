@@ -40,8 +40,7 @@ public class KitchenManagementManagedBean implements Serializable {
     @Inject
     private ViewMenuItemManagedBean viewMenuItemManagedBean;
 
-    private List<CustomerOrder> currentDayCustomerOrders;
-//    private List<CustomerOrder> filteredCustomerOrders;
+    private List<CustomerOrder> incompleteCustomerOrders;
     private List<Map.Entry<MenuItem, Integer>> menuItemsOverview;
     private Map.Entry<MenuItem, Integer> menuItemToViewEntry;
 
@@ -61,7 +60,15 @@ public class KitchenManagementManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
-        currentDayCustomerOrders = customerOrderSessionBeanLocal.retrieveCurrentDayOrders();
+//        incompleteCustomerOrders = customerOrderSessionBeanLocal.retrieveIncompleteOrders();
+//        sortAllCurrentDayOrderLineItems();
+//
+//        createMenuItemsOverview();
+        this.retrieveIncompleteOrders();
+    }
+
+    public void retrieveIncompleteOrders() {
+        incompleteCustomerOrders = customerOrderSessionBeanLocal.retrieveIncompleteOrders();
         sortAllCurrentDayOrderLineItems();
 
         createMenuItemsOverview();
@@ -69,7 +76,7 @@ public class KitchenManagementManagedBean implements Serializable {
 
     // To sort the current day order line items
     public void sortAllCurrentDayOrderLineItems() {
-        currentDayCustomerOrders.forEach(order -> {
+        incompleteCustomerOrders.forEach(order -> {
             sortOrderLineItems(order);
         });
     }
@@ -82,7 +89,7 @@ public class KitchenManagementManagedBean implements Serializable {
         numOrdered = 0;
         numPreparing = 0;
         Map<MenuItem, Integer> map = new HashMap<>();
-        for (CustomerOrder customerOrder : currentDayCustomerOrders) {
+        for (CustomerOrder customerOrder : incompleteCustomerOrders) {
             for (OrderLineItem orderLineItem : customerOrder.getOrderLineItems()) {
                 OrderLineItemStatusEnum status = orderLineItem.getStatus();
                 if (status == OrderLineItemStatusEnum.ORDERED || status == OrderLineItemStatusEnum.PREPARING) {
@@ -96,7 +103,7 @@ public class KitchenManagementManagedBean implements Serializable {
                     numPreparing++;
                 }
             }
-        }                                                     
+        }
         menuItemsOverview = new ArrayList<>(map.entrySet());
     }
 
@@ -157,7 +164,7 @@ public class KitchenManagementManagedBean implements Serializable {
         try {
             customerOrderSessionBeanLocal.updateCustomerOrder(orderToComplete);
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderToComplete.getCustomer().getFirstName() + "'s order (ID - " + orderToComplete.getOrderId() + ") is completed!", null));
-            currentDayCustomerOrders.remove(orderToComplete);
+            incompleteCustomerOrders.remove(orderToComplete);
             orderToComplete = new CustomerOrder();
         } catch (CustomerOrderNotFoundException | InputDataValidationException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating customer order: ", ex.getMessage()));
@@ -210,12 +217,12 @@ public class KitchenManagementManagedBean implements Serializable {
         this.viewMenuItemManagedBean = viewMenuItemManagedBean;
     }
 
-    public List<CustomerOrder> getCurrentDayCustomerOrders() {
-        return currentDayCustomerOrders;
+    public List<CustomerOrder> getIncompleteCustomerOrders() {
+        return incompleteCustomerOrders;
     }
 
-    public void setCurrentDayCustomerOrders(List<CustomerOrder> currentDayCustomerOrders) {
-        this.currentDayCustomerOrders = currentDayCustomerOrders;
+    public void setIncompleteCustomerOrders(List<CustomerOrder> incompleteCustomerOrders) {
+        this.incompleteCustomerOrders = incompleteCustomerOrders;
     }
 
     public OrderLineItem getSelectedOrderItem() {

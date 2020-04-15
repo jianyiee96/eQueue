@@ -20,7 +20,7 @@ public interface CustomerOrderSessionBeanLocal {
 
     public Long createCustomerOrder(CustomerOrder newCustomerOrder, Long customerId, List<OrderLineItem> orderLineItems) throws InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException;
 
-    public List<CustomerOrder> retrieveCurrentDayOrders();
+    public List<CustomerOrder> retrieveIncompleteOrders();
 
     public void updateCustomerOrder(CustomerOrder customerOrder) throws CustomerOrderNotFoundException, InputDataValidationException;
 
