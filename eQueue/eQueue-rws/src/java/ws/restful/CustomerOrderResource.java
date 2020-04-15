@@ -163,6 +163,7 @@ public class CustomerOrderResource {
             System.out.println("Success call." + orderLineItemId);
             orderLineItemSessionBeanLocal.cancelOrderLineItem(Long.parseLong(orderLineItemId));
             customerOrderSessionBeanLocal.recalculateTotalAmount(Long.parseLong(customerOrderId));
+            customerOrderSessionBeanLocal.updateOrderStatus(Long.parseLong(customerOrderId));
             return Response.status(Response.Status.OK).entity(null).build();
 
         } catch (OrderLineItemNotFoundException | OrderStateMismatchException ex) {
