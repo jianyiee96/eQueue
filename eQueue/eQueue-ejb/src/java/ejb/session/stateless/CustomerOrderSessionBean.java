@@ -21,6 +21,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.OrderLineItemStatusEnum;
+import util.enumeration.OrderStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.CustomerNotFoundException;
@@ -210,6 +211,27 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
             CustomerOrder customerOrder = retrieveCustomerOrderById(customerOrderId);
 
             customerOrder.setTotalAmount(calculateTotalPrice(customerOrder.getOrderLineItems()));
+
+        } catch (CustomerOrderNotFoundException ex) {
+
+        }
+    }
+    
+    @Override
+    public void updateOrderStatus(Long customerOrderId) {
+        try {
+            CustomerOrder customerOrder = retrieveCustomerOrderById(customerOrderId);
+            boolean toggle = false;
+            for(OrderLineItem o : customerOrder.getOrderLineItems()) {
+                if(o.getStatus() != OrderLineItemStatusEnum.CANCELLED){
+                    toggle = true;
+                }
+            }
+            
+            if(!toggle) {
+                customerOrder.setStatus(OrderStatusEnum.CANCELLED);
+                customerOrder.setIsCompleted(true);
+            }
 
         } catch (CustomerOrderNotFoundException ex) {
 

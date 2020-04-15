@@ -117,7 +117,7 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
                 orderLineItemToUpdate.setIsEdited(true);
                 orderLineItemToUpdate.setQuantity(orderLineItem.getQuantity());
                 orderLineItemToUpdate.setRemarks(orderLineItem.getRemarks());
-
+                
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
