@@ -29,10 +29,10 @@ public class ShoppingCartSessionBean implements ShoppingCartSessionBeanLocal {
     CustomerSessionBeanLocal customerSessionBeanLocal;
     @EJB
     MenuItemSessionBeanLocal menuItemSessionBeanLocal;
-    
+
     public ShoppingCartSessionBean() {
     }
-    
+
     @Override
     public Long createNewShoppingCart(Customer customer) {
         if (customer.getShoppingCart() == null) {
@@ -50,20 +50,20 @@ public class ShoppingCartSessionBean implements ShoppingCartSessionBeanLocal {
     @Override
     public ShoppingCart retrieveShoppingCartById(Long shoppingCartId) throws ShoppingCartNotFoundException {
         ShoppingCart shoppingCart = em.find(ShoppingCart.class, shoppingCartId);
-        
+
         shoppingCart.getOrderLineItems().size();
         shoppingCart.getOrderLineItems().forEach(x -> x.getMenuItem());
-        
+
         if (shoppingCart != null) {
             return shoppingCart;
         } else {
             throw new ShoppingCartNotFoundException("Shopping Cart ID " + shoppingCartId + " does not exist!");
         }
     }
-    
+
     @Override
     public ShoppingCart retrieveShoppingCartByCustomerId(Long customerId) {
-        
+
         try {
             ShoppingCart s = customerSessionBeanLocal.retrieveCustomerById(customerId).getShoppingCart();
 
@@ -72,19 +72,22 @@ public class ShoppingCartSessionBean implements ShoppingCartSessionBeanLocal {
             return null;
         }
     }
-    
+
     @Override
     public void saveShoppingCart(Long customerId, ShoppingCart shoppingCart) throws CustomerNotFoundException, MenuItemNotFoundException {
-        
+
         Customer c = customerSessionBeanLocal.retrieveCustomerById(customerId);
         ShoppingCart cart = c.getShoppingCart();
-        
+
+        cart.getOrderLineItems().forEach(o -> em.remove(o));
+
         cart.setOrderLineItems(new ArrayList<>());
-        
+        em.flush();
+
         cart.setTotalAmount(shoppingCart.getTotalAmount());
-        
-        for(OrderLineItem o : shoppingCart.getOrderLineItems()){
-            
+
+        for (OrderLineItem o : shoppingCart.getOrderLineItems()) {
+
             OrderLineItem newOrderLineItem = new OrderLineItem(o.getQuantity(), o.getRemarks(), OrderLineItemStatusEnum.IN_CART);
             MenuItem m = menuItemSessionBeanLocal.retrieveMenuItemById(o.getMenuItem().getMenuItemId());
             newOrderLineItem.setMenuItem(m);
@@ -93,6 +96,6 @@ public class ShoppingCartSessionBean implements ShoppingCartSessionBeanLocal {
         }
         em.persist(cart);
         em.flush();
-        
+
     }
 }

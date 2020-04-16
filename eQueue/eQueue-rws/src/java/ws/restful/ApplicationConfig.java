@@ -24,6 +24,7 @@ public class ApplicationConfig extends Application {
     private void addRestResourceClasses(Set<Class<?>> resources) {
         resources.add(ws.restful.CorsFilter.class);
         resources.add(ws.restful.CreditCardResource.class);
+        resources.add(ws.restful.CustomerOrderResource.class);
         resources.add(ws.restful.CustomerResource.class);
         resources.add(ws.restful.DiningTableResource.class);
         resources.add(ws.restful.MenuResource.class);

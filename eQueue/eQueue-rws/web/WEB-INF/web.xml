@@ -33,4 +33,10 @@
         <local>ejb.session.stateless.CreditCardSessionBeanLocal</local>
         <ejb-link>eQueue-ejb.jar#CreditCardSessionBean</ejb-link>
     </ejb-local-ref>
+    <ejb-local-ref>
+        <ejb-ref-name>CustomerOrderSessionBean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>ejb.session.stateless.CustomerOrderSessionBeanLocal</local>
+        <ejb-link>eQueue-ejb.jar#CustomerOrderSessionBean</ejb-link>
+    </ejb-local-ref>
 </web-app>
