@@ -22,6 +22,11 @@ public class CreditCard implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long creditCardId;
 
+    @Column(nullable = false, length = 26)
+    @NotNull
+    @Size(max = 26)
+    private String creditCardName;
+
     //Format of 1234-1234-1234-1234
     @Column(nullable = false, length = 19)
     @NotNull
@@ -43,9 +48,8 @@ public class CreditCard implements Serializable {
     @Column(nullable = false)
     @NotNull
     @Min(1)
-    @Max(31)
     @Positive
-    private Long expiryDay;
+    private Long expiryYear;
 
     @OneToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -55,12 +59,21 @@ public class CreditCard implements Serializable {
 
     }
 
-    public CreditCard(String creditCardNumber, String cvv, Long expiryMonth, Long expiryDay) {
+    public CreditCard(String creditCardName, String creditCardNumber, String cvv, Long expiryMonth, Long expiryYear) {
         this();
+        this.creditCardName = creditCardName;
         this.creditCardNumber = creditCardNumber;
         this.cvv = cvv;
         this.expiryMonth = expiryMonth;
-        this.expiryDay = expiryDay;
+        this.expiryYear = expiryYear;
+    }
+
+    public String getCreditCardName() {
+        return creditCardName;
+    }
+
+    public void setCreditCardName(String creditCardName) {
+        this.creditCardName = creditCardName;
     }
 
     public Long getCreditCardId() {
@@ -95,12 +108,12 @@ public class CreditCard implements Serializable {
         this.expiryMonth = expiryMonth;
     }
 
-    public Long getExpiryDay() {
-        return expiryDay;
+    public Long getExpiryYear() {
+        return expiryYear;
     }
 
-    public void setExpiryDay(Long expiryDay) {
-        this.expiryDay = expiryDay;
+    public void setExpiryYear(Long expiryYear) {
+        this.expiryYear = expiryYear;
     }
 
     public Customer getCustomer() {
