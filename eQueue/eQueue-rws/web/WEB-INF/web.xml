@@ -28,6 +28,12 @@
         <ejb-link>eQueue-ejb.jar#ShoppingCartSessionBean</ejb-link>
     </ejb-local-ref>
     <ejb-local-ref>
+        <ejb-ref-name>CreditCardSessionBean</ejb-ref-name>
+        <ejb-ref-type>Session</ejb-ref-type>
+        <local>ejb.session.stateless.CreditCardSessionBeanLocal</local>
+        <ejb-link>eQueue-ejb.jar#CreditCardSessionBean</ejb-link>
+    </ejb-local-ref>
+    <ejb-local-ref>
         <ejb-ref-name>CustomerOrderSessionBean</ejb-ref-name>
         <ejb-ref-type>Session</ejb-ref-type>
         <local>ejb.session.stateless.CustomerOrderSessionBeanLocal</local>

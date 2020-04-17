@@ -4,6 +4,7 @@ import ejb.session.stateless.CustomerSessionBeanLocal;
 import entity.Customer;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -11,7 +12,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import util.exceptions.CustomerInvalidLoginCredentialException;
+import util.exceptions.CustomerInvalidPasswordException;
+import util.exceptions.CustomerNotFoundException;
 import util.exceptions.InputDataValidationException;
+import ws.datamodel.ChangePasswordReq;
 import ws.datamodel.CustomerLoginRsp;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.RegisterCustomerReq;
@@ -47,7 +51,8 @@ public class CustomerResource {
             customer.setAllocatedDiningTable(null);
             customer.setCurrentQueue(null);
             customer.getShoppingCart().getOrderLineItems().forEach(oli -> oli.getMenuItem().setMenuCategory(null));
-
+            customer.setCreditCard(null);
+            
             return Response.status(Response.Status.OK).entity(new CustomerLoginRsp(customer)).build();
         } catch (CustomerInvalidLoginCredentialException ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
@@ -60,6 +65,7 @@ public class CustomerResource {
         }
     }
 
+    @Path("registerCustomer")
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,6 +95,30 @@ public class CustomerResource {
         } else {
 
             ErrorRsp errorRsp = new ErrorRsp("Invalid register customer request");
+
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+        }
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response changePassword(ChangePasswordReq changePasswordReq) {
+        if (changePasswordReq != null) {
+
+            try {
+
+                customerSessionBeanLocal.changePassword(changePasswordReq.getEmail(), changePasswordReq.getOldPassword(), changePasswordReq.getNewPassword());
+                return Response.status(Response.Status.OK).build();
+
+            } catch (CustomerInvalidPasswordException | CustomerNotFoundException ex) {
+
+                ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+                return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+
+            }
+        } else {
+            ErrorRsp errorRsp = new ErrorRsp("Invalid change password request");
 
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         }

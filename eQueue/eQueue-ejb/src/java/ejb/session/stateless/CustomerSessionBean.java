@@ -15,6 +15,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.exceptions.CustomerInvalidLoginCredentialException;
+import util.exceptions.CustomerInvalidPasswordException;
 import util.exceptions.CustomerNotUniqueException;
 import util.exceptions.CustomerNotFoundException;
 import util.exceptions.InputDataValidationException;
@@ -55,7 +56,7 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
         } catch (PersistenceException ex) {
             if (ex.getCause() != null && ex.getCause().getClass().getName().equals("org.eclipse.persistence.exceptions.DatabaseException")) {
                 if (ex.getCause().getCause() != null && ex.getCause().getCause().getClass().getName().equals("java.sql.SQLIntegrityConstraintViolationException")) {
-                    throw new CustomerNotUniqueException();
+                    throw new CustomerNotUniqueException("Email has already been taken.");
                 } else {
                     throw new UnknownPersistenceException(ex.getMessage());
                 }
@@ -102,6 +103,24 @@ public class CustomerSessionBean implements CustomerSessionBeanLocal {
             }
         } catch (CustomerNotFoundException ex) {
             throw new CustomerInvalidLoginCredentialException("Email does not exist or invalid password!");
+        }
+    }
+
+    @Override
+    public void changePassword(String email, String oldPassword, String newPassword) throws CustomerInvalidPasswordException, CustomerNotFoundException{
+        try {
+            
+            Customer customer = retrieveCustomerByEmail(email);
+            String passwordHash = CryptographicHelper.getInstance().byteArrayToHexString(CryptographicHelper.getInstance().doMD5Hashing(oldPassword + customer.getSalt()));
+
+            if (passwordHash.equals(customer.getPassword())) {
+                customer.setPassword(newPassword);
+                em.flush();
+            } else {
+                throw new CustomerInvalidPasswordException("Entered password do not match password associated with account!");
+            }
+        } catch (CustomerNotFoundException ex) {
+            throw new CustomerNotFoundException("Email does not exist!");
         }
     }
 

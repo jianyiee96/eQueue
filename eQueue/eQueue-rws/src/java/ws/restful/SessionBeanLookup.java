@@ -1,5 +1,6 @@
 package ws.restful;
 
+import ejb.session.stateless.CreditCardSessionBeanLocal;
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
@@ -104,6 +105,16 @@ public class SessionBeanLookup {
         }
     }
 
+    public CreditCardSessionBeanLocal lookupCreditCardSessionBeanLocal() {
+        try {
+            Context c = new InitialContext();
+            return (CreditCardSessionBeanLocal) c.lookup(ejbModuleJndiPath + "CreditCardSessionBean!ejb.session.stateless.CreditCardSessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
+
     public CustomerOrderSessionBeanLocal lookupCustomerOrderSessionBeanLocal() {
         try {
             Context c = new InitialContext();
@@ -113,7 +124,7 @@ public class SessionBeanLookup {
             throw new RuntimeException(ne);
         }
     }
-    
+
     public OrderLineItemSessionBeanLocal lookupOrderLineItemSessionBeanLocal() {
         try {
             Context c = new InitialContext();
