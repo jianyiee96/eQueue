@@ -31,6 +31,7 @@ import util.enumeration.EmployeeRoleEnum;
 import util.enumeration.MenuItemAvailabilityEnum;
 import util.enumeration.NotificationTypeEnum;
 import util.enumeration.OrderLineItemStatusEnum;
+import util.enumeration.OrderStatusEnum;
 import util.exceptions.CreateNewCustomerOrderException;
 import util.exceptions.CreateNewMenuCategoryException;
 import util.exceptions.CreateNewMenuItemException;
@@ -49,10 +50,10 @@ import util.exceptions.UnknownPersistenceException;
 @Startup
 
 public class DataInitializationSessionBean {
-
+    
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
-
+    
     @EJB
     private CustomerOrderSessionBeanLocal customerOrderSessionBean;
     @EJB
@@ -71,27 +72,27 @@ public class DataInitializationSessionBean {
     private MenuCategorySessionBeanLocal menuCategorySessionBean;
     @EJB
     private NotificationSessionBeanLocal notificationSessionBeanLocal;
-
+    
     public DataInitializationSessionBean() {
-
+        
     }
-
+    
     @PostConstruct
     public void postConstruct() {
         try {
-            //customerOrderSessionBean.retrieveCurrentDayOrders();
+            //customerOrderSessionBean.retrieveIncompleteOrders();
             storeManagementSessionBeanLocal.retrieveStore();
         } catch (StoreNotInitializedException ex) {
             initializeData();
-            //customerOrderSessionBean.retrieveCurrentDayOrders();
+            //customerOrderSessionBean.retrieveIncompleteOrders();
         }
     }
-
+    
     private void initializeData() {
-
+        
         System.out.println("Initialiing Data...");
         try {
-
+            
             storeManagementSessionBeanLocal.storeInitialization(new Store("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
             Long custId1 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
             Long custId2 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
@@ -114,7 +115,7 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
-
+            
             employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Kek", "Tan", "weekek-tan@eQueue.com", "manager", "password", EmployeeRoleEnum.MANAGER, "1 - tan_wee_kek.jpg"));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER));
@@ -126,14 +127,14 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("Four", "Cashier", "cashier-four@eQueue.com", "cashier4", "password", EmployeeRoleEnum.CASHIER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("One", "Staff", "staff-one@eQueue.com", "staff1", "password", EmployeeRoleEnum.DEFAULT));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Staff", "staff-two@eQueue.com", "staff2", "password", EmployeeRoleEnum.DEFAULT));
-
+            
             Long mcId1 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
             Long mcId2 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mcId1);
             Long mcId3 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Malay"), mcId1);
             Long mcId4 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Western"), null);
             
             Long mcId5 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Original"), mcId4);
-
+            
             Long miId1 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI001", "Chicken Rice", 3.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "1 - Chicken Rice.jpg", "Fragrant and steamy Chicken Rice"), mcId2);
             Long miId2 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "2 - Char Kway Teow.jpg", "Singapore award winning Char Kway Teow"), mcId2);
             Long miId3 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "3 - Hokkien Noodles.jpg", "Penang best Hokkien Mee"), mcId2);
@@ -142,32 +143,46 @@ public class DataInitializationSessionBean {
             Long miId6 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI006", "Chicken Chop", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "6 - Chicken Chop.jpg", "Freshly chopped chicken served with chopsticks"), mcId5);
             Long miId7 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI007", "Fish and Chips", 6.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "7 - Fish and Chips.jpg", "Original recipe from Sanji"), mcId5);
             Long miId8 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI008", "Fries", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "8 - Fries.jpg", "Golden Potato Fries, Served with Curry Sauce, BBQ Sauce and Mayo Sauce"), mcId5);
-
+            
             for (int i = 0; i < 20; i++) {
+                Boolean orderIsCancelled = true;
+                
                 List<OrderLineItem> orderLineItems = new ArrayList<>();
-
+                
                 Integer numItems = (int) (Math.random() * 3) + 1;
 //                System.out.println("numItems --> " + numItems);
 
                 for (int x = 0; numItems > x; x++) {
                     Long quantity = (long) (Math.random() * 10) + 1L;
                     Long menuItemId = (long) (Math.random() * 8) + 1L;
-
-                    Long oliId = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(quantity, remarksRandomiser(), lineItemStatusRandomiser()), menuItemId);
+                    
+                    OrderLineItemStatusEnum lineItemStatus = lineItemStatusRandomiser();
+                    
+                    if (lineItemStatus != OrderLineItemStatusEnum.CANCELLED) {
+                        orderIsCancelled = false;
+                    }
+                    
+                    Long oliId = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(quantity, remarksRandomiser(), lineItemStatus), menuItemId);
                     OrderLineItem oli = orderLineItemSessionBean.retrieveOrderLineItemById(oliId);
                     orderLineItems.add(oli);
                 }
+                
                 CustomerOrder customerOrder = new CustomerOrder();
                 customerOrder.setTotalAmount(calculateTotalPrice(orderLineItems));
-
+                
+                if (orderIsCancelled) {
+                    customerOrder.setStatus(OrderStatusEnum.CANCELLED);
+                    customerOrder.setIsCompleted(true);
+                }
+                
                 customerOrderSessionBean.createCustomerOrder(customerOrder, (long) (Math.random() * 4) + 1L, orderLineItems);
-
+                
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
-
+                
             }
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
@@ -176,7 +191,7 @@ public class DataInitializationSessionBean {
             ex.printStackTrace();
         }
     }
-
+    
     private String remarksRandomiser() {
         Integer remarksRandomiser = (int) (Math.random() * 5);
         switch (remarksRandomiser) {
@@ -192,7 +207,7 @@ public class DataInitializationSessionBean {
                 return "Faster!!";
         }
     }
-
+    
     private OrderLineItemStatusEnum lineItemStatusRandomiser() {
         Integer lineItemStatusRandomiser = (int) (Math.random() * 4);
         switch (lineItemStatusRandomiser) {
@@ -206,7 +221,7 @@ public class DataInitializationSessionBean {
                 return OrderLineItemStatusEnum.CANCELLED;
         }
     }
-
+    
     private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {
         double totalPrice = 0.0;
         for (OrderLineItem oli : orderLineItems) {
@@ -214,5 +229,5 @@ public class DataInitializationSessionBean {
         }
         return totalPrice;
     }
-
+    
 }
