@@ -37,7 +37,7 @@ public class Notification implements Serializable {
 
     @Column(nullable = false, length = 256)
     @NotNull
-    @Size(max = 128)
+    @Size(max = 256)
     private String message;
 
     @Column(nullable = false)
@@ -47,7 +47,7 @@ public class Notification implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private Customer customer;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @NotNull
@@ -133,8 +133,6 @@ public class Notification implements Serializable {
         this.notificationType = notificationType;
     }
 
-    
-    
     @Override
     public int hashCode() {
         int hash = 0;
