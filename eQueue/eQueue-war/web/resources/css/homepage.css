@@ -35,6 +35,10 @@
     background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
 }
 
+.link-panel-container:hover .custom-icon-homepage {
+    transform: scale(1.2);
+}
+
 .link-text-styling {
     text-align: start;
     font-family: Georgia, serif;

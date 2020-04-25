@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <style type="text/css">
+        </style>
+        <p:layout>
+            <p:poll interval="5" listener="#{queueManagementManagedBean.retrieveQueues}" update="formAllQueues"></p:poll>
+
+            <p:layoutUnit position="center" >
+                <h:form id="formAllQueues">
+                    <p:growl id="infoGrowl" redisplay="false" life="2500" />
+                    <p:dataTable id="dataTableAllQueues" widgetVar="dataTableAllQueues" value="#{queueManagementManagedBean.queues}" var="queue" rowKey="#{queue.queueId}" rowIndexVar="row"
+                                 rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
+
+                        <p:column headerText="Position" >
+                            <h:outputText value="#{row + 1}" />
+                        </p:column>  
+
+                        <p:column headerText="Queue ID" >
+                            <h:outputText value="#{queue.queueId}" />
+                        </p:column>                            
+
+                        <p:column headerText="Name" >
+                            <h:outputText value="#{queue.customer.firstName}" />
+                        </p:column>
+
+                        <p:column headerText="Email" >
+                            <h:outputText value="#{queue.customer.email}" />
+                        </p:column>
+
+                        <p:column headerText="Status" >
+                            <h:outputText value="#{queue.queueStatus}" />
+                        </p:column>
+
+                        <p:column headerText="Time Joined Queue" >
+                            <h:outputText  value="#{queue.startDateTime}" >
+                                <f:convertDateTime pattern="HH:mm"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Duration in Queue" >
+                            <h:outputText  id="timerCell" value="#{queueManagementManagedBean.dateDiff(queue.startDateTime)}" >
+                                <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
+                            </h:outputText>
+                            <p:poll interval="1" update="timerCell" />
+                        </p:column>
+
+                        <p:column headerText="Action" style="text-align: center">
+                            <p:commandButton actionListener="#{queueManagementManagedBean.doCreateNotification}" update="formCreateNotification" oncomplete="PF('dialogCreateNotification').show()" icon="fa fa-send-o" title="Send Notification">
+                                <f:attribute name="selectedQueue" value="#{queue}" />
+                            </p:commandButton>
+                        </p:column>
+
+                    </p:dataTable>
+                </h:form>
+
+                <h:form id="formCreateNotification">
+
+                    <p:dialog id="dialogCreateNotification" widgetVar="dialogCreateNotification" header="Create New Notification" closable="true">
+
+                        <p:messages id="messagesCreateNotification" redisplay="false" />
+
+                        <p:panelGrid id="createNewMenuCategoryPanel">
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="title" value="Title: " style="font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="title" value="#{queueManagementManagedBean.notificationTitle}" placeholder="Please enter a notification title" required="true" requiredMessage="Title is required" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel for="message" value="Message: " style="font-weight: bold;" />
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="message" value="#{queueManagementManagedBean.notificationMessage}" placeholder="Please enter a notification message" required="true" requiredMessage="Message is required" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:commandButton type="reset" value="Clear" />&nbsp;
+                                    <p:commandButton  value="Send" update="@form" actionListener="#{queueManagementManagedBean.createNotification}" oncomplete="PF('dialogCreateNotification').show();" />
+                                </p:column>
+                            </p:row>
+
+                        </p:panelGrid>
+
+                    </p:dialog>
+
+                </h:form>
+            </p:layoutUnit>
+        </p:layout>
+    </ui:define>
+</ui:composition>
+

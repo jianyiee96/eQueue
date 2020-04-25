@@ -5,7 +5,6 @@ import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
-import entity.Customer;
 import entity.CustomerOrder;
 import entity.MenuItem;
 import entity.Notification;
