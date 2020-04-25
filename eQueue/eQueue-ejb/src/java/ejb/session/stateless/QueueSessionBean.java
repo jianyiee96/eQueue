@@ -43,6 +43,15 @@ public class QueueSessionBean implements QueueSessionBeanLocal {
     }
 
     @Override
+    public List<Queue> retrieveAllQueues() {
+
+        Query query = em.createQuery("SELECT q FROM Queue q ORDER BY q.startDateTime ASC");
+
+        return query.getResultList();
+
+    }
+
+    @Override
     public List<Queue> retrieveAllActiveQueues() {
 
         Query query = em.createQuery("SELECT q FROM Queue q WHERE q.queueStatus = :inStatus ORDER BY q.startDateTime ASC");
