@@ -95,21 +95,21 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
     }
 
     @Override
-    public List<CustomerOrder> retrieveCurrentDayOrders() {
-        Date currentDay = new Date();
-        currentDay.setHours(0);
-        currentDay.setMinutes(0);
-        currentDay.setSeconds(0);
+    public List<CustomerOrder> retrieveIncompleteOrders() {
+//        Date currentDay = new Date();
+//        currentDay.setHours(0);
+//        currentDay.setMinutes(0);
+//        currentDay.setSeconds(0);
         Query query = em.createQuery(
                 "SELECT DISTINCT o "
                 + "FROM CustomerOrder o "
                 + "JOIN o.orderLineItems li "
-                + "WHERE o.orderDate > :today "
-                + "AND o.isCompleted = false "
+//                + "WHERE o.orderDate > :today "
+                + "WHERE o.isCompleted = false "
                 + "AND li.status <> util.enumeration.OrderLineItemStatusEnum.IN_CART "
                 + "ORDER BY o.orderDate ASC, o.orderId ASC"
         );
-        query.setParameter("today", currentDay, TemporalType.TIMESTAMP);
+//        query.setParameter("today", currentDay, TemporalType.TIMESTAMP);
 
         List<CustomerOrder> currentDayOrders = query.getResultList();
 

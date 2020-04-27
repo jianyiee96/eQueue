@@ -10,76 +10,97 @@
     <ui:define name="content">
         <h:outputStylesheet library="css" name="homepage.css" />
         <div class="outer-container">
-            <p:panel header="Menu">
-                <h:panelGrid class="panel-grid-container" columns="5" cellpadding="10">
-                    <p:link outcome="storeDetails.xhtml">
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="store-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Store</p>
-                                    <p style="margin: 0">Details</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                    <p:link>
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="queue-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Queue</p>
-                                    <p style="margin: 0">Mgmt</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                    <p:link outcome="menuManagement.xhtml">
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="menu-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Menu</p>
-                                    <p style="margin: 0">Mgmt</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                    <p:link outcome="diningTableManagement.xhtml">
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="table-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Table</p>
-                                    <p style="margin: 0">Mgmt</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                    <p:link outcome="diningTableManagement-E.xhtml">
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="table-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Table</p>
-                                    <p style="margin: 0">Mgmt_2</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                    <p:link outcome="kitchenManagement.xhtml">
-                        <p:panel class="link-panel-container">
-                            <h:panelGrid>
-                                <span class="kitchen-icon custom-icon-homepage"/>
-                                <div class="link-text-styling">
-                                    <p style="margin: 0">Kitchen</p>
-                                    <p style="margin: 0">Mgmt</p>
-                                </div>
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:link>
-                </h:panelGrid>
-            </p:panel>
+
+            <p:link outcome="storeDetails.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="store-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Store</p>
+                            <p style="margin: 0">Details</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link outcome="queueManagement.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="queue-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Queue</p>
+                            <p style="margin: 0">Management</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link outcome="menuManagement.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="menu-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Menu</p>
+                            <p style="margin: 0">Management</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link outcome="diningTableManagement.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="table-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Table</p>
+                            <p style="margin: 0">Management</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            
+            <p:link outcome="diningTableManagement-E.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="table-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Table</p>
+                            <p style="margin: 0">Management 2</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link outcome="kitchenManagement.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="kitchen-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Kitchen</p>
+                            <p style="margin: 0">Management</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link outcome="employeeManagement.xhtml">
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="employees-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Employee</p>
+                            <p style="margin: 0">Management</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            <p:link>
+                <p:panel class="link-panel-container">
+                    <h:panelGrid class="vertically-centered">
+                        <span class="transaction-icon custom-icon-homepage"/>
+                        <div class="link-text-styling">
+                            <p style="margin: 0">Transaction</p>
+                            <p style="margin: 0">History</p>
+                        </div>
+                    </h:panelGrid>
+                </p:panel>
+            </p:link>
+            
         </div>
     </ui:define>
 </ui:composition>

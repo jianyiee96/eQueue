@@ -9,12 +9,12 @@
 
     <p:sidebar id="sidebar1" widgetVar="sidebar1" baseZIndex="10000">
         <div class="menu-container" style="">
-            <h1 class="menu-header">Menu</h1>
+            <h1 class="menu-header">Overview</h1>
             <h:form id="menuForm">   
                 <p:panelMenu class="menu-panel">
                     <p:submenu label="Store">
                         <p:menuitem value="Store Details" outcome="/storeDetails.xhtml" icon="custom-icon store-icon" />
-                        <p:menuitem value="Queue Management" icon="custom-icon queue-icon" />
+                        <p:menuitem value="Queue Management" outcome="/queueManagement.xhtml" icon="custom-icon queue-icon" />
                         <p:menuitem value="Menu Management" outcome="/menuManagement.xhtml" icon="custom-icon menu-icon" />
                         <p:menuitem value="Table Management" outcome="/diningTableManagement.xhtml" icon="custom-icon table-icon" />
                         <p:menuitem value="Kitchen Management" outcome="/kitchenManagement.xhtml" icon="custom-icon kitchen-icon" />
@@ -36,11 +36,6 @@
                 <p:commandLink action="/employeeProfilePage.xhtml?faces-redirect=true" >
                     <div class="menu-user-container-inner">
                         <div class="profile-picture-container" >
-<!--                            <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath != null}" 
-                                            library="images" name="profiles/#{sessionScope.currentEmployee.imagePath}" height="75" width="75" 
-                                            alt="#{sessionScope.currentEmployee.lastName} #{sessionScope.currentEmployee.firstName}'s Profile Picture" 
-                                            cache="false"
-                                            />-->
                             <ui:fragment rendered="#{employeeProfilePageManagedBean.imageContents != null}" >
                                 <img class="profile-picture" src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="width: 75px; height: 75px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
                             </ui:fragment>

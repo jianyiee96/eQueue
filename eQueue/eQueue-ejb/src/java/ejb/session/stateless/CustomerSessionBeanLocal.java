@@ -23,4 +23,6 @@ public interface CustomerSessionBeanLocal {
 
     public void changePassword(String email, String oldPassword, String newPassword) throws CustomerInvalidPasswordException, CustomerNotFoundException;
     
+    public Long retrieveCustomerIdByOrderLineItemId(Long orderLineItemId) throws CustomerNotFoundException;
+    
 }
