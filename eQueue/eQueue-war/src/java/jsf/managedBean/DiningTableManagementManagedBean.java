@@ -55,6 +55,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void postConstruct() {
 
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
+        diningTables.add(new DiningTable());
 
     }
 
@@ -188,7 +189,7 @@ public class DiningTableManagementManagedBean implements Serializable {
             System.out.println("Unable to increase seated time for dining table id [" + diningTableId + " Error: Cannot find the dining table!");
         }
     }
-
+    
     public ViewDiningTableManagedBean getViewDiningTableManagedBean() {
         return viewDiningTableManagedBean;
     }
