@@ -1,10 +1,13 @@
 package jsf.managedBean;
 
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import entity.Customer;
+import entity.CustomerOrder;
 import entity.DiningTable;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -40,9 +43,14 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     private List<TableStatusEnum> tableStatuses = new ArrayList();
 
+    private Customer selectedCustomer;
+    private DiningTable selectedDiningTable;
+    private List<CustomerOrder> selectedCustomerActiveOrders;
+
     public DiningTableManagementManagedBean() {
         newDiningTable = new DiningTable();
         selectedDiningTableToUpdate = new DiningTable();
+        selectedCustomer = null;
         tableStatuses.add(TableStatusEnum.FROZEN_UNOCCUPIED);
         tableStatuses.add(TableStatusEnum.FROZEN_OCCUPIED);
         tableStatuses.add(TableStatusEnum.FROZEN_ALLOCATED);
@@ -56,6 +64,7 @@ public class DiningTableManagementManagedBean implements Serializable {
 
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         diningTables.add(new DiningTable());
+        selectedCustomer = null;
 
     }
 
@@ -142,9 +151,9 @@ public class DiningTableManagementManagedBean implements Serializable {
             }
 
             diningTableSessionBeanLocal.removeCustomerTableRelationship(selectedDiningTableToUpdate.getCustomer().getCustomerId());
-            
+
             postConstruct();
-            
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID " + selectedDiningTableToUpdate.getDiningTableId() + "] status changed successfully.", null));
         } catch (InvalidTableStatusException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating dining table status: " + ex.getMessage(), null));
@@ -172,26 +181,71 @@ public class DiningTableManagementManagedBean implements Serializable {
         }
     }
 
-    public void incrementDiningTableSeatedTime(Long diningTableId) {
-        try {
-            DiningTable diningTable = diningTableSessionBeanLocal.retrieveDiningTableById(diningTableId);
-            diningTableSessionBeanLocal.incrementTimePassed(diningTableId);
-//            System.out.println(diningTable + " seated " + diningTable.getSeatedTime());
-//            System.out.println(diningTable + " passed " + diningTable.getTimePassed());
-            for (DiningTable dt : diningTables) {
-                if (dt.equals(diningTable)) {
-                    dt.setSeatedTime(diningTable.getSeatedTime());
-                    dt.setTimePassed(diningTable.getTimePassed());
-                    break;
-                }
+    public void viewDetails(ActionEvent event) {
+        this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToView");
+        this.selectedCustomer = selectedDiningTable.getCustomer();
+        this.selectedCustomerActiveOrders = new ArrayList<>();
+        
+        for(CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
+           
+            if(!c.getIsCompleted()) {
+                this.selectedCustomerActiveOrders.add(c);
             }
-        } catch (DiningTableNotFoundException ex) {
-            System.out.println("Unable to increase seated time for dining table id [" + diningTableId + " Error: Cannot find the dining table!");
         }
+
     }
-    
-    public ViewDiningTableManagedBean getViewDiningTableManagedBean() {
-        return viewDiningTableManagedBean;
+
+    public String dateDiff(Date date) {
+
+        Date d1 = date;
+        Date d2 = new Date();
+
+        //in milliseconds
+        long diff = d2.getTime() - d1.getTime();
+
+        long diffSeconds = diff / 1000 % 60;
+        long diffMinutes = diff / (60 * 1000) % 60;
+        long diffHours = diff / (60 * 60 * 1000) % 24;
+
+        String seconds = (diffSeconds < 10) ? "0" + diffSeconds : "" + diffSeconds;
+        String minutes = (diffMinutes < 10) ? "0" + diffMinutes : "" + diffMinutes;
+        String hours = (diffHours < 10) ? "0" + diffHours : "" + diffHours;
+
+        return hours + ":" + minutes + ":" + seconds;
+
+    }
+
+    public String statusOf(TableStatusEnum status) {
+
+        if (status == TableStatusEnum.FROZEN_ALLOCATED || status == TableStatusEnum.UNFROZEN_ALLOCATED) {
+            return "Allocated";
+        } else if (status == TableStatusEnum.FROZEN_OCCUPIED || status == TableStatusEnum.UNFROZEN_OCCUPIED) {
+            return "Occupied";
+        } else if (status == TableStatusEnum.FROZEN_UNOCCUPIED || status == TableStatusEnum.UNFROZEN_UNOCCUPIED) {
+            return "Unoccupied";
+        }
+
+        return "Unknown";
+    }
+
+    public String frozenStatusOf(TableStatusEnum status) {
+
+        if (status == TableStatusEnum.FROZEN_ALLOCATED || status == TableStatusEnum.FROZEN_OCCUPIED || status == TableStatusEnum.FROZEN_UNOCCUPIED) {
+            return "Frozen";
+        } else if (status == TableStatusEnum.UNFROZEN_ALLOCATED || status == TableStatusEnum.UNFROZEN_OCCUPIED || status == TableStatusEnum.UNFROZEN_UNOCCUPIED) {
+            return "Unfrozen";
+        }
+        return "Unknown";
+    }
+
+    public Boolean isFrozen(TableStatusEnum status) {
+
+        if (status == TableStatusEnum.FROZEN_ALLOCATED || status == TableStatusEnum.FROZEN_OCCUPIED || status == TableStatusEnum.FROZEN_UNOCCUPIED) {
+            return true;
+        } else if (status == TableStatusEnum.UNFROZEN_ALLOCATED || status == TableStatusEnum.UNFROZEN_OCCUPIED || status == TableStatusEnum.UNFROZEN_UNOCCUPIED) {
+            return false;
+        }
+        return null;
     }
 
     public void setViewDiningTableManagedBean(ViewDiningTableManagedBean viewDiningTableManagedBean) {
@@ -236,6 +290,30 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     public void setTableStatuses(List<TableStatusEnum> tableStatuses) {
         this.tableStatuses = tableStatuses;
+    }
+
+    public Customer getSelectedCustomer() {
+        return selectedCustomer;
+    }
+
+    public void setSelectedCustomer(Customer selectedCustomer) {
+        this.selectedCustomer = selectedCustomer;
+    }
+
+    public DiningTable getSelectedDiningTable() {
+        return selectedDiningTable;
+    }
+
+    public void setSelectedDiningTable(DiningTable selectedDiningTable) {
+        this.selectedDiningTable = selectedDiningTable;
+    }
+
+    public List<CustomerOrder> getSelectedCustomerActiveOrders() {
+        return selectedCustomerActiveOrders;
+    }
+
+    public void setSelectedCustomerActiveOrders(List<CustomerOrder> selectedCustomerActiveOrders) {
+        this.selectedCustomerActiveOrders = selectedCustomerActiveOrders;
     }
 
 }
