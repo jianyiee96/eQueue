@@ -46,8 +46,8 @@ public class MenuItem implements Serializable {
     @Digits(integer = 9, fraction = 2)
     private Double menuItemPrice;
 
-    @Column()
-    private String imagePath;
+    @Column(nullable = false)
+    private String imagePath = "food-default.png";
 
     @Column(nullable = true)
     @Positive
