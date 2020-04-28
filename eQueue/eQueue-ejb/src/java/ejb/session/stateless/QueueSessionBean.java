@@ -98,7 +98,6 @@ public class QueueSessionBean implements QueueSessionBeanLocal {
             diningTableSessionBeanLocal.removeCustomerTableRelationship(customerId);
 
             queue.getCustomer().setCurrentQueue(null);
-            //queue.setCustomer(null);
             em.remove(queue);
         }
 
