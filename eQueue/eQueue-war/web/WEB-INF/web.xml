@@ -12,7 +12,7 @@
         <param-name>primefaces.UPLOADER</param-name>
         <param-value>native</param-value>
     </context-param>
-<!--    <context-param>
+    <!--    <context-param>
         <param-name>alternatedocroot_1</param-name>
         <param-value>C:/Personal_Information/NUS/AY1920S2/IS3106/Project/eQueue/eQueue/eQueue-war/web/resources/images/profiles</param-value>
     </context-param>-->
@@ -45,4 +45,13 @@
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
     </context-param>
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>nova-light</param-value>
+    </context-param>
+<!--    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>blitzer</param-value>
+    </context-param>-->
+
 </web-app>

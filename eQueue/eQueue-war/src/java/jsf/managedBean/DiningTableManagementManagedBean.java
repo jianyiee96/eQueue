@@ -182,15 +182,21 @@ public class DiningTableManagementManagedBean implements Serializable {
     }
 
     public void viewDetails(ActionEvent event) {
+
         this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToView");
+
         this.selectedCustomer = selectedDiningTable.getCustomer();
         this.selectedCustomerActiveOrders = new ArrayList<>();
-        
-        for(CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
-           
-            if(!c.getIsCompleted()) {
-                this.selectedCustomerActiveOrders.add(c);
+
+        System.out.println("Table id:" + selectedDiningTable.getDiningTableId());
+        if (selectedCustomer != null) {
+            for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
+
+                if (!c.getIsCompleted()) {
+                    this.selectedCustomerActiveOrders.add(c);
+                }
             }
+
         }
 
     }

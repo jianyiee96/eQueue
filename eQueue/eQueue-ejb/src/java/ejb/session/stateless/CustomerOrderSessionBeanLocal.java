@@ -11,6 +11,7 @@ import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.PriceMismatchException;
 import util.exceptions.UnknownPersistenceException;
@@ -28,7 +29,7 @@ public interface CustomerOrderSessionBeanLocal {
     
     public List<CustomerOrder> retrieveAllCustomerOrdersByCustomerId(Long customerId);
     
-    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException;
+    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException, MenuItemUnavailableException;
 
     public void recalculateTotalAmount(Long customerOrderId);
     

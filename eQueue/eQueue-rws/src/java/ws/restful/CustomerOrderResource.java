@@ -29,6 +29,7 @@ import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.OrderStateMismatchException;
 import util.exceptions.PriceMismatchException;
@@ -138,6 +139,9 @@ public class CustomerOrderResource {
                 return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
             }
 
+        } catch (MenuItemUnavailableException ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         } catch (CustomerNotFoundException ex) {
             ErrorRsp errorRsp = new ErrorRsp("Customer not found.");
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
@@ -171,13 +175,13 @@ public class CustomerOrderResource {
             return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
         }
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateOrderLineItem(UpdateOrderReq updateOrderReq) {
         try {
-            
+
             OrderLineItem data = new OrderLineItem(updateOrderReq.getNewQuantity(), updateOrderReq.getNewComment(), OrderLineItemStatusEnum.ORDERED);
             data.setOrderLineItemId(updateOrderReq.getOrderLineItemId());
             orderLineItemSessionBeanLocal.updateOrderLineItemByCustomer(data);

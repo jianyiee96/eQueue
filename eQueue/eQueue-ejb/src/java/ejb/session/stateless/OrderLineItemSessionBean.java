@@ -18,6 +18,7 @@ import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.DeleteOrderLineItemException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.OrderStateMismatchException;
 import util.exceptions.UnknownPersistenceException;
@@ -41,7 +42,7 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
     }
 
     @Override
-    public Long createNewOrderLineItem(OrderLineItem newOrderLineItem, Long menuItemId) throws UnknownPersistenceException, InputDataValidationException, CreateNewOrderLineItemException {
+    public Long createNewOrderLineItem(OrderLineItem newOrderLineItem, Long menuItemId) throws UnknownPersistenceException, InputDataValidationException, CreateNewOrderLineItemException, MenuItemUnavailableException {
         Set<ConstraintViolation<OrderLineItem>> constraintViolations = validator.validate(newOrderLineItem);
         if (constraintViolations.isEmpty()) {
             try {
@@ -52,7 +53,7 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
                 MenuItem menuItem = menuItemSessionBean.retrieveMenuItemById(menuItemId);
 
                 if (menuItem.getAvailability() == MenuItemAvailabilityEnum.UNAVAILABLE) {
-                    throw new CreateNewOrderLineItemException("An error has occured while creating the new order line item: " + menuItem.getMenuItemName() + " is currently unavailable.");
+                    throw new MenuItemUnavailableException("Item [" + menuItem.getMenuItemName() + "] is unavailable, please remove from cart!");
                 }
 
                 em.persist(newOrderLineItem);

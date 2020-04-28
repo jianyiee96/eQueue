@@ -29,6 +29,7 @@ import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.EmptyCartException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotFoundException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.PriceMismatchException;
 import util.exceptions.UnknownPersistenceException;
@@ -104,7 +105,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
                 "SELECT DISTINCT o "
                 + "FROM CustomerOrder o "
                 + "JOIN o.orderLineItems li "
-//                + "WHERE o.orderDate > :today "
+                //                + "WHERE o.orderDate > :today "
                 + "WHERE o.isCompleted = false "
                 + "AND li.status <> util.enumeration.OrderLineItemStatusEnum.IN_CART "
                 + "ORDER BY o.orderDate ASC, o.orderId ASC"
@@ -174,7 +175,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
 
     //can rename as checkoutFromCart if u guys want OWO/
     @Override
-    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException {
+    public void processOrderFromCart(Long customerId) throws CustomerNotFoundException, EmptyCartException, MenuItemNotFoundException, InputDataValidationException, CreateNewCustomerOrderException, UnknownPersistenceException, CreateNewOrderLineItemException, OrderLineItemNotFoundException, PriceMismatchException, MenuItemUnavailableException {
 
         Customer customer = customerSessionBeanLocal.retrieveCustomerById(customerId);
         ShoppingCart cart = customer.getShoppingCart();
@@ -190,6 +191,7 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
             Long oliId = orderLineItemSessionBeanLocal.createNewOrderLineItem(new OrderLineItem(cartItem.getQuantity(), cartItem.getRemarks(), OrderLineItemStatusEnum.ORDERED), cartItem.getMenuItem().getMenuItemId());
             OrderLineItem oli = orderLineItemSessionBeanLocal.retrieveOrderLineItemById(oliId);
             orderLineItems.add(oli);
+
         }
 
         //totalPrice validation
@@ -216,19 +218,19 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
 
         }
     }
-    
+
     @Override
     public void updateOrderStatus(Long customerOrderId) {
         try {
             CustomerOrder customerOrder = retrieveCustomerOrderById(customerOrderId);
             boolean toggle = false;
-            for(OrderLineItem o : customerOrder.getOrderLineItems()) {
-                if(o.getStatus() != OrderLineItemStatusEnum.CANCELLED){
+            for (OrderLineItem o : customerOrder.getOrderLineItems()) {
+                if (o.getStatus() != OrderLineItemStatusEnum.CANCELLED) {
                     toggle = true;
                 }
             }
-            
-            if(!toggle) {
+
+            if (!toggle) {
                 customerOrder.setStatus(OrderStatusEnum.CANCELLED);
                 customerOrder.setIsCompleted(true);
             }

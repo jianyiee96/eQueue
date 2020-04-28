@@ -5,6 +5,7 @@ import javax.ejb.Local;
 import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.DeleteOrderLineItemException;
 import util.exceptions.InputDataValidationException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.OrderStateMismatchException;
 import util.exceptions.UnknownPersistenceException;
@@ -15,7 +16,7 @@ public interface OrderLineItemSessionBeanLocal {
 
     public OrderLineItem retrieveOrderLineItemById(Long orderLineItemId) throws OrderLineItemNotFoundException;
 
-    public Long createNewOrderLineItem(OrderLineItem newOrderLineItem, Long menuItemId) throws UnknownPersistenceException, InputDataValidationException, CreateNewOrderLineItemException;
+    public Long createNewOrderLineItem(OrderLineItem newOrderLineItem, Long menuItemId) throws UnknownPersistenceException, InputDataValidationException, CreateNewOrderLineItemException, MenuItemUnavailableException;
 
     public void updateOrderLineItemByCustomer(OrderLineItem orderLineItem) throws OrderLineItemNotFoundException, UpdateOrderLineItemException, InputDataValidationException;
 

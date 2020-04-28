@@ -76,7 +76,7 @@
                                         <p:commandButton actionListener="#{diningTableManagementManagedBean.cleanDiningTable}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-paint-brush" title="Finished Cleaning Table">
                                             <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
                                         </p:commandButton>
-                                        <p:commandButton icon="ui-icon-trash" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
+                                        <p:commandButton icon="fa fa-remove" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
                                             <f:attribute name="diningTableToDelete" value="#{diningTable}" />
                                             <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
                                         </p:commandButton>
@@ -152,7 +152,7 @@
                                                 <p:commandButton actionListener="#{diningTableManagementManagedBean.cleanDiningTable}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-paint-brush" title="Finished Cleaning Table">
                                                     <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
                                                 </p:commandButton>
-                                                <p:commandButton icon="ui-icon-trash" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
+                                                <p:commandButton icon="fa fa-remove" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
                                                     <f:attribute name="diningTableToDelete" value="#{diningTable}" />
                                                     <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
                                                 </p:commandButton>

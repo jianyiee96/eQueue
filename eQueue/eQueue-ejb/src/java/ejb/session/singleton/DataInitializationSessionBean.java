@@ -40,6 +40,7 @@ import util.exceptions.CustomerNotUniqueException;
 import util.exceptions.EmployeeUsernameExistException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.MenuItemNotUniqueException;
+import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.StoreNotInitializedException;
 import util.exceptions.UnableToCreateNotificationException;
@@ -187,7 +188,7 @@ public class DataInitializationSessionBean {
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
                 | MenuItemNotUniqueException | CreateNewOrderLineItemException | OrderLineItemNotFoundException
-                | CreateNewCustomerOrderException | UnableToCreateNotificationException ex) {
+                | CreateNewCustomerOrderException | MenuItemUnavailableException | UnableToCreateNotificationException ex) {
             ex.printStackTrace();
         }
     }
