@@ -5,6 +5,7 @@ import entity.DiningTable;
 import entity.Queue;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -152,7 +153,6 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
         
         
         diningTable.setSeatedTime(null);
-        diningTable.setTimePassed(null);
         diningTable.setCustomer(null);
 
     }
@@ -161,19 +161,13 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
     public void seatCustomerToDiningTable(Long diningTableId) {
         DiningTable diningTable = em.find(DiningTable.class, diningTableId);
         diningTable.setTableStatus(TableStatusEnum.UNFROZEN_OCCUPIED);
-        diningTable.setSeatedTime(LocalTime.now(ZoneId.of("Asia/Singapore")));
+        diningTable.setSeatedTime(new Date());
         
         Queue queue = diningTable.getCustomer().getCurrentQueue();
         diningTable.getCustomer().setCurrentQueue(null);
         em.remove(queue);
     }
 
-    @Override
-    public void incrementTimePassed(Long diningTableId) {
-        DiningTable diningTable = em.find(DiningTable.class, diningTableId);
-
-        diningTable.setTimePassed(LocalTime.now(ZoneId.of("Asia/Singapore")).minusNanos(diningTable.getSeatedTime().toNanoOfDay()));
-    }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<DiningTable>> constraintViolations) {
         String msg = "Input data validation error!:";

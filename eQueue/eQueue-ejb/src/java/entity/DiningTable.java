@@ -2,6 +2,7 @@ package entity;
 
 import java.io.Serializable;
 import java.time.LocalTime;
+import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -10,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -35,9 +38,9 @@ public class DiningTable implements Serializable {
     @Max(8)
     private Long seatingCapacity;
 
-    private LocalTime seatedTime;
-
-    private LocalTime timePassed;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = true)
+    private Date seatedTime;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -110,20 +113,12 @@ public class DiningTable implements Serializable {
         }
     }
 
-    public LocalTime getSeatedTime() {
+    public Date getSeatedTime() {
         return seatedTime;
     }
 
-    public void setSeatedTime(LocalTime seatedTime) {
+    public void setSeatedTime(Date seatedTime) {
         this.seatedTime = seatedTime;
-    }
-    
-    public LocalTime getTimePassed() {
-        return timePassed;
-    }
-
-    public void setTimePassed(LocalTime timePassed) {
-        this.timePassed = timePassed;
     }
 
     @Override

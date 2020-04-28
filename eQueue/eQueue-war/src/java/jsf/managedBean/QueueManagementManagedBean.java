@@ -50,7 +50,7 @@ public class QueueManagementManagedBean {
         this.queues = queueSessionBean.retrieveAllQueues();
     }
 
-    public String dateDiff(Date date) {
+public String dateDiff(Date date) {
 
         Date d1 = date;
         Date d2 = new Date();
@@ -61,8 +61,12 @@ public class QueueManagementManagedBean {
         long diffSeconds = diff / 1000 % 60;
         long diffMinutes = diff / (60 * 1000) % 60;
         long diffHours = diff / (60 * 60 * 1000) % 24;
-
-        return diffHours + ":" + diffMinutes + ":" + diffSeconds;
+        
+        String seconds = (diffSeconds < 10)?"0"+diffSeconds:""+diffSeconds;
+        String minutes = (diffMinutes < 10)?"0"+diffMinutes:""+diffMinutes;
+        String hours = (diffHours < 10)?"0"+diffHours:""+diffHours;
+        
+        return hours + ":" + minutes + ":" + seconds;
 
     }
 

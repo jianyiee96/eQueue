@@ -19,63 +19,166 @@
 
                         <p:growl id="messages" redisplay="false" life="4500" keepAlive="true"/>
 
-                        <p:dataTable id="dataTableAllDiningTables" widgetVar="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" var="diningTable" rowKey="#{diningTable.diningTableId}" rowIndexVar="row"
-                                     filteredValue="#{diningTableManagementManagedBean.filteredDiningTables}"
-                                     rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50"
-                                     >
+
+                        <p:dataView id="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" var="diningTable">
 
                             <f:facet name="header">
-                                <p:commandButton style="float: left;" onclick="PF('dialogCreateNewDiningTable').show()" icon="fa fa-plus-circle" />
-                                <p:outputPanel style="text-align: right;">
-                                    <h:outputText value="Search all fields:" />
-                                    <p:inputText id="globalFilter" onkeyup="PF('dataTableAllDiningTables').filter()" style="width:300px" placeholder="Enter keyword"/>
-                                </p:outputPanel>
+                                Dining Tables
                             </f:facet>
 
-                            <p:column headerText="Dining Table ID" sortBy="#{diningTable.diningTableId}" filterBy="#{diningTable.diningTableId}" filterMatchMode="contains">
-                                <h:outputText value="#{diningTable.diningTableId}" />
-                            </p:column>
+                            <p:dataViewGridItem columns="4">
 
-                            <p:column headerText="QR Code" sortBy="#{diningTable.qrCode}" filterBy="#{diningTable.qrCode}" filterMatchMode="contains">
-                                <h:outputText value="#{diningTable.qrCode}" />
-                            </p:column>
+                                <p:panel rendered="#{diningTable.diningTableId != null}" header="Table #{diningTable.diningTableId}" style="text-align: center">
 
-                            <p:column headerText="Capacity" sortBy="#{diningTable.seatingCapacity}" filterBy="#{diningTable.seatingCapacity}" filterMatchMode="contains">
-                                <h:outputText value="#{diningTable.seatingCapacity}" />
-                            </p:column>
 
-                            <p:column headerText="Status" sortBy="#{diningTable.tableStatus}" filterBy="#{diningTable.tableStatus}" filterMatchMode="contains">
-                                <h:outputText value="#{diningTable.tableStatus}" />
-                            </p:column>
+                                    <f:attribute name="tableId" value="#{diningTable.diningTableId}"></f:attribute>
 
-                            <p:column headerText="Time Since Occupied" >
-                                <h:outputText  id="timerCell" value="#{diningTable.timePassed}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
-                                    <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
-                                </h:outputText>
-                                <p:poll interval="1" listener="#{diningTableManagementManagedBean.incrementDiningTableSeatedTime(diningTable.diningTableId)}" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
-                            </p:column>
 
-                            <p:column headerText="Action" >
-                                <p:commandButton update="ccViewDiningTable:formViewDiningTable" oncomplete="PF('dialogViewDiningTable').show()" icon="ui-icon-document" title="View">
-                                    <f:setPropertyActionListener value="#{diningTable}" target="#{diningTableManagementManagedBean.viewDiningTableManagedBean.diningTableToView}" />
-                                </p:commandButton>
-                                <p:commandButton actionListener="#{diningTableManagementManagedBean.doUpdateDiningTable}" update="formUpdateDiningTable" oncomplete="PF('dialogUpdateDiningTable').show()" icon="ui-icon-pencil" title="Update">
-                                    <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
-                                </p:commandButton>
-                                <p:commandButton actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
-                                    <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
-                                </p:commandButton>
-                                <p:commandButton actionListener="#{diningTableManagementManagedBean.cleanDiningTable}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-paint-brush" title="Finished Cleaning Table">
-                                    <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
-                                </p:commandButton>
-                                <p:commandButton icon="ui-icon-trash" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
-                                    <f:attribute name="diningTableToDelete" value="#{diningTable}" />
-                                    <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
-                                </p:commandButton>
+                                    <p:barcode type="qr" value="#{diningTable.qrCode}" />
 
-                            </p:column>
+                                    <h:panelGrid columns="2" style="width:100%; text-align: left">
 
-                        </p:dataTable>
+                                        <h:outputText value="Dining Table ID:" />
+                                        <h:outputText value="#{diningTable.diningTableId}" />
+
+                                        <h:outputText value="QR Code: " />
+                                        <h:outputText value="#{diningTable.qrCode}" />
+
+                                        <h:outputText value="Capacity: " />
+                                        <h:outputText value="#{diningTable.seatingCapacity}" />
+
+                                        <h:outputText value="Status: " />
+                                        <h:outputText value="#{diningTableManagementManagedBean.statusOf(diningTable.tableStatus)}" />
+
+                                        <h:outputText value="Time Since Occupied: "/>
+                                        <h:outputText  id="timerCell" value="#{diningTableManagementManagedBean.dateDiff(diningTable.seatedTime)}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
+                                            <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
+                                        </h:outputText>
+
+                                        <h:outputText value="-" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'UNFROZEN_OCCUPIED'}" />
+
+                                        <h:outputText value="Frozen: " />
+                                        <h:outputText value="#{diningTableManagementManagedBean.frozenStatusOf(diningTable.tableStatus)}" />
+
+
+                                        <p:poll interval="1" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
+                                    </h:panelGrid>
+
+
+
+                                    <p:column headerText="Action" >
+                                        <p:commandButton actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                            <f:attribute name="diningTableToView" value="#{diningTable}" />
+                                        </p:commandButton>
+                                        <p:commandButton actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
+                                            <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                        </p:commandButton>
+                                        <p:commandButton actionListener="#{diningTableManagementManagedBean.cleanDiningTable}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-paint-brush" title="Finished Cleaning Table">
+                                            <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                        </p:commandButton>
+                                        <p:commandButton icon="ui-icon-trash" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
+                                            <f:attribute name="diningTableToDelete" value="#{diningTable}" />
+                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
+                                        </p:commandButton>
+
+                                    </p:column>
+
+
+
+
+                                </p:panel>
+
+                                <p:panel rendered="#{diningTable.diningTableId == null}">
+
+                                    Create New Table
+
+                                </p:panel>
+
+                            </p:dataViewGridItem>
+
+
+                            <p:dataViewListItem>
+
+                                <p:panel rendered="#{diningTable.diningTableId != null}">
+
+
+                                    <h:panelGrid columns="4" style="width:100%; text-align: left">
+
+                                        <p:barcode type="qr" value="#{diningTable.qrCode}" />
+
+                                        <p:outputPanel>
+                                            <h:panelGrid columns="2" cellpadding="5">
+
+                                                <h:outputText value="Dining Table ID:" />
+                                                <h:outputText value="#{diningTable.diningTableId}" />
+
+                                                <h:outputText value="QR Code: " />
+                                                <h:outputText value="#{diningTable.qrCode}" />
+
+                                                <h:outputText value="Capacity " />
+                                                <h:outputText value="#{diningTable.seatingCapacity}" />
+
+                                                <h:outputText value="Status: " />
+                                                <h:outputText value="#{diningTableManagementManagedBean.statusOf(diningTable.tableStatus)}" />
+
+                                                <h:outputText value="Time Since Occupied: "/>
+                                                <h:outputText  id="timerCell2" value="#{diningTableManagementManagedBean.dateDiff(diningTable.seatedTime)}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
+                                                    <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
+                                                </h:outputText>
+
+                                                <h:outputText value="-" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'UNFROZEN_OCCUPIED'}" />
+
+
+                                                <h:outputText value="Frozen: " />
+                                                <h:outputText value="#{diningTableManagementManagedBean.frozenStatusOf(diningTable.tableStatus)}" />
+
+
+                                                <p:poll interval="1" update="timerCell2" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
+
+                                            </h:panelGrid>
+                                        </p:outputPanel>
+
+                                        <p:outputPanel>
+
+                                            <h:panelGrid columns="1">
+
+                                                <p:commandButton actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                                    <f:attribute name="diningTableToView" value="#{diningTable}" />
+                                                </p:commandButton>
+
+                                                <p:commandButton actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
+                                                    <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                                </p:commandButton>
+                                                <p:commandButton actionListener="#{diningTableManagementManagedBean.cleanDiningTable}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-paint-brush" title="Finished Cleaning Table">
+                                                    <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                                </p:commandButton>
+                                                <p:commandButton icon="ui-icon-trash" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
+                                                    <f:attribute name="diningTableToDelete" value="#{diningTable}" />
+                                                    <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
+                                                </p:commandButton>
+
+
+                                            </h:panelGrid>
+
+
+                                        </p:outputPanel>
+
+
+
+                                    </h:panelGrid>
+
+                                </p:panel>
+
+
+
+                                <p:panel rendered="#{diningTable.diningTableId == null}">
+                                    Create New Table
+                                </p:panel>
+
+                            </p:dataViewListItem>
+
+                        </p:dataView>
+
 
                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                             <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
@@ -91,18 +194,6 @@
                             <p:growl id="messagesCreateNewDiningTable" redisplay="false" />
 
                             <p:panelGrid>
-
-<!--                                <p:row>
-                                    <p:column>
-                                        <p:outputLabel for="qrCode" value="QR Code: " style="font-weight: bold;" />
-                                    </p:column>
-                                    <p:column>
-                                        <p:inputText id="qrCode" value="#{diningTableManagementManagedBean.newDiningTable.qrCode}" placeholder="QR Code String" required="true" requiredMessage="QR Code is required" />
-                                    </p:column>
-                                    <p:column>
-                                        <p:message for="qrCode" />
-                                    </p:column>
-                                </p:row>-->
 
                                 <p:row>
                                     <p:column>
@@ -138,7 +229,17 @@
                             <p:messages id="messagesUpdateDiningTable" redisplay="false" />
 
                             <p:panelGrid>
-
+                                <p:row>
+                                    <p:column>
+                                        <h:outputLabel value="Dining Table ID: " />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{diningTableManagementManagedBean.selectedDiningTableToUpdate.diningTableId}" />
+                                    </p:column>
+                                    <p:column>
+                                        &nbsp;
+                                    </p:column>
+                                </p:row>
                                 <p:row>
                                     <p:column>
                                         <h:outputLabel value="Dining Table ID: " />
@@ -175,21 +276,6 @@
                                     </p:column>
                                 </p:row>
 
-                                <!--                    <p:row>
-                                                        <p:column>
-                                                            <p:outputLabel for="selDiningTableStatus" value="Status " style="font-weight: bold;" />
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:selectOneMenu id="selDiningTableStatus" value="#{diningTableManagementManagedBean.selectedDiningTableToUpdate.tableStatus}">                                
-                                                                <f:selectItem itemLabel="[Select One]" noSelectionOption="true" />
-                                                                <f:selectItems value="#{diningTableManagementManagedBean.tableStatuses}"  />
-                                                            </p:selectOneMenu>
-                                                        </p:column>
-                                                        <p:column>
-                                                            <p:message for="selDiningTableStatus" />
-                                                        </p:column>
-                                                    </p:row>-->
-
                                 <p:row>
                                     <p:column colspan="3">
                                         <p:commandButton value="Update Dining Table" update="@form formAllDiningTables:dataTableAllDiningTables" actionListener="#{diningTableManagementManagedBean.updateDiningTable}" oncomplete="PF('dialogUpdateDiningTable').show();" />
@@ -203,6 +289,50 @@
                     </h:form>
 
                 </div>
+            </p:layoutUnit>
+
+
+            <p:layoutUnit position="east" minSize="400" header="Table's Customer/Order Details" >
+
+                <h:form id="additionalDetails">
+                    <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer == null}">
+                        <p:graphicImage library="images" name="LOGO.png" height="500" width="400" alt="eQueue Login Form" />
+                    </p:outputPanel>
+
+                    <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer != null}">
+
+                        
+                        <h:panelGrid columns="2" cellpadding="10">
+                            
+                            <p:outputLabel value="Table Information"></p:outputLabel>
+                            <p:outputLabel value=""></p:outputLabel>
+                            
+                            <p:outputLabel value="Table ID: "></p:outputLabel>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedDiningTable.diningTableId}"></p:outputLabel>
+                            
+                            <p:outputLabel value="Current Status: "></p:outputLabel>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.statusOf(diningTableManagementManagedBean.selectedDiningTable.tableStatus)}"></p:outputLabel>
+                            
+                            <p:outputLabel value="Customer Information"></p:outputLabel>
+                            <p:outputLabel value=""></p:outputLabel>
+                            
+                            <p:outputLabel value="Customer Name:"></p:outputLabel>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.firstName} #{diningTableManagementManagedBean.selectedCustomer.lastName}"></p:outputLabel>
+                            
+                            <p:outputLabel value="Customer Email:"></p:outputLabel>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.email}"></p:outputLabel>
+
+                            <p:outputLabel value="Orders: "></p:outputLabel>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomerActiveOrders}"></p:outputLabel>
+
+                            
+                        </h:panelGrid>
+                        
+                    </p:outputPanel>
+                    
+                    
+                </h:form>
+
             </p:layoutUnit>
         </p:layout>
     </ui:define>
