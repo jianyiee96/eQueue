@@ -154,7 +154,7 @@ public class QueueAllocationManager {
         } catch (UnableToCreateNotificationException ex) {
             System.out.println("- Unable to create notification: " + ex.toString());
         } catch (QueueDoesNotExistException ex) {
-            System.out.println("- Queue no longer exist. [Customer might have checked-in to dining table]");
+            System.out.println("- Queue no longer exist. [Customer might have checked-in to dining table/left the queue]");
             System.out.println("- Nothing to do");
         }
         System.out.println("----------------------------------------------------------------------------");

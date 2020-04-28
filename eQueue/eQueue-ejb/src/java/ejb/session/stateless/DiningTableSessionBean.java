@@ -140,6 +140,10 @@ public class DiningTableSessionBean implements DiningTableSessionBeanLocal {
 
         Customer customer = em.find(Customer.class, customerId);
         DiningTable diningTable = customer.getAllocatedDiningTable();
+        
+        if(diningTable == null) {
+            return;
+        }
 
         if (diningTable.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED) {
             diningTable.setTableStatus(TableStatusEnum.UNFROZEN_UNOCCUPIED);

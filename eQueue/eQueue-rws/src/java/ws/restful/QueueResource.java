@@ -23,9 +23,11 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import util.enumeration.NotificationTypeEnum;
+import util.exceptions.QueueDoesNotExistException;
 import util.exceptions.UnableToJoinQueueException;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.JoinQueueRsp;
+import ws.datamodel.LeaveQueueRsp;
 import ws.datamodel.RetrieveQueueRsp;
 
 @Path("Queue")
@@ -46,7 +48,6 @@ public class QueueResource {
         queueSessionBeanLocal = sessionBeanLookup.lookupQueueSessionBeanLocal();
         customerSessionBeanLocal = sessionBeanLookup.lookupCustomerSessionBeanLocal();
         notificationSessionBeanLocal = sessionBeanLookup.lookupNotificationSessionBeanLocal();
-        
 
     }
 
@@ -60,12 +61,12 @@ public class QueueResource {
             Queue queue = queueSessionBeanLocal.retrieveQueueByCustomerId(Long.parseLong(customerId));
 
             if (queue == null) {
-                return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(null,null)).build();
+                return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(null, null)).build();
             }
             queue.setCustomer(null);
-            
+
             Long queuePosition = queueSessionBeanLocal.getPositionByQueueId(queue.getQueueId());
-            
+
             return Response.status(Response.Status.OK).entity(new RetrieveQueueRsp(queue, queuePosition)).build();
 
         } catch (Exception ex) {
@@ -91,10 +92,10 @@ public class QueueResource {
             }
 
             Long queueId = queueSessionBeanLocal.joinQueue(customer.getCustomerId(), Long.parseLong(pax));
-            
-            Notification n = new Notification("Successfully Joined Queue","You have successfully joined the queue.",NotificationTypeEnum.QUEUE_STARTED);
+
+            Notification n = new Notification("Successfully Joined Queue", "You have successfully joined the queue.", NotificationTypeEnum.QUEUE_STARTED);
             notificationSessionBeanLocal.createNewNotification(n, customer.getCustomerId());
-            
+
             JoinQueueRsp joinQueueRsp = new JoinQueueRsp(queueId);
 
             return Response.status(Response.Status.OK).entity(joinQueueRsp).build();
@@ -110,6 +111,29 @@ public class QueueResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
 
+    }
+
+    @Path("leaveQueue")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response leaveQueue(@QueryParam("customerId") String customerId) {
+
+        try {
+
+            queueSessionBeanLocal.invalidateCustomerQueue(Long.parseLong(customerId));
+
+            LeaveQueueRsp leaveQueueRsp = new LeaveQueueRsp(true);
+            return Response.status(Response.Status.OK).entity(leaveQueueRsp).build();
+
+        } catch (QueueDoesNotExistException ex) {
+            LeaveQueueRsp leaveQueueRsp = new LeaveQueueRsp(false);
+            return Response.status(Response.Status.OK).entity(leaveQueueRsp).build();
+        } catch (Exception ex) {
+
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
     }
 
 }
