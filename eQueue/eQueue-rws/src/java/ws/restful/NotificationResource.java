@@ -3,6 +3,7 @@ package ws.restful;
 import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
+import entity.Customer;
 import entity.Notification;
 import java.util.List;
 import javax.ws.rs.core.Context;
@@ -54,7 +55,7 @@ public class NotificationResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
     @Path("readNotification")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
@@ -63,7 +64,7 @@ public class NotificationResource {
         try {
 
             Boolean change = notificationSessionBeanLocal.readNotification(Long.parseLong(notificationId));
-            
+
             return Response.status(Response.Status.OK).entity(new ReadNotificationRsp(change)).build();
 
         } catch (Exception ex) {
@@ -72,7 +73,33 @@ public class NotificationResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
+    @Path("readAllNotification")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response readAllNotification(@QueryParam("customerId") String customerId) {
+        try {
+
+            Customer customer = customerSessionBeanLocal.retrieveCustomerById(Long.parseLong(customerId));
+
+            Boolean change = false;
+            for (Notification n : customer.getNotifications()) {
+                Boolean read = notificationSessionBeanLocal.readNotification(n.getNotificationId());
+                if (read) {
+                    change = true;
+                }
+            }
+
+            return Response.status(Response.Status.OK).entity(new ReadNotificationRsp(change)).build();
+
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+
     @Path("deleteNotification")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
@@ -81,7 +108,7 @@ public class NotificationResource {
         try {
 
             Boolean change = notificationSessionBeanLocal.deleteNotification(Long.parseLong(notificationId));
-            
+
             return Response.status(Response.Status.OK).entity(new DeleteNotificationRsp(change)).build();
 
         } catch (Exception ex) {
@@ -90,6 +117,31 @@ public class NotificationResource {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
         }
     }
-    
+
+    @Path("deleteAllNotification")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteAllNotification(@QueryParam("customerId") String customerId) {
+        try {
+
+            Customer customer = customerSessionBeanLocal.retrieveCustomerById(Long.parseLong(customerId));
+
+            Boolean change = false;
+            for (Notification n : customer.getNotifications()) {
+                Boolean deleted = notificationSessionBeanLocal.deleteNotification(n.getNotificationId());
+                if (deleted) {
+                    change = true;
+                }
+            }
+
+            return Response.status(Response.Status.OK).entity(new DeleteNotificationRsp(change)).build();
+
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
 
 }
