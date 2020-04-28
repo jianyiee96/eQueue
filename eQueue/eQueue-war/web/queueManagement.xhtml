@@ -39,8 +39,7 @@
                         </p:column>
 
                         <p:column headerText="Time Joined Queue" >
-                            <h:outputText  value="#{queue.startDateTime}" >
-                                <f:convertDateTime pattern="HH:mm"/>
+                            <h:outputText value="#{queueManagementManagedBean.formatDate(queue.startDateTime)}" >
                             </h:outputText>
                         </p:column>
 
