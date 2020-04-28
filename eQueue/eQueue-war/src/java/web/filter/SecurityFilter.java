@@ -35,50 +35,54 @@ public class SecurityFilter implements Filter {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpSession httpSession = httpServletRequest.getSession(true);
         String requestServletPath = httpServletRequest.getServletPath();
-        
+
         if (httpSession.getAttribute("employeeIsLogin") == null) {
             httpSession.setAttribute("employeeIsLogin", false);
         }
 
         Boolean employeeIsLogin = (Boolean) httpSession.getAttribute("employeeIsLogin");
-        
-        chain.doFilter(request, response);
+
+//        chain.doFilter(request, response);
 /* Commented out the check below to ease the development process by excluding all the necessary checks */
-//        if(!excludeLoginCheck(requestServletPath)) {
-//            if(employeeIsLogin == true) {
-//                Employee currentEmployee = (Employee)httpSession.getAttribute("currentEmployee");
-//                
-//                if(checkAccessRight(requestServletPath, currentEmployee.getEmployeeRole())) {
-//                    chain.doFilter(request, response);
-//                } else {
-//                    httpServletResponse.sendRedirect(CONTEXT_ROOT + "index.xhtml");
-//                }
-//            } else {
-//                httpServletResponse.sendRedirect(CONTEXT_ROOT + "index.xhtml");
-//            }
-//        } else {
-//            chain.doFilter(request, response);
-//        }
+        if (!excludeLoginCheck(requestServletPath)) {
+            if (employeeIsLogin == true) {
+                Employee currentEmployee = (Employee) httpSession.getAttribute("currentEmployee");
+
+                if (checkAccessRight(requestServletPath, currentEmployee.getEmployeeRole())) {
+                    chain.doFilter(request, response);
+                } else {
+                    httpServletResponse.sendRedirect(CONTEXT_ROOT + "accessRightError.xhtml");
+                }
+            } else {
+                httpServletResponse.sendRedirect(CONTEXT_ROOT + "index.xhtml");
+            }
+        } else {
+            chain.doFilter(request, response);
+        }
 
     }
 
     private Boolean checkAccessRight(String path, EmployeeRoleEnum employeeRole) {
+        if (path.equals("/homepage.xhtml")) {
+            return true;
+        }
         switch (employeeRole) {
             case CASHIER:
                 // for transaction management
                 return true;
             case MANAGER:
                 // for menu, employee, store, order, table, queue and transaction managements
-                if (path.equals("/viewStoreVariables.xhtml")
-                        || path.equals("/updateVariables.xhtml")
-                        || path.equals("/createNewEmployee.xhtml")
-                        || path.equals("/deleteEmployee.xhtml")
-                        || path.equals("/updateEmployee.xhtml")
-                        || path.equals("/viewAllEmployees.xhtml")
-                        || path.equals("/viewEmployeeDetails.xhtml")) {
-                    return true;
-                }
-                break;
+                return true;
+//                if (path.equals("/diningTableManagement.xhtml")
+//                        ||path.equals("/storeDetails.xhtml")
+//                        || path.equals("queueManagement.xhtml")
+//                        || path.equals("/createNewEmployee.xhtml")
+//                        || path.equals("/deleteEmployee.xhtml")
+//                        || path.equals("/updateEmployee.xhtml")
+//                        || path.equals("/viewAllEmployees.xhtml")
+//                        || path.equals("/viewEmployeeDetails.xhtml")) {
+//                    return true;
+//                }
             case DEFAULT:
                 return true;
         }
@@ -89,10 +93,10 @@ public class SecurityFilter implements Filter {
         return path.equals("/index.xhtml")
                 || path.startsWith("/javax.faces.resource");
     }
-    
+
     @Override
     public void destroy() {
-        
+
     }
 
     /**
