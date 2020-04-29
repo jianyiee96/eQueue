@@ -1,9 +1,11 @@
 package jsf.managedBean;
 
+import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
 import entity.Customer;
 import entity.CustomerOrder;
 import entity.DiningTable;
+import entity.OrderLineItem;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -17,7 +19,9 @@ import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
+import util.enumeration.OrderStatusEnum;
 import util.enumeration.TableStatusEnum;
+import util.exceptions.CustomerNotFoundException;
 import util.exceptions.DeleteDiningTableException;
 import util.exceptions.DiningTableNotFoundException;
 import util.exceptions.InputDataValidationException;
@@ -30,6 +34,8 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     @EJB
     private DiningTableSessionBeanLocal diningTableSessionBeanLocal;
+    @EJB
+    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @Inject
     private ViewDiningTableManagedBean viewDiningTableManagedBean;
@@ -68,6 +74,28 @@ public class DiningTableManagementManagedBean implements Serializable {
 
     }
 
+    public void refresh() {
+        diningTables = diningTableSessionBeanLocal.retrieveAllTables();
+        diningTables.add(new DiningTable());
+
+        try {
+            selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
+            this.selectedCustomerActiveOrders = new ArrayList<>();
+
+            if (selectedCustomer != null) {
+                for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
+
+                    if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                        this.selectedCustomerActiveOrders.add(c);
+                    }
+                }
+
+            }
+        } catch (CustomerNotFoundException ex) {
+            System.out.println("Unexpected Error.");
+        }
+    }
+
     public void viewDiningTableDetails(ActionEvent event) throws IOException {
         Long diningTableIdToView = (Long) event.getComponent().getAttributes().get("diningTableId");
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("diningTableIdToView", diningTableIdToView);
@@ -79,7 +107,7 @@ public class DiningTableManagementManagedBean implements Serializable {
         try {
             Long diningTableId = diningTableSessionBeanLocal.createNewDiningTable(newDiningTable);
             DiningTable dt = diningTableSessionBeanLocal.retrieveDiningTableById(diningTableId);
-            diningTables.add(dt);
+            diningTables.add(diningTables.size() - 1, dt);
 
             if (filteredDiningTables != null) {
                 filteredDiningTables.add(dt);
@@ -141,20 +169,32 @@ public class DiningTableManagementManagedBean implements Serializable {
         }
     }
 
-    public void cleanDiningTable(ActionEvent event) {
+    public void cleanDiningTable() {
         try {
-            selectedDiningTableToUpdate = (DiningTable) event.getComponent().getAttributes().get("diningTableToUpdate");
 
-            if (selectedDiningTableToUpdate.getTableStatus() != TableStatusEnum.FROZEN_OCCUPIED && selectedDiningTableToUpdate.getTableStatus() != TableStatusEnum.UNFROZEN_OCCUPIED) {
-
-                throw new InvalidTableStatusException("Table [ID" + selectedDiningTableToUpdate.getDiningTableId() + "] is already cleaned");
+            if (selectedDiningTable.getTableStatus() != TableStatusEnum.FROZEN_OCCUPIED && selectedDiningTable.getTableStatus() != TableStatusEnum.UNFROZEN_OCCUPIED) {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID" + selectedDiningTable.getDiningTableId() + "] is not occupied by any customer", null));
+                throw new InvalidTableStatusException("Table [ID" + selectedDiningTable.getDiningTableId() + "] is not occupied by any customer");
             }
 
-            diningTableSessionBeanLocal.removeCustomerTableRelationship(selectedDiningTableToUpdate.getCustomer().getCustomerId());
+            for (CustomerOrder c : selectedCustomerActiveOrders) {
 
+                if (!c.getIsCompleted()) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to clear table, please check if all orders are paid and completed.", null));
+                    return;
+                }
+
+                if (c.getStatus() == OrderStatusEnum.UNPAID) {
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Unable to clear table, please check if all orders are paid and completed.", null));
+                    return;
+                }
+
+            }
+
+            diningTableSessionBeanLocal.removeCustomerTableRelationship(selectedDiningTable.getCustomer().getCustomerId());
             postConstruct();
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID " + selectedDiningTable.getDiningTableId() + "] successfully cleared.", null));
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID " + selectedDiningTableToUpdate.getDiningTableId() + "] status changed successfully.", null));
         } catch (InvalidTableStatusException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating dining table status: " + ex.getMessage(), null));
         } catch (Exception ex) {
@@ -192,7 +232,7 @@ public class DiningTableManagementManagedBean implements Serializable {
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
-                if (!c.getIsCompleted()) {
+                if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
             }
