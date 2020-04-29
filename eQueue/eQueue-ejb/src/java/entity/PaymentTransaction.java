@@ -33,42 +33,41 @@ public class PaymentTransaction implements Serializable {
     @Column(nullable = false)
     @NotNull
     private Date transactionDate;
-    
+
     @Column(nullable = false, length = 64)
     @NotNull
     @Size(max = 64)
     private String paymentType;
-    
+
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
     @DecimalMin("0.00")
     @Digits(integer = 9, fraction = 2)
     private Double gst;
-    
+
     @Column(nullable = false, precision = 11, scale = 2)
     @NotNull
     @DecimalMin("0.00")
     @Digits(integer = 9, fraction = 2)
     private Double transactionValue;
-    
+
     @OneToMany(mappedBy = "paymentTransaction")
     private List<CustomerOrder> customerOrders;
-    
+
     @ManyToOne(optional = true)
     private Employee employee;
-    
-    public PaymentTransaction(){
+
+    public PaymentTransaction() {
         this.transactionDate = new Date();
     }
-    
-    public PaymentTransaction(String paymentType, Double gst, Double transactionValue){
+
+    public PaymentTransaction(String paymentType, Double gst, Double transactionValue) {
         this();
         this.paymentType = paymentType;
         this.gst = gst;
         this.transactionValue = transactionValue;
-               
     }
-    
+
     public Long getPaymentTransactionId() {
         return paymentTransactionId;
     }
@@ -122,23 +121,19 @@ public class PaymentTransaction implements Serializable {
     }
 
     public void setEmployee(Employee employee) {
-        if(this.employee != null)
-        {
+        if (this.employee != null) {
             this.employee.getPaymentTransactions().remove(this);
         }
-        
+
         this.employee = employee;
-        
-        if(this.employee != null)
-        {
-            if(!this.employee.getPaymentTransactions().contains(this))
-            {
+
+        if (this.employee != null) {
+            if (!this.employee.getPaymentTransactions().contains(this)) {
                 this.employee.getPaymentTransactions().add(this);
-            }   
+            }
         }
     }
-    
-    
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -163,5 +158,5 @@ public class PaymentTransaction implements Serializable {
     public String toString() {
         return "entity.PaymentTransaction[ id=" + paymentTransactionId + " ]";
     }
-    
+
 }
