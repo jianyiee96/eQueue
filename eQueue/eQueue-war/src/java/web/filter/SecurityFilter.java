@@ -42,8 +42,7 @@ public class SecurityFilter implements Filter {
 
         Boolean employeeIsLogin = (Boolean) httpSession.getAttribute("employeeIsLogin");
 
-//        chain.doFilter(request, response);
-/* Commented out the check below to ease the development process by excluding all the necessary checks */
+        /* Commented out the check below to ease the development process by excluding all the necessary checks */
         if (!excludeLoginCheck(requestServletPath)) {
             if (employeeIsLogin == true) {
                 Employee currentEmployee = (Employee) httpSession.getAttribute("currentEmployee");
@@ -57,12 +56,18 @@ public class SecurityFilter implements Filter {
                 httpServletResponse.sendRedirect(CONTEXT_ROOT + "index.xhtml");
             }
         } else {
+            if (employeeIsLogin == true) {
+                if (requestServletPath.equals("/index.xhtml")) {
+                    httpServletResponse.sendRedirect(CONTEXT_ROOT + "homepage.xhtml");
+                }
+            }
             chain.doFilter(request, response);
         }
 
     }
 
     private Boolean checkAccessRight(String path, EmployeeRoleEnum employeeRole) {
+        // Pages that can be accessed by all
         if (path.equals("/homepage.xhtml")) {
             return true;
         }
@@ -91,6 +96,7 @@ public class SecurityFilter implements Filter {
 
     private Boolean excludeLoginCheck(String path) {
         return path.equals("/index.xhtml")
+                || path.equals("/accessRightError.xhtml")
                 || path.startsWith("/resources/images/food")
                 || path.startsWith("/resources/images/appIcons")
                 || path.startsWith("/javax.faces.resource");

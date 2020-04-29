@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.MenuCategory;
 import entity.MenuItem;
+import entity.OrderLineItem;
 import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
@@ -25,6 +26,9 @@ import util.exceptions.UpdateMenuItemException;
 
 @Stateless
 public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
+
+    @EJB
+    private OrderLineItemSessionBeanLocal orderLineItemSessionBean;
 
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
@@ -98,7 +102,7 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
 
         return menuItems;
     }
-    
+
     @Override
     public List<MenuItem> retrieveAllMenuItemsByCategory(Long categoryId) {
         Query query = em.createQuery("SELECT m FROM MenuItem m WHERE m.menuCategory.menuCategoryId = :inCategoryId ORDER BY m.menuItemName ASC");
@@ -149,17 +153,13 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
     @Override
     public void deleteMenuItem(Long menuItemId) throws MenuItemNotFoundException, DeleteMenuItemException {
         MenuItem menuItemToRemove = retrieveMenuItemById(menuItemId);
-        menuItemToRemove.getMenuCategory().getMenuItems().remove(menuItemToRemove);
-        em.remove(menuItemToRemove);
-
-        // SELECT DISTINCT O.orderlineitems.product.id FROM Orders O
-//        List<SaleTransactionLineItemEntity> saleTransactionLineItemEntities = saleTransactionEntitySessionBeanLocal.retrieveSaleTransactionLineItemsByProductId(productId);
-//
-//        if (saleTransactionLineItemEntities.isEmpty()) {
-//            entityManager.remove(productEntityToRemove);
-//        } else {
-//            throw new DeleteProductException("Product ID " + productId + " is associated with existing sale transaction line item(s) and cannot be deleted!");
-//        }
+        List<OrderLineItem> orderLineItems = orderLineItemSessionBean.retrieveOrderLineItemsByMenuItemId(menuItemId);
+        if (orderLineItems.isEmpty()) {
+            menuItemToRemove.getMenuCategory().getMenuItems().remove(menuItemToRemove);
+            em.remove(menuItemToRemove);
+        } else {
+            throw new DeleteMenuItemException("Menu Item ID " + menuItemId + " is associated with existing order line items and cannot be deleted!");
+        }
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<MenuItem>> constraintViolations) {

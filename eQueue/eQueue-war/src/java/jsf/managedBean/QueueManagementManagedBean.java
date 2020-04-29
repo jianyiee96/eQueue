@@ -6,8 +6,10 @@
 package jsf.managedBean;
 
 import ejb.session.stateless.CustomerSessionBeanLocal;
+import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
+import entity.DiningTable;
 import entity.Notification;
 import entity.Queue;
 import java.text.SimpleDateFormat;
@@ -21,11 +23,16 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import util.enumeration.NotificationTypeEnum;
+import util.enumeration.QueueStatusEnum;
+import util.enumeration.TableStatusEnum;
 import util.exceptions.UnableToCreateNotificationException;
 
 @Named(value = "queueManagementManagedBean")
 @ApplicationScoped
 public class QueueManagementManagedBean {
+
+    @EJB
+    private DiningTableSessionBeanLocal diningTableSessionBean;
 
     @EJB
     private NotificationSessionBeanLocal notificationSessionBean;
@@ -34,6 +41,7 @@ public class QueueManagementManagedBean {
     private QueueSessionBeanLocal queueSessionBean;
 
     private List<Queue> queues;
+    private List<DiningTable> diningTables;
     private Queue selectedQueue;
     private String notificationTitle;
     private String notificationMessage;
@@ -48,6 +56,7 @@ public class QueueManagementManagedBean {
 
     public void retrieveQueues() {
         this.queues = queueSessionBean.retrieveAllQueues();
+        this.diningTables = diningTableSessionBean.retrieveAllTables();
     }
 
     public String dateDiff(Date date) {
@@ -103,8 +112,57 @@ public class QueueManagementManagedBean {
         return queues;
     }
 
+    public Long getNoOfActiveQueues() {
+        return queues.stream().filter(x -> x.getQueueStatus() == QueueStatusEnum.ACTIVE).count();
+    }
+
+    public Long getNoOfAllocatedQueues() {
+        return queues.stream().filter(x -> x.getQueueStatus() == QueueStatusEnum.ALLOCATED).count();
+    }
+
     public void setQueues(List<Queue> queues) {
         this.queues = queues;
+    }
+
+    public List<DiningTable> getDiningTables() {
+        return diningTables;
+    }
+
+    public Long getNoOfFrozenTables() {
+        return diningTables.stream()
+                .filter(x -> x.getTableStatus() == TableStatusEnum.FROZEN_ALLOCATED
+                || x.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED
+                || x.getTableStatus() == TableStatusEnum.FROZEN_UNOCCUPIED)
+                .count();
+    }
+
+    public Long getNoOfUnoccupiedTables() {
+        return diningTables.stream()
+                .filter(x -> x.getTableStatus() == TableStatusEnum.FROZEN_UNOCCUPIED
+                || x.getTableStatus() == TableStatusEnum.UNFROZEN_UNOCCUPIED)
+                .count();
+    }
+
+    public Long getNoOfOccupiedTables() {
+        return diningTables.stream()
+                .filter(x -> x.getTableStatus() == TableStatusEnum.FROZEN_OCCUPIED
+                || x.getTableStatus() == TableStatusEnum.UNFROZEN_OCCUPIED)
+                .count();
+    }
+
+    public Long getNoOfAllocatedTables() {
+        return diningTables.stream()
+                .filter(x -> x.getTableStatus() == TableStatusEnum.FROZEN_ALLOCATED
+                || x.getTableStatus() == TableStatusEnum.UNFROZEN_ALLOCATED)
+                .count();
+    }
+
+    public Long getNoOfUnfrozenTables() {
+        return this.diningTables.size() - getNoOfFrozenTables();
+    }
+
+    public void setDiningTables(List<DiningTable> diningTables) {
+        this.diningTables = diningTables;
     }
 
     public String getNotificationTitle() {
