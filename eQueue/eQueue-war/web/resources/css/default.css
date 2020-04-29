@@ -67,6 +67,14 @@ div.ui-growl {
     transform: scale(1.1);
 }
 
+.bell {
+    align-self: center
+}
+
+.bell:hover{
+    transform: scale(1.1);
+}
+
 .store-icon {
     background-image: url("#{resource['images/icons/store_icon.svg']}") !important;
 }
