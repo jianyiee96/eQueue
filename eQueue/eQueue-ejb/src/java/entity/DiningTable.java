@@ -35,8 +35,8 @@ public class DiningTable implements Serializable {
     @NotNull
     @Positive
     @Min(1)
-    @Max(8)
-    private Long seatingCapacity;
+    @Max(12)
+    private Long seatingCapacity = 1l;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = true)
