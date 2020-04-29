@@ -2,6 +2,7 @@ package ejb.session.stateless;
 
 import entity.MenuItem;
 import entity.OrderLineItem;
+import java.util.List;
 import java.util.Set;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -9,6 +10,7 @@ import javax.validation.ConstraintViolation;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -90,6 +92,13 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
         }
     }
 
+    @Override
+    public List<OrderLineItem> retrieveOrderLineItemsByMenuItemId(Long menuItemId) {
+        Query query = em.createQuery("SELECT o FROM OrderLineItem o WHERE o.menuItem.menuItemId = :inMenuItemId ORDER BY o.orderLineItemId DESC");
+        query.setParameter("inMenuItemId", menuItemId);
+        return query.getResultList();
+    }
+
     // Customer - Can only update the quantity, remkarks when item is in ordered/in_cart status
     @Override
     public void updateOrderLineItemByCustomer(OrderLineItem orderLineItem) throws OrderLineItemNotFoundException, UpdateOrderLineItemException, InputDataValidationException {
@@ -118,7 +127,7 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
                 orderLineItemToUpdate.setIsEdited(true);
                 orderLineItemToUpdate.setQuantity(orderLineItem.getQuantity());
                 orderLineItemToUpdate.setRemarks(orderLineItem.getRemarks());
-                
+
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
             }
@@ -126,19 +135,18 @@ public class OrderLineItemSessionBean implements OrderLineItemSessionBeanLocal {
             throw new OrderLineItemNotFoundException("Order Line Item ID not provided for order line item to be updated");
         }
     }
-    
+
     @Override
     public void cancelOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, OrderStateMismatchException {
-        
+
         OrderLineItem orderLineItem = retrieveOrderLineItemById(orderLineItemId);
-        
-        if(orderLineItem.getStatus() == OrderLineItemStatusEnum.ORDERED) {
+
+        if (orderLineItem.getStatus() == OrderLineItemStatusEnum.ORDERED) {
             orderLineItem.setStatus(OrderLineItemStatusEnum.CANCELLED);
         } else {
             throw new OrderStateMismatchException("OrderLineItem is not in ORDERED state.");
         }
-        
-        
+
     }
 
     // Employee - Can update everything, except ID and menu item, in whatever status
