@@ -58,20 +58,4 @@ public class AlertResource {
 
     }
 
-    @Path("{alertId}")
-    @DELETE
-    @Consumes(MediaType.TEXT_PLAIN)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteProduct(@PathParam("alertId") Long alertId) {
-        try {
-            alertSessionBeanLocal.deleteAlert(alertId);
-
-            return Response.status(Status.OK).build();
-        } catch (Exception ex) {
-            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
-
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
-        }
-    }
-
 }
