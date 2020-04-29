@@ -10,7 +10,105 @@
         <style type="text/css">
         </style>
         <p:layout>
-            <p:poll interval="5" listener="#{queueManagementManagedBean.retrieveQueues}" update="formAllQueues"></p:poll>
+            <p:poll interval="5" listener="#{queueManagementManagedBean.retrieveQueues}" update="formAllQueues formQueueOverview"></p:poll>
+
+            <p:layoutUnit minSize="300" position="west"  header="Overview" collapsible="true">
+                <h:form id="formQueueOverview">
+
+                    <p:panelGrid style="width:300px; margin:10 5 0 5">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="3">
+                                    Queue Information
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of People in Queue:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.queues.size()}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Active Queues:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfActiveQueues}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Allocated Queues:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfAllocatedQueues}"/>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:panelGrid style="width:300px; margin:10 5 0 5">
+                        <f:facet name="header">
+                            <p:row>
+                                <p:column colspan="3">
+                                    Table Information
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Tables:" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.diningTables.size()}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Unfrozen Tables" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfUnfrozenTables}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Frozen Tables" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfFrozenTables}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Unoccupied Tables" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfUnoccupiedTables}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Occupied Tables" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfOccupiedTables}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Number of Allocated Tables" />
+                            </p:column>
+                            <p:column colspan="1" style="text-align: center; font-weight: bold">
+                                <h:outputText value="#{queueManagementManagedBean.noOfAllocatedTables}"/>
+                            </p:column>
+                        </p:row>
+
+                    </p:panelGrid>
+                </h:form>
+            </p:layoutUnit>
 
             <p:layoutUnit position="center" >
                 <h:form id="formAllQueues">

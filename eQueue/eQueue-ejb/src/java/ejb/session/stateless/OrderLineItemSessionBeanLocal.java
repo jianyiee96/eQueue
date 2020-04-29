@@ -1,6 +1,7 @@
 package ejb.session.stateless;
 
 import entity.OrderLineItem;
+import java.util.List;
 import javax.ejb.Local;
 import util.exceptions.CreateNewOrderLineItemException;
 import util.exceptions.DeleteOrderLineItemException;
@@ -25,5 +26,7 @@ public interface OrderLineItemSessionBeanLocal {
     public void deleteOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, DeleteOrderLineItemException;
     
     public void cancelOrderLineItem(Long orderLineItemId) throws OrderLineItemNotFoundException, OrderStateMismatchException;
+
+    public List<OrderLineItem> retrieveOrderLineItemsByMenuItemId(Long menuItemId);
     
 }
