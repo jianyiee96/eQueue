@@ -8,41 +8,101 @@
                 template="./template/defaultTemplate.xhtml">
 
     <ui:define name="content">
+
+        <style type="text/css">
+            #footer {
+                position: absolute;
+                left: 0px;
+                right: 0px;
+                bottom: 0px;
+                height: 25px;
+                font-size: 12px;
+            }
+            .text-center {
+                text-align: center;
+            }
+        </style>
+
         <p:layout>
-            <p:layoutUnit minSize="500" position="west">
-                <p:dataView var="diningTable" value="#{transactionManagementManagedBean.diningTables}" layout="grid" gridIcon="fa fa-th-large">
+
+            <p:layoutUnit position="west" size="500">
+                <p:dataGrid var="diningTable" value="#{transactionManagementManagedBean.diningTables}" columns="3" layout="grid">
                     <f:facet name="header">
                         Dining Tables
                     </f:facet>
 
-                    <p:dataViewGridItem>
-                        <p:panel header="Table #{diningTable.diningTableId}" style="text-align: center;">
-                            <h:panelGrid columns="1" style="width:100%; text-align: center; height: 100px;">
-                                <p:graphicImage library="images" name="round-table.png" style="margin: 5px 0px 5px 0px" height="45" width="45" alt="Table" />
+                    <p:panel header="Table #{diningTable.diningTableId}" style="text-align: center;">
+                        <h:panelGrid columns="1" style="width:100%; text-align: center; height: 100px;">
+                            <p:graphicImage library="images" name="round-table.png" style="margin: 5px 0px 5px 0px" height="45" width="45" alt="Table" />
 
-                                <h:outputText style="font-size: 12;" value="#{transactionManagementManagedBean.getDiningTableStatus(diningTable.tableStatus)}" />
+                            <h:outputText style="font-size: 12;" value="#{transactionManagementManagedBean.getDiningTableStatus(diningTable.tableStatus)}" />
 
-                                <p:commandButton rendered="#{diningTable.customer != null}" disabled="false" icon="fa fa-money">
-                                </p:commandButton>
+                            <p:commandButton rendered="#{diningTable.customer != null}" title="Payment" update="checkoutForm" icon="fa fa-money" actionListener="#{transactionManagementManagedBean.checkout}">
+                                <f:attribute name="diningTableToCheckout" value="#{diningTable}" />
+                            </p:commandButton>
 
-                                <p:commandButton rendered="#{diningTable.customer == null}" disabled="true" icon="fa fa-money">
-                                </p:commandButton>
+                            <p:commandButton rendered="#{diningTable.customer == null}" disabled="true" icon="fa fa-money">
+                            </p:commandButton>
 
-                                <!--                                <p:commandLink update=":form:carDetail" oncomplete="PF('carDialog').show()" title="View Detail">
-                                                                    <h:outputText styleClass="ui-icon pi pi-search" style="margin:0 auto;" />
-                                                                    <f:setPropertyActionListener value="{car}" target="{dataGridView.selectedCar}" />
-                                                                </p:commandLink>-->
-                            </h:panelGrid>
-                        </p:panel>
-                    </p:dataViewGridItem>
-                </p:dataView>
+                        </h:panelGrid>
+                    </p:panel>
+                </p:dataGrid>
+            </p:layoutUnit>
 
+            <p:layoutUnit position="center">
+
+                <h:form id="checkoutForm">
+
+                    <p:dataTable rendered="#{transactionManagementManagedBean.isDiningTableSelected == true}" value="#{transactionManagementManagedBean.customerUnpaidOrderLineItems}"
+                                 var="orderLineItem" style="margin: 0px 5px 0px 5px;" rowIndexVar="rowIdx" scrollable="true" scrollHeight="500">
+                        <f:facet name="header">
+                            Payment Transaction
+                        </f:facet>
+
+                        <p:column headerText="Item Name">
+                            <h:outputText value="#{rowIdx} #{orderLineItem.menuItem.menuItemName}" />
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Quantity">
+                            <h:outputText value="#{orderLineItem.quantity}" />
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Unit Price">
+                            <h:outputText value="#{orderLineItem.menuItem.menuItemPrice}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Total">
+                            <h:outputText value="#{orderLineItem.quantity * orderLineItem.menuItem.menuItemPrice}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </p:column>
+                        
+                        
+                        <p:column rendered="#{(rowIdx + 1) eq transactionManagementManagedBean.customerUnpaidOrderLineItems.size()}">
+                            das
+                        </p:column>
+
+<!--                        <f:facet name="footer">
+                            <h:outputText value="Total Amount" />
+
+                            <p:column colspan="3">
+                            </p:column>
+                        </f:facet>-->
+                    </p:dataTable>
+
+                    <div class="text-center">
+                        <p:graphicImage rendered="#{transactionManagementManagedBean.isDiningTableSelected == false}" library="images" name="equeue-logo.png" height="160" width="500" />
+                    </div>
+                </h:form>
+
+                <!--                <div id="footer">
+                                    lol
+                                </div>-->
 
             </p:layoutUnit>
 
-            <p:layoutUnit position="center" >
-
-            </p:layoutUnit>
         </p:layout>
     </ui:define>
 
