@@ -10,6 +10,7 @@ import ejb.session.stateless.MenuCategorySessionBeanLocal;
 import ejb.session.stateless.MenuItemSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
+import ejb.session.stateless.PaymentTransactionSessionBeanLocal;
 import ejb.session.stateless.ShoppingCartSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
 import java.util.logging.Level;
@@ -146,4 +147,13 @@ public class SessionBeanLookup {
         }
     }
 
+    public PaymentTransactionSessionBeanLocal lookupPaymentTransactionSessionBeanLocal() {
+        try {
+            Context c = new InitialContext();
+            return (PaymentTransactionSessionBeanLocal) c.lookup(ejbModuleJndiPath + "PaymentTransactionSessionBean!ejb.session.stateless.PaymentTransactionSessionBeanLocal");
+        } catch (NamingException ne) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "exception caught", ne);
+            throw new RuntimeException(ne);
+        }
+    }
 }

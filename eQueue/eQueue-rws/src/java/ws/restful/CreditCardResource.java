@@ -84,21 +84,15 @@ public class CreditCardResource {
             customer.setCurrentQueue(null);
             customer.getShoppingCart().getOrderLineItems().forEach(oli -> oli.getMenuItem().setMenuCategory(null));
 
-            CreditCard customerCC = customer.getCreditCard();
+            CreditCard customerCreditCard = customer.getCreditCard();
             customer.setCreditCard(null);
 
-//            if (customerCC != null) {
-//                System.out.println("not null");
-//                return Response.status(Response.Status.OK).entity(new RetrieveCreditCardRsp(customerCC)).build();
-//
-//            } else {
-//                System.out.println(" null");
-//                ErrorRsp errorRsp = new ErrorRsp("No Credit Card Associated");
-//                return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
-//
-//            }
-
-            return Response.status(Response.Status.OK).entity(new RetrieveCreditCardRsp(customerCC)).build();
+            if (customerCreditCard != null) {
+                return Response.status(Response.Status.OK).entity(new RetrieveCreditCardRsp(customerCreditCard)).build();
+            } else {
+                ErrorRsp errorRsp = new ErrorRsp("No Credit Card Associated with Customer");
+                return Response.status(Response.Status.BAD_REQUEST).entity(errorRsp).build();
+            }
 
         } catch (CustomerNotFoundException ex) {
 
