@@ -75,7 +75,6 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
                 em.flush();
 
 //                System.out.println("Payment done!!!");
-
                 return newPaymentTransaction.getPaymentTransactionId();
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
@@ -93,14 +92,17 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
         for (PaymentTransaction pt : pastTransactions) {
             List<CustomerOrder> customerOrders = pt.getCustomerOrders();
             customerOrders.size();
-            
-            for (CustomerOrder co: customerOrders) {
+
+            for (CustomerOrder co : customerOrders) {
                 co.getOrderLineItems().size();
             }
         }
-        
+
         return pastTransactions;
 
+    }
+
+    @Override
     public List<PaymentTransaction> retrievePaymentTransactions(Long customerId) {
         Query getCustomerOrdersByCustomerId = em.createQuery("SELECT co FROM CustomerOrder co WHERE co.customer.customerId LIKE :inCustomerId ORDER BY co.orderId DESC");
         getCustomerOrdersByCustomerId.setParameter("inCustomerId", customerId);
@@ -139,7 +141,7 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
                     }
                 }
             }
-        }       
+        }
         return paymentTransactionsFiltered;
 
     }
