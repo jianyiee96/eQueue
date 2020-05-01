@@ -34,4 +34,6 @@ public interface CustomerOrderSessionBeanLocal {
     public void recalculateTotalAmount(Long customerOrderId);
     
     public void updateOrderStatus(Long customerOrderId);
+
+    public List<CustomerOrder> retrieveAllOrders();
 }
