@@ -62,7 +62,7 @@ public class OrderLineItem implements Serializable {
     public Long getOrderLineItemId() {
         return orderLineItemId;
     }
-    
+
     public void setOrderLineItemId(Long orderLineItemId) {
         this.orderLineItemId = orderLineItemId;
     }
@@ -112,6 +112,14 @@ public class OrderLineItem implements Serializable {
             return this.menuItem.getMenuItemName().compareTo(i2.getMenuItem().getMenuItemName());
         } else {
             return this.status.compareTo(i2.getStatus());
+        }
+    }
+
+    public int compareTo_MenuItem_Quantity(OrderLineItem i2) {
+        if (!this.menuItem.getMenuItemName().equals(i2.getMenuItem().getMenuItemName())) {
+            return this.menuItem.getMenuItemName().compareTo(i2.getMenuItem().getMenuItemName());
+        } else {
+            return this.quantity.compareTo(i2.getQuantity());
         }
     }
 

@@ -16,6 +16,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.OrderStatusEnum;
+import util.exceptions.CreateNewPaymentTransactionException;
 import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.UnknownPersistenceException;
@@ -38,7 +39,7 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
     }
 
     @Override
-    public Long createNewPaymentTransactionByCustomer(PaymentTransaction newPaymentTransaction) throws CustomerOrderNotFoundException, InputDataValidationException, UnknownPersistenceException {
+    public Long createNewPaymentTransactionByCustomer(PaymentTransaction newPaymentTransaction) throws CreateNewPaymentTransactionException, CustomerOrderNotFoundException, InputDataValidationException, UnknownPersistenceException {
 //        System.out.println("newPaymentTransaction_date: " + newPaymentTransaction.getTransactionDate());
 //        System.out.println("newPaymentTransaction_val : " + newPaymentTransaction.getTransactionValue());
 //        System.out.println("newPaymentTransaction_gst : " + newPaymentTransaction.getGst());
@@ -49,6 +50,10 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
 //        }
 
         try {
+            if (newPaymentTransaction.getCustomerOrders().isEmpty()) {
+                throw new CreateNewPaymentTransactionException("There is no customer order associated with this table currently!");
+            }
+
             Set<ConstraintViolation<PaymentTransaction>> constraintViolations = validator.validate(newPaymentTransaction);
 
             if (constraintViolations.isEmpty()) {
@@ -81,6 +86,21 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
     }
 
     @Override
+    public List<PaymentTransaction> retrieveAllPastTransactions() {
+        Query query = em.createQuery("SELECT pt FROM PaymentTransaction pt");
+        List<PaymentTransaction> pastTransactions = query.getResultList();
+
+        for (PaymentTransaction pt : pastTransactions) {
+            List<CustomerOrder> customerOrders = pt.getCustomerOrders();
+            customerOrders.size();
+            
+            for (CustomerOrder co: customerOrders) {
+                co.getOrderLineItems().size();
+            }
+        }
+        
+        return pastTransactions;
+
     public List<PaymentTransaction> retrievePaymentTransactions(Long customerId) {
         Query getCustomerOrdersByCustomerId = em.createQuery("SELECT co FROM CustomerOrder co WHERE co.customer.customerId LIKE :inCustomerId ORDER BY co.orderId DESC");
         getCustomerOrdersByCustomerId.setParameter("inCustomerId", customerId);
@@ -121,6 +141,7 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
             }
         }       
         return paymentTransactionsFiltered;
+
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<PaymentTransaction>> constraintViolations) {

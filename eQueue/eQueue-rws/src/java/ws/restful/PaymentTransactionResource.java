@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import util.exceptions.CreateNewPaymentTransactionException;
 import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.UnknownPersistenceException;
@@ -49,7 +50,7 @@ public class PaymentTransactionResource {
                 CreateNewPaymentTransactionRsp createNewPaymentTransactionRsp = new CreateNewPaymentTransactionRsp(paymentTransactionId);
 
                 return Response.status(Response.Status.OK).entity(createNewPaymentTransactionRsp).build();
-            } catch (CustomerOrderNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
+            } catch (CreateNewPaymentTransactionException | CustomerOrderNotFoundException | InputDataValidationException | UnknownPersistenceException ex) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(new ErrorRsp("Failed to create a new payment transaction: " + ex.getMessage())).build();
             }
         } else {
