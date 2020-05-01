@@ -38,4 +38,5 @@ public interface CustomerOrderSessionBeanLocal {
 
     public void updateOrderStatus(Long customerOrderId);
 
+    public List<CustomerOrder> retrieveAllOrders();
 }

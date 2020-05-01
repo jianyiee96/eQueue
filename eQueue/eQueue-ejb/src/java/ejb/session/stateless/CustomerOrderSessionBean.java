@@ -97,6 +97,12 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
     }
 
     @Override
+    public List<CustomerOrder> retrieveAllOrders() {
+        Query query = em.createQuery("SELECT o FROM CustomerOrder o ORDER BY o.orderDate ASC, o.orderId ASC");
+        return query.getResultList();
+    }
+
+    @Override
     public List<CustomerOrder> retrieveIncompleteOrders() {
 //        Date currentDay = new Date();
 //        currentDay.setHours(0);

@@ -1,0 +1,118 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                template="/template/defaultTemplate.xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <ui:define name="content">
+        <style type="text/css">
+            .menu-header-text {
+                font-weight: bold;
+            }
+        </style>
+        <p:layout>
+            <p:layoutUnit minSize="400" position="west"  header="Filter" collapsible="true">
+
+                <h:panelGrid style="margin-bottom:10px" cellpadding="3">
+
+                    <h:form id="filterForm">
+                        <p:row>
+                            <p:column colspan="2">
+                                <h:outputText value="Type" styleClass="menu-header-text"/>
+                            </p:column>
+                        </p:row>
+                        <br/>
+                        <p:row>
+                            <p:column colspan="2">
+
+                                <p:selectOneButton unselectable="false" value="#{analyticsPageManagedBean.optionType}">
+                                    <f:selectItem itemLabel="Menu Items" itemValue="MENU_ITEMS"/>
+                                    <f:selectItem itemLabel="Sales Revenue" itemValue="SALES_REVENUE"/>
+                                    <f:selectItem itemLabel="Popular Timings" itemValue="POPULAR_TIMINGS"/>
+                                    <p:ajax update="@form"/>
+                                </p:selectOneButton>
+
+                            </p:column>
+                        </p:row>
+                        <br/>
+                        <br/>
+                        <ui:fragment id="menuItemSelectionFragment" rendered="#{analyticsPageManagedBean.optionType == 'MENU_ITEMS'}">
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="Selection" styleClass="menu-header-text"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:selectOneRadio value="#{analyticsPageManagedBean.optionMenuItemsType}">
+                                        <f:selectItem itemLabel="All Menu Items" itemValue="ALL" />
+                                        <f:selectItem itemLabel="Single Menu Item" itemValue="SINGLE" />
+                                        <p:ajax update="@form"/>
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <br/>
+                            <div style="display: flex; align-items: baseline">
+                                <p:row rendered="#{analyticsPageManagedBean.optionMenuItemsType == 'SINGLE'}" >
+                                    <h:outputLabel for="menuItemSelection" value="Choose Menu Item:" />
+                                    <p:selectOneMenu id="menuItemSelection" value="#{analyticsPageManagedBean.selectedMenuItemId}" label="MenuItem"
+                                                     filter="true" filterMatchMode="contains" style="width:160px" panelStyle="width:180px">
+                                        <f:selectItems value="#{analyticsPageManagedBean.menuItems}" var="menuItem" itemValue="#{menuItem.menuItemId}" itemLabel="#{menuItem.menuItemName}"/>
+                                        <p:ajax update="@form:menuItemSelectionFragment"/>
+                                    </p:selectOneMenu>
+                                    <p:message id="menuItemSelectionMsg" for="menuItemSelection"/>
+                                </p:row>
+                            </div>
+                            <br/>
+                        </ui:fragment>
+                        <ui:fragment id="dateSelectionFragment">
+                            <p:row>
+                                <p:column colspan="2">
+                                    <h:outputText value="Date" styleClass="menu-header-text"/>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column colspan="2">
+                                    <p:selectOneRadio value="#{analyticsPageManagedBean.optionDateType}">
+                                        <f:selectItem itemLabel="Day" itemValue="DAY" />
+                                        <f:selectItem itemLabel="Week" itemValue="WEEK" />
+                                        <f:selectItem itemLabel="Month" itemValue="MONTH" />
+                                        <f:selectItem itemLabel="Year" itemValue="YEAR" />
+                                        <p:ajax update="@form @form:dayDatePicker @form:monthDatePicker"/>
+                                    </p:selectOneRadio>
+                                </p:column>
+                            </p:row>
+                            <br/>
+                            <p:datePicker id="dayDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'DAY' or analyticsPageManagedBean.optionDateType == 'WEEK'}" inline="true" value="#{analyticsPageManagedBean.selectedDate}" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
+                                <p:ajax event="dateSelect" process="@form:dayDatePicker"/>
+                            </p:datePicker>
+                            <p:message id="dayMsg" for="dayDatePicker"/>
+                            <p:datePicker id="monthDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'MONTH' or analyticsPageManagedBean.optionDateType == 'YEAR'}" view="month" value="#{analyticsPageManagedBean.selectedDate}"
+                                          inline="true" pattern="MM/yyyy" yearNavigator="true" yearRange="2010:2020" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
+                                <p:ajax event="dateSelect" process="@form:monthDatePicker"/>
+                            </p:datePicker>
+                            <p:message id="monthMsg" for="monthDatePicker"/>
+                        </ui:fragment>
+                        <br/>
+                        <br/>
+                        <p:commandButton value="Process" validateClient="true" update="@form charts" icon="pi pi-check" actionListener="#{analyticsPageManagedBean.processFilter}"/>
+                    </h:form>
+
+                </h:panelGrid>
+            </p:layoutUnit>
+
+            #{analyticsPageManagedBean.initialized}
+            <p:layoutUnit position="center" >
+                <h:form id="charts">
+                    <ui:fragment rendered="#{!analyticsPageManagedBean.initialized}">
+                        <h3 style="margin-left: 30px">Please select the data you wish to display</h3>
+                    </ui:fragment>
+                    <p:barChart rendered="#{analyticsPageManagedBean.initialized and analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL'}" id="chart" model="#{analyticsPageManagedBean.allMenuItemsBarChart}" />
+                    <p:lineChart rendered="#{analyticsPageManagedBean.initialized and !(analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL')}" model="#{analyticsPageManagedBean.lineChart}" />
+                </h:form>
+            </p:layoutUnit>
+        </p:layout>
+    </ui:define>
+</ui:composition>
