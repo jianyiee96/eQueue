@@ -40,7 +40,17 @@ public class TransactionManagementManagedBean implements Serializable {
     @EJB(name = "PaymentTransactionSessionBeanLocal")
     private PaymentTransactionSessionBeanLocal paymentTransactionSessionBeanLocal;
 
+    private Boolean isCheckoutSelected;
+    private Boolean isPastTransactionsSelected;
+
+    // 1 for checkout
+    // 2 for past transactions
+    private String optionSelected;
+
     private List<DiningTable> diningTables;
+    private List<PaymentTransaction> pastTransactions;
+    private List<PaymentTransaction> filteredPastTransactions;
+
     private List<CustomerOrder> customerUnpaidOrders;
     private List<OrderLineItem> customerUnpaidOrderLineItems;
 
@@ -63,6 +73,7 @@ public class TransactionManagementManagedBean implements Serializable {
 
     private void initProcess() {
         this.diningTables = diningTableSessionBeanLocal.retrieveAllTables();
+        this.pastTransactions = paymentTransactionSessionBeanLocal.retrieveAllPastTransactions();
 
         this.customerUnpaidOrders = new ArrayList<>();
         this.customerUnpaidOrderLineItems = new ArrayList<>();
@@ -73,6 +84,10 @@ public class TransactionManagementManagedBean implements Serializable {
         this.newPaymentTransaction = new PaymentTransaction();
 
         this.isDiningTableSelected = false;
+    }
+
+    public void handleOptionSelected() {
+        System.out.println("OptionSelected = " + optionSelected);
     }
 
     public void checkout(ActionEvent event) {
@@ -135,9 +150,9 @@ public class TransactionManagementManagedBean implements Serializable {
     public void confirmPayment() {
         try {
             this.paymentTransactionSessionBeanLocal.createNewPaymentTransactionByCustomer(newPaymentTransaction);
-            
+
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Payment processed successfully on " + this.newPaymentTransaction.getTransactionDate() + " (ID: " + this.newPaymentTransaction.getPaymentTransactionId() + ")", null));
-            
+
             this.initProcess();
         } catch (CreateNewPaymentTransactionException | CustomerOrderNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating a new transaction: " + ex.getMessage(), null));
@@ -180,12 +195,52 @@ public class TransactionManagementManagedBean implements Serializable {
         return "Unknown";
     }
 
+    public String getOptionSelected() {
+        return optionSelected;
+    }
+
+    public void setOptionSelected(String optionSelected) {
+        this.optionSelected = optionSelected;
+    }
+
+    public Boolean getIsCheckoutSelected() {
+        return isCheckoutSelected;
+    }
+
+    public void setIsCheckoutSelected(Boolean isCheckoutSelected) {
+        this.isCheckoutSelected = isCheckoutSelected;
+    }
+
+    public Boolean getIsPastTransactionsSelected() {
+        return isPastTransactionsSelected;
+    }
+
+    public void setIsPastTransactionsSelected(Boolean isPastTransactionsSelected) {
+        this.isPastTransactionsSelected = isPastTransactionsSelected;
+    }
+
     public List<DiningTable> getDiningTables() {
         return diningTables;
     }
 
     public void setDiningTables(List<DiningTable> diningTables) {
         this.diningTables = diningTables;
+    }
+
+    public List<PaymentTransaction> getPastTransactions() {
+        return pastTransactions;
+    }
+
+    public void setPastTransactions(List<PaymentTransaction> pastTransactions) {
+        this.pastTransactions = pastTransactions;
+    }
+
+    public List<PaymentTransaction> getFilteredPastTransactions() {
+        return filteredPastTransactions;
+    }
+
+    public void setFilteredPastTransactions(List<PaymentTransaction> filteredPastTransactions) {
+        this.filteredPastTransactions = filteredPastTransactions;
     }
 
     public List<CustomerOrder> getCustomerUnpaidOrders() {

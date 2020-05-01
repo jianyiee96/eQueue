@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
+import javax.persistence.Query;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -81,6 +82,23 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
         } catch (PersistenceException ex) {
             throw new UnknownPersistenceException(ex.getMessage());
         }
+    }
+
+    @Override
+    public List<PaymentTransaction> retrieveAllPastTransactions() {
+        Query query = em.createQuery("SELECT pt FROM PaymentTransaction pt");
+        List<PaymentTransaction> pastTransactions = query.getResultList();
+
+        for (PaymentTransaction pt : pastTransactions) {
+            List<CustomerOrder> customerOrders = pt.getCustomerOrders();
+            customerOrders.size();
+            
+            for (CustomerOrder co: customerOrders) {
+                co.getOrderLineItems().size();
+            }
+        }
+        
+        return pastTransactions;
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<PaymentTransaction>> constraintViolations) {
