@@ -13,11 +13,11 @@
         <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
         <h:outputStylesheet library="css" name="default.css" />
         <style type="text/css">
-            
+
             .ui-button {
                 background-color: pink;
             }
-            
+
             .ui-datagrid-header {
                 font-size: medium;
             }
@@ -111,7 +111,7 @@
                     <p:dataGrid id="orders" value="#{kitchenManagementManagedBean.incompleteCustomerOrders}" var="order" columns="3" rows="9" paginator="true" 
                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
                                 rowsPerPageTemplate="9,12,15" layout="grid">
-                        <p:panel style="height: 230px; text-align: center; margin: 2px 2px 2px 2px;">
+                        <p:panel style="text-align: center; margin: 2px 2px 2px 2px;" >
 
                             <f:facet name="header">
                                 <h:outputText value="Order [ #{order.orderId} ]" />&nbsp;
@@ -123,52 +123,54 @@
                                 </h:outputText>&nbsp;
                             </f:facet>
 
-                            <p:dataTable id="orderLineItemsTable" rowIndexVar="index" value="#{order.orderLineItems}" var="item" scrollable="true" scrollHeight="100"
-                                         rowKey="#{item.orderLineItemId}" selection="#{kitchenManagementManagedBean.selectedOrderItem}" selectionMode="single">
-                                <p:ajax event="contextMenu" update="formViewOrderLineItem" />
-                                <p:column headerText="Idx" style="width: 15px; text-align: center;">
-                                    <h:outputText value="#{index + 1}" />
-                                </p:column>
+                            <div style="min-height: 150px">
+                                <p:dataTable id="orderLineItemsTable" rowIndexVar="index" value="#{order.orderLineItems}" var="item" scrollable="true" scrollHeight="100"
+                                             rowKey="#{item.orderLineItemId}" selection="#{kitchenManagementManagedBean.selectedOrderItem}" selectionMode="single">
+                                    <p:ajax event="contextMenu" update="formViewOrderLineItem" />
+                                    <p:column headerText="Idx" style="width: 15px; text-align: center;">
+                                        <h:outputText value="#{index + 1}" />
+                                    </p:column>
 
-                                <p:column headerText="Item Name" style="width: 100px; text-align: center;">
-                                    <h:outputText value="#{item.menuItem.menuItemName}" />
-                                </p:column>
+                                    <p:column headerText="Item Name" style="width: 100px; text-align: center;">
+                                        <h:outputText value="#{item.menuItem.menuItemName}" />
+                                    </p:column>
 
-                                <p:column headerText="Qty" style="width: 20px; text-align: center;">
-                                    <h:outputText value="#{item.quantity}" />
-                                </p:column>
+                                    <p:column headerText="Qty" style="width: 20px; text-align: center;">
+                                        <h:outputText value="#{item.quantity}" />
+                                    </p:column>
 
-                                <p:column headerText="Status" style="width: 80px; text-align: center;" styleClass="#{item.status == 'ORDERED' ? 'ordered' : item.status == 'PREPARING' ? 'preparing' : item.status == 'SERVED' ? 'served' : 'cancelled'}">
-                                    <h:outputText value="#{item.status}" />
-                                </p:column>
+                                    <p:column headerText="Status" style="width: 80px; text-align: center;" styleClass="#{item.status == 'ORDERED' ? 'ordered' : item.status == 'PREPARING' ? 'preparing' : item.status == 'SERVED' ? 'served' : 'cancelled'}">
+                                        <h:outputText value="#{item.status}" />
+                                    </p:column>
 
-                                <p:column headerText="Action" style="width: 70px; text-align: center;">
-                                    <p:commandButton rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon">
-                                        <f:setPropertyActionListener value="#{item}" target="#{kitchenManagementManagedBean.selectedOrderItem}" />
-                                    </p:commandButton>
+                                    <p:column headerText="Action" style="width: 70px; text-align: center;">
+                                        <p:commandButton rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon">
+                                            <f:setPropertyActionListener value="#{item}" target="#{kitchenManagementManagedBean.selectedOrderItem}" />
+                                        </p:commandButton>
 
-                                    <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}">
-                                        <f:attribute name="orderItemToPrepare" value="#{item}" />
-                                        <f:attribute name="order" value="#{order}"/>
-                                    </p:commandButton>
+                                        <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}">
+                                            <f:attribute name="orderItemToPrepare" value="#{item}" />
+                                            <f:attribute name="order" value="#{order}"/>
+                                        </p:commandButton>
 
-                                    <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
-                                        <f:attribute name="orderItemToServe" value="#{item}" />
-                                        <f:attribute name="order" value="#{order}"/>
-                                    </p:commandButton>
-                                </p:column>
-                            </p:dataTable>
+                                        <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
+                                            <f:attribute name="orderItemToServe" value="#{item}" />
+                                            <f:attribute name="order" value="#{order}"/>
+                                        </p:commandButton>
+                                    </p:column>
+
+                                </p:dataTable>
+                            </div>
 
                             <p:contextMenu for="orderLineItemsTable">
                                 <p:menuitem value="View" update="formViewOrderLineItem" icon="pi pi-search" oncomplete="PF('dialogViewOrderLineItem').show()"/>
                                 <p:menuitem value="Edit" update="formUpdateOrderLineItem" icon="pi pi-pencil" oncomplete="PF('dialogUpdateOrderLineItem').show()"/>
                             </p:contextMenu>
-
-                            <br />
-                            <p:commandButton rendered="#{order.isAllServed == true}" update="@form formOrdersOverview infoGrowl" value="Complete" actionListener="#{kitchenManagementManagedBean.completeOrder}">
-                                <f:attribute name="orderToComplete" value="#{order}" />
-                            </p:commandButton>
-
+                            <div style="min-height: 40px">
+                                <p:commandButton style="float: bottom" rendered="#{order.isAllServed == true}" update="@form formOrdersOverview infoGrowl" value="Complete" actionListener="#{kitchenManagementManagedBean.completeOrder}">
+                                    <f:attribute name="orderToComplete" value="#{order}" />
+                                </p:commandButton>
+                            </div>
                         </p:panel>
                     </p:dataGrid>
                 </h:form>
