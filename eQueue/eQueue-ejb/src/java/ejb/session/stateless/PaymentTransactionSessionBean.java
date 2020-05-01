@@ -15,6 +15,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import util.enumeration.OrderStatusEnum;
+import util.exceptions.CreateNewPaymentTransactionException;
 import util.exceptions.CustomerOrderNotFoundException;
 import util.exceptions.InputDataValidationException;
 import util.exceptions.UnknownPersistenceException;
@@ -37,7 +38,7 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
     }
 
     @Override
-    public Long createNewPaymentTransactionByCustomer(PaymentTransaction newPaymentTransaction) throws CustomerOrderNotFoundException, InputDataValidationException, UnknownPersistenceException {
+    public Long createNewPaymentTransactionByCustomer(PaymentTransaction newPaymentTransaction) throws CreateNewPaymentTransactionException, CustomerOrderNotFoundException, InputDataValidationException, UnknownPersistenceException {
 //        System.out.println("newPaymentTransaction_date: " + newPaymentTransaction.getTransactionDate());
 //        System.out.println("newPaymentTransaction_val : " + newPaymentTransaction.getTransactionValue());
 //        System.out.println("newPaymentTransaction_gst : " + newPaymentTransaction.getGst());
@@ -48,6 +49,10 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
 //        }
 
         try {
+            if (newPaymentTransaction.getCustomerOrders().isEmpty()) {
+                throw new CreateNewPaymentTransactionException("There is no customer order associated with this table currently!");
+            }
+
             Set<ConstraintViolation<PaymentTransaction>> constraintViolations = validator.validate(newPaymentTransaction);
 
             if (constraintViolations.isEmpty()) {
@@ -69,7 +74,6 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
                 em.flush();
 
 //                System.out.println("Payment done!!!");
-                
                 return newPaymentTransaction.getPaymentTransactionId();
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
