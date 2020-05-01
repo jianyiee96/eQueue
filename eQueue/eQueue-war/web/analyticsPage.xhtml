@@ -102,11 +102,15 @@
 
                 </h:panelGrid>
             </p:layoutUnit>
+
+            #{analyticsPageManagedBean.initialized}
             <p:layoutUnit position="center" >
                 <h:form id="charts">
-                    <ui:fragment >
-                        <p:barChart rendered="#{analyticsPageManagedBean.initialized}" id="chart" model="#{analyticsPageManagedBean.barModel}" />
+                    <ui:fragment rendered="#{!analyticsPageManagedBean.initialized}">
+                        <h3 style="margin-left: 30px">Please select the data you wish to display</h3>
                     </ui:fragment>
+                    <p:barChart rendered="#{analyticsPageManagedBean.initialized and analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL'}" id="chart" model="#{analyticsPageManagedBean.allMenuItemsBarChart}" />
+                    <p:lineChart rendered="#{analyticsPageManagedBean.initialized and !(analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL')}" model="#{analyticsPageManagedBean.lineChart}" />
                 </h:form>
             </p:layoutUnit>
         </p:layout>
