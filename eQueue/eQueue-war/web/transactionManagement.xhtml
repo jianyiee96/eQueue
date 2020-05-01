@@ -28,6 +28,8 @@
                                 </p:selectOneMenu>-->
 
                 <p:tabView id="transactionManagementTabView">
+                    <p:ajax event="tabChange" update="checkoutForm pastTransactionForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
+
                     <p:tab id="checkoutTab">
                         <f:facet name="title">
                             Checkout
@@ -63,8 +65,7 @@
                             <p:dataTable id="dataTablePastTransactions" widgetVar="dataTablePastTransactions" value="#{transactionManagementManagedBean.pastTransactions}" var="pastTransaction" 
                                          rowIndexVar="rowIdx" rowKey="#{pastTransaction.paymentTransactionId}" filteredValue="#{transactionManagementManagedBean.filteredPastTransactions}" rows="10" 
                                          paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
-                                         rowsPerPageTemplate="10,20,50" sortBy="#{pastTransaction.transactionDate}">
-
+                                         rowsPerPageTemplate="10,20,50" sortBy="#{pastTransaction.transactionDate}" selection="#{transactionManagementManagedBean.selectedPastTransaction}" selectionMode="single">
                                 <f:facet name="header">
                                     <p:outputPanel style="text-align: right;">
                                         <h:outputText value="Search all fields: " />
@@ -72,10 +73,12 @@
                                     </p:outputPanel>
                                 </f:facet>
 
+                                <p:ajax event="contextMenu" update="pastTransactionForm" />
+
                                 <p:column class="text-center" headerText="No." width="15">
                                     <h:outputText value="#{rowIdx + 1}" />
                                 </p:column>
-                                
+
                                 <p:column class="text-center" headerText="Transaction Date" width="60" sortBy="#{pastTransaction.transactionDate}" filterBy="#{pastTransaction.transactionDate}" filterMatchMode="contains">
                                     <h:outputText value="#{pastTransaction.transactionDate}">
                                         <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm a" />
@@ -96,15 +99,14 @@
                                     <h:outputText rendered="#{pastTransaction.employee != null}" value="#{pastTransaction.employee.firstName} #{pastTransaction.employee.lastName}" />
                                     <h:outputText rendered="#{pastTransaction.employee == null}" value="-" />
                                 </p:column>
-
                             </p:dataTable>
+
+                            <p:contextMenu for="dataTablePastTransactions">
+                                <p:menuitem value="View" update="pastTransactionForm" icon="pi pi-search" action="#{transactionManagementManagedBean.viewPastTransactionDetails}"/>
+                            </p:contextMenu>
                         </h:form>
                     </p:tab>
                 </p:tabView>           
-                <!--                <p:dataGrid id="pastTransactionsDataGrid" rendered="{transactionManagementManagedBean.optionSelected == 2}">
-
-                
-                                </p:dataGrid>-->
             </p:layoutUnit>
 
             <p:layoutUnit position="center">
@@ -154,14 +156,14 @@
                         </p:summaryRow>
 
                         <f:facet name="footer">
-                            <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.cancel}" />
+                            <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                             &nbsp;
                             <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" />
                         </f:facet>
                     </p:dataTable>
 
                     <div class="text-center">
-                        <p:graphicImage rendered="#{transactionManagementManagedBean.isDiningTableSelected == false}" library="images" name="equeue-logo.png" height="160" width="500" />
+                        <p:graphicImage rendered="#{transactionManagementManagedBean.isDiningTableSelected == false and transactionManagementManagedBean.isPastTransactionSelected == false}" library="images" name="equeue-logo.png" height="160" width="500" />
                     </div>
                 </h:form>
 
@@ -267,6 +269,50 @@
                             </p:row>
                         </p:panelGrid>
                     </p:dialog>
+                </h:form>
+
+                <h:form id="pastTransactionForm">
+                    <p:panelGrid id="panelGridPastTransaction" rendered="#{transactionManagementManagedBean.isPastTransactionSelected == true}">
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Payment Transaction ID" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.paymentTransactionId}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Payment Date" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.transactionDate}">
+                                    <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Employee in Charge" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.employee.firstName} #{transactionManagementManagedBean.newPaymentTransaction.employee.lastName}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+
+                    <p:dataTable rendered="#{transactionManagementManagedBean.isPastTransactionSelected == true}" value="#{transactionManagementManagedBean.selectedPastTransaction.customerOrders}"
+                                 var="customerOrder" style="margin: 0px 5px 0px 5px;" rowIndexVar="rowIdx" scrollable="true" scrollHeight="500">
+                        <f:facet name="header">
+                            Customer Orders
+                        </f:facet>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Cancel" update="pastTransactionForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
+                        </f:facet>
+                    </p:dataTable>
                 </h:form>
             </p:layoutUnit>
         </p:layout>

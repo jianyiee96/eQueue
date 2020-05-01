@@ -40,16 +40,7 @@ public class TransactionManagementManagedBean implements Serializable {
     @EJB(name = "PaymentTransactionSessionBeanLocal")
     private PaymentTransactionSessionBeanLocal paymentTransactionSessionBeanLocal;
 
-    private Boolean isCheckoutSelected;
-    private Boolean isPastTransactionsSelected;
-
-    // 1 for checkout
-    // 2 for past transactions
-    private String optionSelected;
-
     private List<DiningTable> diningTables;
-    private List<PaymentTransaction> pastTransactions;
-    private List<PaymentTransaction> filteredPastTransactions;
 
     private List<CustomerOrder> customerUnpaidOrders;
     private List<OrderLineItem> customerUnpaidOrderLineItems;
@@ -62,8 +53,13 @@ public class TransactionManagementManagedBean implements Serializable {
     private String cashAmount;
     private Double change;
 
-    public TransactionManagementManagedBean() {
+    private List<PaymentTransaction> pastTransactions;
+    private List<PaymentTransaction> filteredPastTransactions;
 
+    private PaymentTransaction selectedPastTransaction;
+    private Boolean isPastTransactionSelected;
+
+    public TransactionManagementManagedBean() {
     }
 
     @PostConstruct
@@ -82,12 +78,10 @@ public class TransactionManagementManagedBean implements Serializable {
         this.selectedCustomer = new Customer();
 
         this.newPaymentTransaction = new PaymentTransaction();
-
         this.isDiningTableSelected = false;
-    }
 
-    public void handleOptionSelected() {
-        System.out.println("OptionSelected = " + optionSelected);
+        this.selectedPastTransaction = new PaymentTransaction();
+        this.isPastTransactionSelected = false;
     }
 
     public void checkout(ActionEvent event) {
@@ -174,7 +168,7 @@ public class TransactionManagementManagedBean implements Serializable {
 //        System.out.println("*****************************************************");
     }
 
-    public void cancel() {
+    public void voidSelection() {
         this.initProcess();
     }
 
@@ -195,28 +189,9 @@ public class TransactionManagementManagedBean implements Serializable {
         return "Unknown";
     }
 
-    public String getOptionSelected() {
-        return optionSelected;
-    }
-
-    public void setOptionSelected(String optionSelected) {
-        this.optionSelected = optionSelected;
-    }
-
-    public Boolean getIsCheckoutSelected() {
-        return isCheckoutSelected;
-    }
-
-    public void setIsCheckoutSelected(Boolean isCheckoutSelected) {
-        this.isCheckoutSelected = isCheckoutSelected;
-    }
-
-    public Boolean getIsPastTransactionsSelected() {
-        return isPastTransactionsSelected;
-    }
-
-    public void setIsPastTransactionsSelected(Boolean isPastTransactionsSelected) {
-        this.isPastTransactionsSelected = isPastTransactionsSelected;
+    public void viewPastTransactionDetails() {
+        this.isPastTransactionSelected = true;
+        System.out.println("selectedPastTransaction -> " + this.selectedPastTransaction);
     }
 
     public List<DiningTable> getDiningTables() {
@@ -305,5 +280,21 @@ public class TransactionManagementManagedBean implements Serializable {
 
     public void setChange(Double change) {
         this.change = change;
+    }
+
+    public PaymentTransaction getSelectedPastTransaction() {
+        return selectedPastTransaction;
+    }
+
+    public void setSelectedPastTransaction(PaymentTransaction selectedPastTransaction) {
+        this.selectedPastTransaction = selectedPastTransaction;
+    }
+
+    public Boolean getIsPastTransactionSelected() {
+        return isPastTransactionSelected;
+    }
+
+    public void setIsPastTransactionSelected(Boolean isPastTransactionSelected) {
+        this.isPastTransactionSelected = isPastTransactionSelected;
     }
 }
