@@ -32,6 +32,7 @@ import util.exceptions.MenuItemNotFoundException;
 import util.exceptions.MenuItemUnavailableException;
 import util.exceptions.OrderLineItemNotFoundException;
 import util.exceptions.PriceMismatchException;
+import util.exceptions.TransactionNotFoundException;
 import util.exceptions.UnknownPersistenceException;
 
 @Stateless
@@ -96,6 +97,12 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
     }
 
     @Override
+    public List<CustomerOrder> retrieveAllOrders() {
+        Query query = em.createQuery("SELECT o FROM CustomerOrder o ORDER BY o.orderDate ASC, o.orderId ASC");
+        return query.getResultList();
+    }
+
+    @Override
     public List<CustomerOrder> retrieveIncompleteOrders() {
 //        Date currentDay = new Date();
 //        currentDay.setHours(0);
@@ -136,6 +143,23 @@ public class CustomerOrderSessionBean implements CustomerOrderSessionBeanLocal {
             return customerOrder;
         } else {
             throw new CustomerOrderNotFoundException("Customer Order ID " + customerOrderId + " does not exist!");
+        }
+    }
+    
+    @Override
+    public List<CustomerOrder> retrieveAllCustomerOrdersByTransactionId(Long transactionId) throws TransactionNotFoundException {
+     
+        if (transactionId != null) {
+            
+        Query retrieveAllCustomerOrdersByTransactionIdQuery = em.createQuery("SELECT co FROM CustomerOrder co WHERE co.paymentTransaction.paymentTransactionId LIKE :inTransactionId");
+        retrieveAllCustomerOrdersByTransactionIdQuery.setParameter("inTransactionId", transactionId);
+        
+        return retrieveAllCustomerOrdersByTransactionIdQuery.getResultList();
+        
+        } else {
+            
+            throw new TransactionNotFoundException("Transaction ID " + transactionId + " does not exist!");
+            
         }
     }
 

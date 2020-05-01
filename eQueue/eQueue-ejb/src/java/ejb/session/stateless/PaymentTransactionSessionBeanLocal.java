@@ -15,4 +15,6 @@ public interface PaymentTransactionSessionBeanLocal {
 
     public List<PaymentTransaction> retrieveAllPastTransactions();
 
+    public List<PaymentTransaction> retrievePaymentTransactions(Long customerId);
+
 }

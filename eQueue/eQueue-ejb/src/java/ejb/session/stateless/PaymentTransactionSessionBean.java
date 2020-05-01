@@ -75,6 +75,7 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
                 em.flush();
 
 //                System.out.println("Payment done!!!");
+
                 return newPaymentTransaction.getPaymentTransactionId();
             } else {
                 throw new InputDataValidationException(prepareInputDataValidationErrorsMessage(constraintViolations));
@@ -99,6 +100,48 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
         }
         
         return pastTransactions;
+
+    public List<PaymentTransaction> retrievePaymentTransactions(Long customerId) {
+        Query getCustomerOrdersByCustomerId = em.createQuery("SELECT co FROM CustomerOrder co WHERE co.customer.customerId LIKE :inCustomerId ORDER BY co.orderId DESC");
+        getCustomerOrdersByCustomerId.setParameter("inCustomerId", customerId);
+
+        List<CustomerOrder> customerOrders = getCustomerOrdersByCustomerId.getResultList();
+        System.out.println("customer orders " + customerOrders);
+
+        Query getTransactions = em.createQuery("SELECT pt FROM PaymentTransaction pt");
+        // currently, these transactions have not been filtered by customer id
+        List<PaymentTransaction> paymentTransactionsUnfiltered = getTransactions.getResultList();
+        System.out.println("paymentTransactionsUnfiltered " + paymentTransactionsUnfiltered);
+
+        List<PaymentTransaction> paymentTransactionsFiltered = new ArrayList<>();
+
+//        for(PaymentTransaction pt : paymentTransactionsUnfiltered) {
+//            
+//            for (CustomerOrder co : customerOrders) {
+//                System.out.println("co.getPaymentTransactionId() "+co.getPaymentTransaction().getPaymentTransactionId());
+//                System.out.println("pt.getPaymentTransactionId() "+pt.getPaymentTransactionId());
+//                if (co.getPaymentTransaction().getPaymentTransactionId() == pt.getPaymentTransactionId()) {
+//                    System.out.println("equals");
+//                    paymentTransactionsFiltered.add(pt);
+//                    customerOrders.remove(co);
+//                    break;
+//                }
+//            }
+//            
+//        }
+        for (CustomerOrder co : customerOrders) {
+            if (co.getPaymentTransaction() != null) {
+                for (PaymentTransaction pt : paymentTransactionsUnfiltered) {
+                    if (co.getPaymentTransaction().getPaymentTransactionId().equals(pt.getPaymentTransactionId())) {
+                        paymentTransactionsFiltered.add(pt);
+                        paymentTransactionsUnfiltered.remove(pt);
+                        break;
+                    }
+                }
+            }
+        }       
+        return paymentTransactionsFiltered;
+
     }
 
     private String prepareInputDataValidationErrorsMessage(Set<ConstraintViolation<PaymentTransaction>> constraintViolations) {

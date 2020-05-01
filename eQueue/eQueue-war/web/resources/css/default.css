@@ -115,6 +115,10 @@ div.ui-growl {
     background-image: url("#{resource['images/icons/serve_icon.svg']}") !important;
 }
 
+.analytics-icon {
+    background-image: url("#{resource['images/icons/analytics_icon.svg']}") !important;
+}
+
 .alert-icon {
     background-image: url("#{resource['images/icons/alert_icon.svg']}") !important;
 }
