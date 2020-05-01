@@ -93,6 +93,38 @@ public class CustomerOrderResource {
         }
     }
 
+    @Path("retrieveCustomerOrdersByPaymentTransactionId")
+    @GET
+    @Consumes(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrieveCustomerOrdersByPaymentTransactionId(@QueryParam("transactionId") String transactionId) {
+        try {
+            List<CustomerOrder> customerOrders = customerOrderSessionBeanLocal.retrieveAllCustomerOrdersByTransactionId(Long.parseLong(transactionId));
+
+            List<CustomerOrder> result = new ArrayList<>();
+            List<Integer> itemCount = new ArrayList<>();
+
+            for (CustomerOrder customerOrder : customerOrders) {
+
+                CustomerOrder parsedOrder = new CustomerOrder();
+
+                parsedOrder.setIsCompleted(customerOrder.getIsCompleted());
+                parsedOrder.setOrderDate(customerOrder.getOrderDate());
+                parsedOrder.setOrderId(customerOrder.getOrderId());
+                parsedOrder.setStatus(customerOrder.getStatus());
+                parsedOrder.setTotalAmount(customerOrder.getTotalAmount());
+
+                result.add(parsedOrder);
+//                itemCount.add(customerOrder.getOrderLineItems().size());
+            }
+            return Response.status(Response.Status.OK).entity(new RetrieveCustomerOrdersRsp(result, itemCount)).build();
+
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+
     @Path("retrieveOrderLineItemsByOrderId")
     @GET
     @Consumes(MediaType.TEXT_PLAIN)
