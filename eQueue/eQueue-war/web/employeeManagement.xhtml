@@ -13,11 +13,8 @@
             .manager {
                 background-color: beige;
             }
-            .cashier {
+            .employee {
                 background-color: antiquewhite;
-            }
-            .default {
-                background-color: azure;
             }
         </style>
 
@@ -33,7 +30,7 @@
                                  rowKey="#{employee.employeeId}" rowIndexVar="row" filteredValue="#{employeeManagementManagedBean.filteredEmployees}" rows="10" paginator="true" 
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
                                  rowsPerPageTemplate="10,20,50" sortBy="#{employee.employeeRole}"
-                                 rowStyleClass="#{employee.employeeRole eq 'MANAGER' ? 'manager' : employee.employeeRole eq 'CASHIER' ? 'cashier' : 'default'}">
+                                 rowStyleClass="#{employee.employeeRole eq 'MANAGER' ? 'manager' : 'employee'}">
                         <f:facet name="header">
                             <p:commandButton style="float: left;" onclick="PF('dialogCreateNewEmployee').show()" icon="fa fa-user-plus" />
 
@@ -55,9 +52,8 @@
                             <f:facet name="filter">
                                 <p:selectOneMenu id="selEmployeeRole" onchange="PF('dataTableAllEmployees').filter()">
                                     <f:selectItem itemValue="#{null}" itemLabel="[No Filter]" noSelectionOption="true" />
-                                    <f:selectItem itemValue="CASHIER" itemLabel="Cashier" />
                                     <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
-                                    <f:selectItem itemValue="DEFAULT" itemLabel="Default" />
+                                    <f:selectItem itemValue="EMPLOYEE" itemLabel="Employee" />
                                 </p:selectOneMenu>
                             </f:facet>
                             <p:outputLabel value="#{employee.employeeRole}" />
@@ -79,7 +75,7 @@
                     </p:dataTable>
 
                     <!--This is for delete employee-->
-                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:confirmDialog global="true">
                         <div style="text-align: center;">
                             <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
@@ -89,7 +85,7 @@
                 </h:form>
 
                 <h:form id="formCreateNewEmployee">
-                    <p:dialog id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true" hideEffect="clip">
+                    <p:dialog resizable="false" id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true">
 
                         <p:growl redisplay="false" life="3500" />
 
@@ -158,8 +154,7 @@
                                     <p:selectOneMenu id="selEmployeeRole" value="#{employeeManagementManagedBean.employeeToCreate.employeeRole}" required="true" requiredMessage="Role is required">
                                         <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
                                         <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
-                                        <f:selectItem itemValue="CASHIER" itemLabel="Cashier" />
-                                        <f:selectItem itemValue="DEFAULT" itemLabel="Others" />
+                                        <f:selectItem itemValue="EMPLOYEE" itemLabel="Employee" />
                                         <f:validateBean />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -201,7 +196,7 @@
                 </h:form>
 
                 <h:form id="formViewEmployee">
-                    <p:dialog id="dialogViewEmployee" widgetVar="dialogViewEmployee" responsive="true" header="View Employee Details" closable="true" showEffect="clip" hideEffect="clip">
+                    <p:dialog resizable="false" id="dialogViewEmployee" widgetVar="dialogViewEmployee" responsive="true" header="View Employee Details" closable="true">
                         <p:panelGrid>
                             <p:row rendered="#{employeeManagementManagedBean.employeeToView.imagePath != null}">
                                 <p:column colspan="2">
@@ -268,7 +263,7 @@
                 </h:form>
 
                 <h:form id="formUpdateEmployee">
-                    <p:dialog id="dialogUpdateEmployee" widgetVar="dialogUpdateEmployee" responsive="true" header="Update Employee Details" closable="true" showEffect="clip" hideEffect="clip">
+                    <p:dialog resizable="false" id="dialogUpdateEmployee" widgetVar="dialogUpdateEmployee" responsive="true" header="Update Employee Details" closable="true">
 
                         <p:growl redisplay="false" life="3500" />
 
@@ -333,8 +328,7 @@
                                     <p:selectOneMenu id="selEmployeeRole" value="#{employeeManagementManagedBean.employeeToUpdate.employeeRole}" required="true" requiredMessage="Role is required">
                                         <f:selectItem itemValue="#{null}" itemLabel="[Select One]" noSelectionOption="true" />
                                         <f:selectItem itemValue="MANAGER" itemLabel="Manager" />
-                                        <f:selectItem itemValue="CASHIER" itemLabel="Cashier" />
-                                        <f:selectItem itemValue="DEFAULT" itemLabel="Others" />
+                                        <f:selectItem itemValue="EMPLOYEE" itemLabel="Employee" />
                                         <f:validateBean />
                                     </p:selectOneMenu>
                                 </p:column>
@@ -365,7 +359,7 @@
                 </h:form>
 
                 <h:form id='formDeleteEmployee'>
-                    <p:dialog id="dialogDeleteEmployee" widgetVar="dialogDeleteEmployee" responsive="true" header="Delete Employee" closable="true" showEffect="clip" hideEffect="clip">
+                    <p:dialog resizable="false" id="dialogDeleteEmployee" widgetVar="dialogDeleteEmployee" responsive="true" header="Delete Employee" closable="true">
                         <p:panelGrid>
                             <p:row rendered="#{employeeManagementManagedBean.employeeToDelete.imagePath != null}">
                                 <p:column colspan="2">

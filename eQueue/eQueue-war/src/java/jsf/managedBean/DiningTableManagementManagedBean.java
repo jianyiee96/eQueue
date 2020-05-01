@@ -193,6 +193,7 @@ public class DiningTableManagementManagedBean implements Serializable {
 
             diningTableSessionBeanLocal.removeCustomerTableRelationship(selectedDiningTable.getCustomer().getCustomerId());
             postConstruct();
+            refresh();
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Table [ID " + selectedDiningTable.getDiningTableId() + "] successfully cleared.", null));
 
         } catch (InvalidTableStatusException ex) {

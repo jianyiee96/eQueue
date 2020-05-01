@@ -19,34 +19,34 @@ import util.enumeration.EmployeeRoleEnum;
 
 @WebFilter(filterName = "SecurityFilter", urlPatterns = {"/*"})
 public class SecurityFilter implements Filter {
-
+    
     private FilterConfig filterConfig;
-
+    
     private static final String CONTEXT_ROOT = "/eQueue-war/";
-
+    
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         this.filterConfig = filterConfig;
     }
-
+    
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
         HttpSession httpSession = httpServletRequest.getSession(true);
         String requestServletPath = httpServletRequest.getServletPath();
-
+        
         if (httpSession.getAttribute("employeeIsLogin") == null) {
             httpSession.setAttribute("employeeIsLogin", false);
         }
-
+        
         Boolean employeeIsLogin = (Boolean) httpSession.getAttribute("employeeIsLogin");
 
         /* Commented out the check below to ease the development process by excluding all the necessary checks */
         if (!excludeLoginCheck(requestServletPath)) {
             if (employeeIsLogin == true) {
                 Employee currentEmployee = (Employee) httpSession.getAttribute("currentEmployee");
-
+                
                 if (checkAccessRight(requestServletPath, currentEmployee.getEmployeeRole())) {
                     chain.doFilter(request, response);
                 } else {
@@ -63,18 +63,25 @@ public class SecurityFilter implements Filter {
             }
             chain.doFilter(request, response);
         }
-
+        
     }
-
+    
     private Boolean checkAccessRight(String path, EmployeeRoleEnum employeeRole) {
         // Pages that can be accessed by all
         if (path.equals("/homepage.xhtml")) {
             return true;
         }
         switch (employeeRole) {
-            case CASHIER:
+            case EMPLOYEE:
                 // for transaction management
-                return true;
+                if (path.equals("/diningTableManagement.xhtml")
+                        || path.equals("/queueManagement.xhtml")
+                        || path.equals("/kitchenManagement.xhtml")
+                        || path.equals("/employeeProfilePage.xhtml")
+                        || path.equals("/transactionManagement.xhtml")) {
+                    return true;
+                }
+                return false;
             case MANAGER:
                 // for menu, employee, store, order, table, queue and transaction managements
                 return true;
@@ -88,12 +95,10 @@ public class SecurityFilter implements Filter {
 //                        || path.equals("/viewEmployeeDetails.xhtml")) {
 //                    return true;
 //                }
-            case DEFAULT:
-                return true;
         }
         return false;
     }
-
+    
     private Boolean excludeLoginCheck(String path) {
         return path.equals("/index.xhtml")
                 || path.equals("/accessRightError.xhtml")
@@ -101,10 +106,10 @@ public class SecurityFilter implements Filter {
                 || path.startsWith("/resources/images/appIcons")
                 || path.startsWith("/javax.faces.resource");
     }
-
+    
     @Override
     public void destroy() {
-
+        
     }
 
     /**
@@ -136,10 +141,10 @@ public class SecurityFilter implements Filter {
         sb.append(")");
         return (sb.toString());
     }
-
+    
     private void sendProcessingError(Throwable t, ServletResponse response) {
         String stackTrace = getStackTrace(t);
-
+        
         if (stackTrace != null && !stackTrace.equals("")) {
             try {
                 response.setContentType("text/html");
@@ -166,7 +171,7 @@ public class SecurityFilter implements Filter {
             }
         }
     }
-
+    
     public static String getStackTrace(Throwable t) {
         String stackTrace = null;
         try {
@@ -180,9 +185,9 @@ public class SecurityFilter implements Filter {
         }
         return stackTrace;
     }
-
+    
     public void log(String msg) {
         filterConfig.getServletContext().log(msg);
     }
-
+    
 }

@@ -25,7 +25,7 @@
                         </f:facet>
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="Number of People in Queue:" />
+                                <h:outputText value="Number of People in Queue" />
                             </p:column>
                             <p:column colspan="1" style="text-align: center; font-weight: bold">
                                 <h:outputText value="#{queueManagementManagedBean.queues.size()}"/>
@@ -33,7 +33,7 @@
                         </p:row>
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="Number of Active Queues:" />
+                                <h:outputText value="Number of Active Queues" />
                             </p:column>
                             <p:column colspan="1" style="text-align: center; font-weight: bold">
                                 <h:outputText value="#{queueManagementManagedBean.noOfActiveQueues}"/>
@@ -41,7 +41,7 @@
                         </p:row>
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="Number of Allocated Queues:" />
+                                <h:outputText value="Number of Allocated Queues" />
                             </p:column>
                             <p:column colspan="1" style="text-align: center; font-weight: bold">
                                 <h:outputText value="#{queueManagementManagedBean.noOfAllocatedQueues}"/>
@@ -59,7 +59,7 @@
                         </f:facet>
                         <p:row>
                             <p:column colspan="2">
-                                <h:outputText value="Number of Tables:" />
+                                <h:outputText value="Number of Tables" />
                             </p:column>
                             <p:column colspan="1" style="text-align: center; font-weight: bold">
                                 <h:outputText value="#{queueManagementManagedBean.diningTables.size()}"/>
@@ -148,7 +148,7 @@
                             <p:poll interval="1" update="timerCell" />
                         </p:column>
 
-                        <p:column headerText="Action" style="text-align: center">
+                        <p:column headerText="Send Notification" style="text-align: center">
                             <p:commandButton actionListener="#{queueManagementManagedBean.doCreateNotification}" update="formCreateNotification" oncomplete="PF('dialogCreateNotification').show()" icon="fa fa-send-o" title="Send Notification">
                                 <f:attribute name="selectedQueue" value="#{queue}" />
                             </p:commandButton>
@@ -159,7 +159,7 @@
 
                 <h:form id="formCreateNotification">
 
-                    <p:dialog id="dialogCreateNotification" widgetVar="dialogCreateNotification" header="Create New Notification" closable="true">
+                    <p:dialog id="dialogCreateNotification" widgetVar="dialogCreateNotification" header="Create New Notification" closable="true" resizable="false">
 
                         <p:messages id="messagesCreateNotification" redisplay="false" />
 
@@ -170,7 +170,7 @@
                                     <p:outputLabel for="title" value="Title: " style="font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="title" value="#{queueManagementManagedBean.notificationTitle}" placeholder="Please enter a notification title" required="true" requiredMessage="Title is required" />
+                                    <p:inputText id="title" size="40" value="#{queueManagementManagedBean.notificationTitle}" placeholder="Please enter a notification title" required="true" requiredMessage="Title is required" />
                                 </p:column>
                             </p:row>
 
@@ -179,7 +179,7 @@
                                     <p:outputLabel for="message" value="Message: " style="font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="message" value="#{queueManagementManagedBean.notificationMessage}" placeholder="Please enter a notification message" required="true" requiredMessage="Message is required" />
+                                    <p:inputText id="message" size="40" value="#{queueManagementManagedBean.notificationMessage}" placeholder="Please enter a notification message" required="true" requiredMessage="Message is required" />
                                 </p:column>
                             </p:row>
 
