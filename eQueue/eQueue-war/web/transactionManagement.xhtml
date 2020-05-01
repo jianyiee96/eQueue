@@ -24,7 +24,6 @@
         </style>
 
         <p:layout>
-
             <p:layoutUnit position="west" size="500">
                 <p:dataGrid var="diningTable" value="#{transactionManagementManagedBean.diningTables}" columns="3" layout="grid">
                     <f:facet name="header">
@@ -52,44 +51,53 @@
             <p:layoutUnit position="center">
 
                 <h:form id="checkoutForm">
-
                     <p:dataTable rendered="#{transactionManagementManagedBean.isDiningTableSelected == true}" value="#{transactionManagementManagedBean.customerUnpaidOrderLineItems}"
-                                 var="orderLineItem" style="margin: 0px 5px 0px 5px;" rowIndexVar="rowIdx" scrollable="true" scrollHeight="500">
+                                 var="orderLineItem" style="margin: 0px 5px 0px 5px;" sortBy="#{transactionManagementManagedBean.newPaymentTransaction.transactionValue}" rowIndexVar="rowIdx" scrollable="true" scrollHeight="500">
                         <f:facet name="header">
                             Payment Transaction
                         </f:facet>
 
-                        <p:column headerText="Item Name">
-                            <h:outputText value="#{rowIdx} #{orderLineItem.menuItem.menuItemName}" />
+                        <p:column class="text-center" headerText="No." width="20">
+                            <h:outputText value="#{rowIdx + 1}"/>
                         </p:column>
 
-                        <p:column class="text-center" headerText="Quantity">
+                        <p:column headerText="Item Name">
+                            <h:outputText value="#{orderLineItem.menuItem.menuItemName}" />
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Quantity" width="60">
                             <h:outputText value="#{orderLineItem.quantity}" />
                         </p:column>
 
-                        <p:column class="text-center" headerText="Unit Price">
+                        <p:column class="text-center" headerText="Unit Price (SGD)">
                             <h:outputText value="#{orderLineItem.menuItem.menuItemPrice}">
                                 <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
                             </h:outputText>
                         </p:column>
 
-                        <p:column class="text-center" headerText="Total">
+                        <p:column class="text-center" headerText="Total (SGD)">
                             <h:outputText value="#{orderLineItem.quantity * orderLineItem.menuItem.menuItemPrice}">
                                 <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
                             </h:outputText>
                         </p:column>
-                        
-                        
-                        <p:column rendered="#{(rowIdx + 1) eq transactionManagementManagedBean.customerUnpaidOrderLineItems.size()}">
-                            das
-                        </p:column>
 
-<!--                        <f:facet name="footer">
-                            <h:outputText value="Total Amount" />
-
-                            <p:column colspan="3">
+                        <p:summaryRow>
+                            <p:column style="text-align: right;" colspan="4">
+                                <h:outputText value="Total Amount (SGD):" />
                             </p:column>
-                        </f:facet>-->
+
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.transactionValue}">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:summaryRow>
+
+                        <f:facet name="footer">
+                            <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.cancel}" />
+                            &nbsp;
+                            <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" />
+                        </f:facet>
                     </p:dataTable>
 
                     <div class="text-center">
@@ -97,12 +105,110 @@
                     </div>
                 </h:form>
 
-                <!--                <div id="footer">
-                                    lol
-                                </div>-->
-
             </p:layoutUnit>
 
+            <h:form id="formPaymentConfirmation">
+                <p:dialog id="dialogPaymentConfirmation" widgetVar="dialogPaymentConfirmation" header="Payment Confirmation" responsive="true">
+                    <p:panelGrid id="panelGridPaymentConfirmation">
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Payment Date" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.transactionDate}">
+                                    <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Cashier" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.employee.firstName} #{transactionManagementManagedBean.newPaymentTransaction.employee.lastName}" />
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Subtotal (Excludes 7% GST)" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.transactionValue - transactionManagementManagedBean.newPaymentTransaction.gst}">
+                                    <f:convertNumber currencyCode="SGD" type="currency" minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="GST (7%)" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.gst}">
+                                    <f:convertNumber currencyCode="SGD" type="currency" minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+
+                        <p:row>                            
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Due (Includes 7% GST)" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.transactionValue}">
+                                    <f:convertNumber currencyCode="SGD" type="currency" minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" value="Payment Type"/>
+                            </p:column>
+                            <p:column class="text-center">
+                                <p:selectOneMenu value="#{transactionManagementManagedBean.newPaymentTransaction.paymentType}" autoWidth="true" required="true">
+                                    <f:selectItem itemLabel="Credit Card" itemValue="Credit Card" />
+                                    <f:selectItem itemLabel="Cash" itemValue="Cash" />
+
+                                    <p:ajax event="itemSelect" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.voidChange}" />
+                                </p:selectOneMenu>
+                            </p:column>
+                        </p:row>
+
+                        <p:row rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}">
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="Cash Amount" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <p:inputText class="text-center" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" placeholder="12.34" value="#{transactionManagementManagedBean.cashAmount}" required="true" size="12" maxlength="12">
+                                    <p:ajax event="keyup" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.computeChange}"/>
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}">
+                            <p:column>
+                                <h:outputLabel style="font-weight: bold;" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="Change" />
+                            </p:column>
+                            <p:column class="text-center">
+                                <h:outputText rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="#{transactionManagementManagedBean.change}">
+                                    <f:convertNumber currencyCode="SGD" type="currency" minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
+                            </p:column>
+                        </p:row>
+
+                        <p:row>
+                            <p:column class="text-center" colspan="2">
+                                <p:commandButton value="Confirm" actionListener="#{transactionManagementManagedBean.confirmPayment}" />
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                </p:dialog>
+            </h:form>
         </p:layout>
     </ui:define>
 

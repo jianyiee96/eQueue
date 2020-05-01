@@ -1,23 +1,31 @@
 package jsf.managedBean;
 
 import ejb.session.stateless.DiningTableSessionBeanLocal;
+import ejb.session.stateless.EmployeeSessionBeanLocal;
 import entity.Customer;
 import entity.CustomerOrder;
 import entity.DiningTable;
+import entity.Employee;
 import entity.OrderLineItem;
 import entity.PaymentTransaction;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.TreeMap;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
 import util.enumeration.OrderStatusEnum;
 import util.enumeration.TableStatusEnum;
+import util.exceptions.EmployeeNotFoundException;
 
 @Named(value = "transactionManagementManagedBean")
 @ViewScoped
@@ -25,30 +33,29 @@ public class TransactionManagementManagedBean implements Serializable {
 
     @EJB(name = "DiningTableSessionBeanLocal")
     private DiningTableSessionBeanLocal diningTableSessionBeanLocal;
+    @EJB(name = "EmployeeSessionBeanLocal")
+    private EmployeeSessionBeanLocal employeeSessionBeanLocal;
 
     private List<DiningTable> diningTables;
     private List<CustomerOrder> customerUnpaidOrders;
-//    private Map<OrderLineItem, Integer> customerUnpaidOrderLineItems;
     private List<OrderLineItem> customerUnpaidOrderLineItems;
 
     private DiningTable selectedDiningTable;
     private Customer selectedCustomer;
 
-    private Double transactionValue;
     private PaymentTransaction newPaymentTransaction;
-
     private Boolean isDiningTableSelected;
+    private Double cashAmount;
+    private Double change;
 
     public TransactionManagementManagedBean() {
         this.diningTables = new ArrayList<>();
         this.customerUnpaidOrders = new ArrayList<>();
-//        this.customerUnpaidOrderLineItems = new TreeMap<>();
         this.customerUnpaidOrderLineItems = new ArrayList<>();
 
         this.selectedDiningTable = new DiningTable();
         this.selectedCustomer = new Customer();
 
-        this.transactionValue = 0.00;
         this.newPaymentTransaction = new PaymentTransaction();
 
         this.isDiningTableSelected = false;
@@ -61,6 +68,15 @@ public class TransactionManagementManagedBean implements Serializable {
 
     public void checkout(ActionEvent event) {
         if (!this.isDiningTableSelected) {
+            Double transactionValue = 0.00;
+            Employee currentEmployee = (Employee) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployee");
+
+            try {
+                currentEmployee = employeeSessionBeanLocal.retrieveEmployeeById(currentEmployee.getEmployeeId());
+                this.newPaymentTransaction.setEmployee(currentEmployee);
+            } catch (EmployeeNotFoundException ex) {
+            }
+
             this.isDiningTableSelected = true;
 
             this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToCheckout");
@@ -74,33 +90,65 @@ public class TransactionManagementManagedBean implements Serializable {
 
                     for (OrderLineItem oli : co.getOrderLineItems()) {
                         customerUnpaidOrderLineItems.add(oli);
-                        this.transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
+                        transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
                     }
                 }
             }
+
+            sortOrderLineItems(customerUnpaidOrderLineItems);
+
+            this.newPaymentTransaction.setTransactionDate(new Date(Calendar.getInstance(TimeZone.getDefault().getTimeZone("GMT+8:00")).getTimeInMillis()));
+            this.newPaymentTransaction.setCustomerOrders(this.customerUnpaidOrders);
+            this.newPaymentTransaction.setTransactionValue(transactionValue);
+
+            Double gst = transactionValue - (transactionValue / 1.07);
+            String formattedGst = String.format("%.2f", gst);
+            this.newPaymentTransaction.setGst(Double.parseDouble(formattedGst));
         } else {
             this.isDiningTableSelected = false;
 
             this.customerUnpaidOrders.clear();
             this.customerUnpaidOrderLineItems.clear();
-        }
 
-//        orderItemToPrepare = (OrderLineItem) event.getComponent().getAttributes().get("orderItemToPrepare");
-//        CustomerOrder currentOrder = (CustomerOrder) event.getComponent().getAttributes().get("order");
-//        orderItemToPrepare.setStatus(OrderLineItemStatusEnum.PREPARING);
-//
-//        try {
-//            orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(orderItemToPrepare);
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, orderItemToPrepare.getMenuItem().getMenuItemName() + " is being prepared.", null));
-//            sortOrderLineItems(currentOrder);
-//            numOrdered--;
-//            numPreparing++;
-//            orderItemToPrepare = new OrderLineItem();
-//        } catch (OrderLineItemNotFoundException | UpdateOrderLineItemException | InputDataValidationException ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while updating order line item: ", ex.getMessage()));
-//        } catch (Exception ex) {
-//            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An unexpected error has occurred: " + ex.getMessage(), null));
-//        }
+            this.newPaymentTransaction = new PaymentTransaction();
+        }
+    }
+
+    public void computeChange() {
+        this.change = this.cashAmount - this.newPaymentTransaction.getTransactionValue();
+    }
+
+    public void voidChange() {
+        this.cashAmount = 0.00;
+        this.change = 0.00;
+    }
+
+    public void confirmPayment() {
+        System.out.println("*****************************************************");
+        System.out.println("Emply  - " + newPaymentTransaction.getEmployee());
+        System.out.println("Date   - " + newPaymentTransaction.getTransactionDate());
+        System.out.println("Type   - " + newPaymentTransaction.getPaymentType());
+        System.out.println("Value  - " + newPaymentTransaction.getTransactionValue());
+        System.out.println("Gst    - " + newPaymentTransaction.getGst());
+
+        System.out.println("=== Orders ===");
+        for (CustomerOrder co : newPaymentTransaction.getCustomerOrders()) {
+            System.out.println("Order - " + co);
+        }
+        System.out.println("*****************************************************");
+    }
+
+    public void cancel() {
+        this.isDiningTableSelected = false;
+
+        this.customerUnpaidOrders.clear();
+        this.customerUnpaidOrderLineItems.clear();
+
+        this.newPaymentTransaction = new PaymentTransaction();
+    }
+
+    private void sortOrderLineItems(List<OrderLineItem> orderLineItems) {
+        Collections.sort(orderLineItems, (i1, i2) -> i1.compareTo_MenuItem_Quantity(i2));
     }
 
     public String getDiningTableStatus(TableStatusEnum status) {
@@ -156,14 +204,6 @@ public class TransactionManagementManagedBean implements Serializable {
         this.selectedCustomer = selectedCustomer;
     }
 
-    public Double getTransactionValue() {
-        return transactionValue;
-    }
-
-    public void setTransactionValue(Double transactionValue) {
-        this.transactionValue = transactionValue;
-    }
-
     public PaymentTransaction getNewPaymentTransaction() {
         return newPaymentTransaction;
     }
@@ -178,5 +218,21 @@ public class TransactionManagementManagedBean implements Serializable {
 
     public void setIsDiningTableSelected(Boolean isDiningTableSelected) {
         this.isDiningTableSelected = isDiningTableSelected;
+    }
+
+    public Double getCashAmount() {
+        return cashAmount;
+    }
+
+    public void setCashAmount(Double cashAmount) {
+        this.cashAmount = cashAmount;
+    }
+
+    public Double getChange() {
+        return change;
+    }
+
+    public void setChange(Double change) {
+        this.change = change;
     }
 }
