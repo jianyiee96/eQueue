@@ -125,6 +125,10 @@ div.ui-growl {
     background-image: url("#{resource['images/icons/alert_icon.svg']}") !important;
 }
 
+.logout-icon {
+    background-image: url("#{resource['images/icons/logout_icon.svg']}") !important;
+}
+
 .header-text:hover {
     text-decoration: none;
 }
