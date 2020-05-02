@@ -344,7 +344,7 @@
                                     <h:outputLabel style="font-weight: bold;" value="Employee in Charge" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <h:outputText rendered="#{transactionManagementManagedBean.selectedPastTransaction.employee != null}" value="#{transactionManagementManagedBean.newPaymentTransaction.employee.firstName} #{transactionManagementManagedBean.newPaymentTransaction.employee.lastName}" />
+                                    <h:outputText rendered="#{transactionManagementManagedBean.selectedPastTransaction.employee != null}" value="#{transactionManagementManagedBean.selectedPastTransaction.employee.firstName} #{transactionManagementManagedBean.selectedPastTransaction.employee.lastName}" />
                                     <h:outputText rendered="#{transactionManagementManagedBean.selectedPastTransaction.employee == null}" value="-" />
                                 </p:column>
                             </p:row>
