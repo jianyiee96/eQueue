@@ -19,6 +19,7 @@ import entity.Notification;
 import entity.OrderLineItem;
 import entity.Store;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -81,6 +82,7 @@ public class DataInitializationSessionBean {
 
     private static final Long totalNumOfMenuItems = 38L;
     private static final Long totalNumOfCustomers = 5L;
+    private static DecimalFormat df = new DecimalFormat("#.##");
 
     public DataInitializationSessionBean() {
 
@@ -129,7 +131,7 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jian Yee", "Hew", "jianyiee-hew@eQueue.com", "hewjianyiee", "password", EmployeeRoleEnum.MANAGER));
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Keat", "Tan", "weekeat-tan@eQueue.com", "tanweekeat", "password", EmployeeRoleEnum.MANAGER, "weekeat.JPG"));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Keat", "Tan", "weekeat-tan@eQueue.com", "tanweekeat", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("One", "Cashier", "cashier-one@eQueue.com", "cashier1", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Cashier", "cashier-two@eQueue.com", "cashier2", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Three", "Cashier", "cashier-three@eQueue.com", "cashier3", "password", EmployeeRoleEnum.EMPLOYEE));
@@ -268,13 +270,12 @@ public class DataInitializationSessionBean {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
             while (startDate.before(today)) {
-                int numOfOrdersForDay = (int) (Math.random() * 11);
+                int numOfOrdersForDay = (int) (Math.random() * 15) + 5;
                 int openingHours = 12;
                 int openingTime = 10;
                 for (int i = 0; i < numOfOrdersForDay; i++) {
                     int randomHour = (int) (Math.random() * openingHours) + openingTime;
                     startDate.setHours(randomHour);
-
                     customerOrderRandomiser(startDate);
                 }
                 Calendar c = Calendar.getInstance();
@@ -289,7 +290,6 @@ public class DataInitializationSessionBean {
                 List<OrderLineItem> orderLineItems = new ArrayList<>();
 
                 Integer numItems = (int) (Math.random() * 3) + 1;
-//                System.out.println("numItems --> " + numItems);
 
                 for (int x = 0; numItems > x; x++) {
                     Long quantity = (long) (Math.random() * 10) + 1L;

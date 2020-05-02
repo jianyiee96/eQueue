@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -144,7 +145,6 @@ public class AnalyticsPageManagedBean implements Serializable {
 
         int counter = 0;
         for (Map.Entry<MenuItem, Integer> entry : map.entrySet()) {
-            System.out.println("Added into Series: " + entry.getKey());
             labels.add(entry.getKey().getMenuItemName());
             values.add(entry.getValue());
             bgColor.add(bgColoursArray[(counter % bgColoursArray.length)]);
@@ -200,17 +200,17 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<String, Integer> map = new HashMap<>();
+        TreeMap<String, Integer> map = new TreeMap<>();
 
         for (CustomerOrder co : orders) {
             for (OrderLineItem orderLineItem : co.getOrderLineItems()) {
                 if (orderLineItem.getMenuItem().getMenuItemId().equals(selectedMenuItemId)) {
                     Date date = co.getOrderDate();
-                    SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
-                    SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
-                    SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+                    SimpleDateFormat hoursSdf = new SimpleDateFormat("HH");
                     String hours = hoursSdf.format(date) + ":00";
+                    SimpleDateFormat daySdf = new SimpleDateFormat("MM/dd");
                     String day = daySdf.format(date);
+                    SimpleDateFormat monthSdf = new SimpleDateFormat("MM");
                     String month = monthSdf.format(date);
 
                     if (optionDateType.equals("DAY")) {
@@ -228,9 +228,15 @@ public class AnalyticsPageManagedBean implements Serializable {
         }
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
-            values.add(entry.getValue());
-            labels.add(entry.getKey());
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+
+            if (optionDateType.equals("YEAR")) {
+                key = getMonthString(key);
+            }
+
+            values.add(value);
+            labels.add(key);
         }
 
         dataSet.setData(values);
@@ -258,13 +264,13 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<String, Double> map = new HashMap<>();
+        TreeMap<String, Double> map = new TreeMap<>();
 
         for (CustomerOrder co : orders) {
             Date date = co.getOrderDate();
-            SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
-            SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
-            SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+            SimpleDateFormat hoursSdf = new SimpleDateFormat("HH");
+            SimpleDateFormat daySdf = new SimpleDateFormat("MM/dd");
+            SimpleDateFormat monthSdf = new SimpleDateFormat("MM");
             String hours = hoursSdf.format(date) + ":00";
             String day = daySdf.format(date);
             String month = monthSdf.format(date);
@@ -282,9 +288,15 @@ public class AnalyticsPageManagedBean implements Serializable {
         }
 
         for (Map.Entry<String, Double> entry : map.entrySet()) {
-            System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
-            values.add(entry.getValue());
-            labels.add(entry.getKey());
+            String key = entry.getKey();
+            Double value = entry.getValue();
+
+            if (optionDateType.equals("YEAR")) {
+                key = getMonthString(key);
+            }
+
+            values.add(value);
+            labels.add(key);
         }
 
         dataSet.setData(values);
@@ -312,13 +324,13 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<String, Integer> map = new HashMap<>();
+        TreeMap<String, Integer> map = new TreeMap<>();
 
         for (CustomerOrder co : orders) {
             Date date = co.getOrderDate();
-            SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
-            SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
-            SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+            SimpleDateFormat hoursSdf = new SimpleDateFormat("HH");
+            SimpleDateFormat daySdf = new SimpleDateFormat("MM/dd");
+            SimpleDateFormat monthSdf = new SimpleDateFormat("MM");
             String hours = hoursSdf.format(date) + ":00";
             String day = daySdf.format(date);
             String month = monthSdf.format(date);
@@ -336,9 +348,15 @@ public class AnalyticsPageManagedBean implements Serializable {
         }
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
-            System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
-            values.add(entry.getValue());
-            labels.add(entry.getKey());
+            String key = entry.getKey();
+            Integer value = entry.getValue();
+
+            if (optionDateType.equals("YEAR")) {
+                key = getMonthString(key);
+            }
+
+            values.add(value);
+            labels.add(key);
         }
 
         dataSet.setData(values);
@@ -382,7 +400,6 @@ public class AnalyticsPageManagedBean implements Serializable {
 
     private List<CustomerOrder> filterByDateRange() {
         Date date1 = selectedDate;
-        System.out.println(selectedDate);
         int year1 = date1.getYear();
         int month1 = date1.getMonth();
         int day1 = date1.getDate();
@@ -404,12 +421,22 @@ public class AnalyticsPageManagedBean implements Serializable {
         } else if (optionDateType.equals("WEEK")) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(selectedDate);
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+            cal.set(Calendar.MINUTE, 0);
+            cal.set(Calendar.SECOND, 0);
+            cal.set(Calendar.MILLISECOND, 0);
             cal.add(Calendar.DATE, 1);
             date1 = cal.getTime();
+            
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTime(date1);
+            cal2.add(Calendar.DATE, -7);
+            Date date3 = cal2.getTime();
+            
             for (CustomerOrder co : list) {
                 Date date2 = co.getOrderDate();
 
-                if (!date1.before(date2) && getDateDiff(date1, date2, TimeUnit.DAYS) <= 7) {
+                if (!date1.before(date2) && !date3.after(date2)) {
                     resultList.add(co);
                 }
             }
@@ -436,9 +463,35 @@ public class AnalyticsPageManagedBean implements Serializable {
         return resultList;
     }
 
-    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
+    private String getMonthString(String month) {
+        switch (month) {
+            case "01":
+                return "Jan";
+            case "02":
+                return "Feb";
+            case "03":
+                return "Mar";
+            case "04":
+                return "Apr";
+            case "05":
+                return "May";
+            case "06":
+                return "Jun";
+            case "07":
+                return "Jul";
+            case "08":
+                return "Aug";
+            case "09":
+                return "Sep";
+            case "10":
+                return "Oct";
+            case "11":
+                return "Nov";
+            case "12":
+                return "Dec";
+            default:
+                return "null";
+        }
     }
 
     public Long getSelectedMenuItemId() {
