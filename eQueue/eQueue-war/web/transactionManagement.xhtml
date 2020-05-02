@@ -174,7 +174,7 @@
                         </p:summaryRow>
 
                         <f:facet name="footer">
-                            <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
+                            <p:commandButton value="Close" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                             &nbsp;
                             <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" actionListener="#{transactionManagementManagedBean.voidCashChange}"/>
                         </f:facet>

@@ -268,8 +268,15 @@ public class DataInitializationSessionBean {
             DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
 
             while (startDate.before(today)) {
-                System.out.println(dateFormat.format(startDate));
+                int numOfOrdersForDay = (int) (Math.random() * 11);
+                int openingHours = 12;
+                int openingTime = 10;
+                for (int i = 0; i < numOfOrdersForDay; i++) {
+                    int randomHour = (int) (Math.random() * openingHours) + openingTime;
+                    startDate.setHours(randomHour);
 
+                    customerOrderRandomiser(startDate);
+                }
                 Calendar c = Calendar.getInstance();
                 c.setTime(startDate);
                 c.add(Calendar.DATE, 1);
@@ -314,6 +321,8 @@ public class DataInitializationSessionBean {
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
                 | MenuItemNotUniqueException | CreateNewOrderLineItemException | OrderLineItemNotFoundException
                 | CreateNewCustomerOrderException | MenuItemUnavailableException | UnableToCreateNotificationException ex) {
+            ex.printStackTrace();
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }

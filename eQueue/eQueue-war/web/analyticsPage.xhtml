@@ -56,7 +56,7 @@
                             <br/>
                             <div style="display: flex; align-items: baseline">
                                 <p:row rendered="#{analyticsPageManagedBean.optionMenuItemsType == 'SINGLE'}" >
-                                    <h:outputLabel for="menuItemSelection" value="Choose Menu Item: " />
+                                    <h:outputLabel for="menuItemSelection" value="Choose Menu Item:" />&nbsp;
                                     <p:selectOneMenu id="menuItemSelection" value="#{analyticsPageManagedBean.selectedMenuItemId}" label="MenuItem"
                                                      filter="true" filterMatchMode="contains" style="width:160px" panelStyle="width:180px">
                                         <f:selectItems value="#{analyticsPageManagedBean.menuItems}" var="menuItem" itemValue="#{menuItem.menuItemId}" itemLabel="#{menuItem.menuItemName}"/>
