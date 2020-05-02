@@ -51,7 +51,7 @@
 
                                 <f:facet name="header" >
                                     <p:outputPanel style="text-align: right;">
-                                        <p:commandButton actionListener="#{menuManagementManagedBean.doCreateMenuItem}" update="menuManagementTabView:formCreateNewMenuItem" style="float: left;" value="Create New Menu Item" oncomplete="PF('dialogCreateNewMenuItem').show()" icon="fa fa-plus-circle" />
+                                        <p:commandButton actionListener="#{menuManagementManagedBean.doCreateMenuItem}" update="menuManagementTabView:formCreateNewMenuItem" style="float: left;" oncomplete="PF('dialogCreateNewMenuItem').show()" icon="fa fa-plus-circle" />
                                         <h:outputText value="Search all fields: " />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTableAllMenuItems').filter()" style="width:300px" placeholder="Enter keyword"/>
                                     </p:outputPanel>

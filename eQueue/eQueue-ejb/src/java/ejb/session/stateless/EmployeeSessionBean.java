@@ -66,7 +66,7 @@ public class EmployeeSessionBean implements EmployeeSessionBeanLocal {
 
     @Override
     public List<Employee> retrieveAllEmployees() {
-        Query query = em.createQuery("SELECT e FROM Employee e");
+        Query query = em.createQuery("SELECT e FROM Employee e ORDER BY e.employeeRole DESC, e.lastName ASC, e.firstName ASC");
         List<Employee> employees = query.getResultList();
 
         for (Employee employee : employees) {
