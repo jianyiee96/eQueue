@@ -18,7 +18,12 @@ import entity.MenuItem;
 import entity.Notification;
 import entity.OrderLineItem;
 import entity.Store;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
@@ -51,10 +56,10 @@ import util.exceptions.UnknownPersistenceException;
 @Startup
 
 public class DataInitializationSessionBean {
-    
+
     @PersistenceContext(unitName = "eQueue-ejbPU")
     private EntityManager em;
-    
+
     @EJB
     private CustomerOrderSessionBeanLocal customerOrderSessionBean;
     @EJB
@@ -73,11 +78,14 @@ public class DataInitializationSessionBean {
     private MenuCategorySessionBeanLocal menuCategorySessionBean;
     @EJB
     private NotificationSessionBeanLocal notificationSessionBeanLocal;
-    
+
+    private static final Long totalNumOfMenuItems = 38L;
+    private static final Long totalNumOfCustomers = 5L;
+
     public DataInitializationSessionBean() {
-        
+
     }
-    
+
     @PostConstruct
     public void postConstruct() {
         try {
@@ -88,19 +96,19 @@ public class DataInitializationSessionBean {
             //customerOrderSessionBean.retrieveIncompleteOrders();
         }
     }
-    
+
     private void initializeData() {
-        
-        System.out.println("Initialiing Data...");
+
+        System.out.println("Initializing Data...");
         try {
-            
+
             storeManagementSessionBeanLocal.storeInitialization(new Store("HamBaoBao", "HamBaoBao@burger.com.yummy", "Kent Ridge Hall, NUS Street 71. #03-21", "Welcome to HamBaoBao", "+65-65410434"));
             Long custId1 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "Account", "guest@equeue.com", "password"));
             Long custId2 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "A", "guestA@equeue.com", "password"));
             Long custId3 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "B", "guestB@equeue.com", "password"));
             Long custId4 = customerSessionBeanLocal.createNewCustomer(new Customer("Guest", "C", "guestC@equeue.com", "password"));
             Long custId5 = customerSessionBeanLocal.createNewCustomer(new Customer("Hew", "Jian Yiee", "hew1521@hotmail.com", "password"));
-            
+
             notificationSessionBeanLocal.createNewNotification(new Notification("Welcome", "Welcome to eQueue :)", NotificationTypeEnum.GENERAL), custId5);
             notificationSessionBeanLocal.createNewNotification(new Notification("Instruction", "For instructions on how to use this app, please refer to google.com", NotificationTypeEnum.GENERAL), custId5);
 //            notificationSessionBeanLocal.createNewNotification(new Notification("Instruction Pt. 2", "To go google.com first you need a browser and an internet connection", NotificationTypeEnum.GENERAL), custId5);
@@ -116,7 +124,7 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(4L));
             diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
-            
+
             employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Kek", "Tan", "weekek-tan@eQueue.com", "manager", "password", EmployeeRoleEnum.MANAGER, "1 - tan_wee_kek.jpg"));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER));
@@ -128,62 +136,179 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("Four", "Cashier", "cashier-four@eQueue.com", "cashier4", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("One", "Staff", "staff-one@eQueue.com", "staff1", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Two", "Staff", "staff-two@eQueue.com", "staff2", "password", EmployeeRoleEnum.EMPLOYEE));
-            
-            Long mcId1 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Asian"), null);
-            Long mcId2 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Chinese"), mcId1);
-            Long mcId3 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Malay"), mcId1);
-            Long mcId4 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Western"), null);
-            
-            Long mcId5 = menuCategorySessionBean.createNewMenuCategory(new MenuCategory("Original"), mcId4);
-            
-            Long miId1 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI001", "Chicken Rice", 3.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "1 - Chicken Rice.jpg", "Fragrant and steamy Chicken Rice"), mcId2);
-            Long miId2 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "2 - Char Kway Teow.jpg", "Singapore award winning Char Kway Teow"), mcId2);
-            Long miId3 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "3 - Hokkien Noodles.jpg", "Penang best Hokkien Mee"), mcId2);
-            Long miId4 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI004", "Ayam Buah Keluak", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "4 - Ayam Buah Keluak.jpg", "Made with fresh kampung chicken"), mcId3);
-            Long miId5 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI005", "Chap Chai", 3.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "5 - Chap Chai.JPG", "Chap Chai Chop Ching Chong"), mcId3);
-            Long miId6 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI006", "Chicken Chop", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "6 - Chicken Chop.jpg", "Freshly chopped chicken served with chopsticks"), mcId5);
-            Long miId7 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI007", "Fish and Chips", 6.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "7 - Fish and Chips.jpg", "Original recipe from Sanji"), mcId5);
-            Long miId8 = menuItemSessionBean.createNewMenuItem(new MenuItem("MI008", "Fries", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "8 - Fries.jpg", "Golden Potato Fries, Served with Curry Sauce, BBQ Sauce and Mayo Sauce"), mcId5);
-            
+
+            // Parent Categories
+            MenuCategory mc1 = new MenuCategory("Asian");
+            MenuCategory mc2 = new MenuCategory("Western");
+            MenuCategory mc3 = new MenuCategory("Drinks");
+            Long mcId1 = menuCategorySessionBean.createNewMenuCategory(mc1, null);
+            Long mcId2 = menuCategorySessionBean.createNewMenuCategory(mc2, null);
+            Long mcId3 = menuCategorySessionBean.createNewMenuCategory(mc3, null);
+
+            // Sub Categories
+            // --Asian
+            MenuCategory mc4 = new MenuCategory("Chinese");
+            MenuCategory mc5 = new MenuCategory("Malay");
+            MenuCategory mc6 = new MenuCategory("Indian");
+            MenuCategory mc7 = new MenuCategory("Thai");
+            Long mcId4 = menuCategorySessionBean.createNewMenuCategory(mc4, mcId1);
+            Long mcId5 = menuCategorySessionBean.createNewMenuCategory(mc5, mcId1);
+            Long mcId6 = menuCategorySessionBean.createNewMenuCategory(mc6, mcId1);
+            Long mcId7 = menuCategorySessionBean.createNewMenuCategory(mc7, mcId1);
+
+            // --Western
+            MenuCategory mc8 = new MenuCategory("Salads");
+            MenuCategory mc9 = new MenuCategory("Burgers");
+            MenuCategory mc10 = new MenuCategory("Mains");
+            MenuCategory mc11 = new MenuCategory("Pizzas");
+            Long mcId8 = menuCategorySessionBean.createNewMenuCategory(mc8, mcId2);
+            Long mcId9 = menuCategorySessionBean.createNewMenuCategory(mc9, mcId2);
+            Long mcId10 = menuCategorySessionBean.createNewMenuCategory(mc10, mcId2);
+            Long mcId11 = menuCategorySessionBean.createNewMenuCategory(mc11, mcId2);
+
+            // --Drinks
+            MenuCategory mc12 = new MenuCategory("Cold");
+            MenuCategory mc13 = new MenuCategory("Hot");
+            MenuCategory mc14 = new MenuCategory("Canned");
+            Long mcId12 = menuCategorySessionBean.createNewMenuCategory(mc12, mcId3);
+            Long mcId13 = menuCategorySessionBean.createNewMenuCategory(mc13, mcId3);
+            Long mcId14 = menuCategorySessionBean.createNewMenuCategory(mc14, mcId3);
+
+            // Menu Items
+            // Chinese
+            MenuItem mi1 = new MenuItem("MI001", "Chicken Rice", 3.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "1 - Chicken Rice.jpg", "Fragrant and steamy Chicken Rice");
+            MenuItem mi2 = new MenuItem("MI002", "Char Kway Teow", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "2 - Char Kway Teow.jpg", "Singapore award winning Char Kway Teow");
+            MenuItem mi3 = new MenuItem("MI003", "Hokkien Noodles", 4.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "3 - Hokkien Noodles.jpg", "Penang best Hokkien Mee");
+            MenuItem mi4 = new MenuItem("MI004", "Pork Ribs Rice", 4.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "4 - Pork Ribs Rice.jpg", "Succulent pork ribs rice. Best in Singapore!");
+            MenuItem mi5 = new MenuItem("MI005", "Mee Goreng", 5.0, 8L, MenuItemAvailabilityEnum.AVAILABLE, "5 - Mee Goreng.jpg", "Chinese Mee Goreng. A little spicy.");
+            MenuItem mi6 = new MenuItem("MI006", "Egg Gravy Crispy Noodle", 5.50, 15L, MenuItemAvailabilityEnum.AVAILABLE, "6 - Egg Gravy Crispy Noodle.jpg", "Crispy Fried Noodles soaked in deliciouos gravy.");
+            MenuItem mi7 = new MenuItem("MI007", "Hong Kong Fried Noodles", 5.50, 15L, MenuItemAvailabilityEnum.AVAILABLE, "7 - Hong Kong Fried Noodles.jpg", "Famous Hong Kong dish prepared by our very own Hong Kong chefs.");
+            menuItemSessionBean.createNewMenuItem(mi1, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi2, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi3, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi4, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi5, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi6, mcId4);
+            menuItemSessionBean.createNewMenuItem(mi7, mcId4);
+            // Malay
+            MenuItem mi8 = new MenuItem("MI008", "Mee Siam", 3.50, 15L, MenuItemAvailabilityEnum.AVAILABLE, "8 - Mee Siam.jpg", "Mee siam is a dish of bee hoon with a unique sweet and tart gravy.");
+            MenuItem mi9 = new MenuItem("MI009", "Mee Rebus", 3.50, 15L, MenuItemAvailabilityEnum.AVAILABLE, "9 - Mee Rebus.jpg", "Mee rebus is a dish comprising egg noodles in thick, spicy gravy.");
+            MenuItem mi10 = new MenuItem("MI010", "Nasi Lemak", 5.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "10 - Nasi Lemak.jpg", "Coconut rice, chili on the side, slivers of anchovy, nuts, and a boiled egg.");
+            MenuItem mi11 = new MenuItem("MI011", "Lontong", 4.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "11 - Lontong.jpg", "Lontong is an Indonesian dish made of compressed rice cake in the form of a cylinder wrapped inside a banana leaf.");
+            menuItemSessionBean.createNewMenuItem(mi8, mcId5);
+            menuItemSessionBean.createNewMenuItem(mi9, mcId5);
+            menuItemSessionBean.createNewMenuItem(mi10, mcId5);
+            menuItemSessionBean.createNewMenuItem(mi11, mcId5);
+            // Indian
+            MenuItem mi12 = new MenuItem("MI012", "Egg Prata", 2.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "12 - Egg Prata.jpg", "Roti prata is a fried flatbread that is cooked over a flat grill.");
+            MenuItem mi13 = new MenuItem("MI013", "Thosai", 3.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "13 - Thosai.jpg", "Thosai is a South Indian savoury, thin pancake.");
+            MenuItem mi14 = new MenuItem("MI014", "Chicken Curry", 5.50, 15L, MenuItemAvailabilityEnum.AVAILABLE, "14 - Chicken Curry.jpg", "Indian Curry chicken with potatoes is the most common chicken curry recipe in India.");
+            menuItemSessionBean.createNewMenuItem(mi12, mcId6);
+            menuItemSessionBean.createNewMenuItem(mi13, mcId6);
+            menuItemSessionBean.createNewMenuItem(mi14, mcId6);
+            // Thai
+            MenuItem mi15 = new MenuItem("MI015", "Phad Thai", 4.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "15 - Phad Thai.jpg", "Pad thai is made with rehydrated dried rice noodles with some tapioca flour mixed in.");
+            MenuItem mi16 = new MenuItem("MI016", "Tom Yum Soup", 6.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "16 - Tom Yum Soup.jpg", "Tom yum is characterised by its distinct hot and sour flavours, with fragrant spices and herbs generously used in the broth.");
+            MenuItem mi17 = new MenuItem("MI017", "Basil Chicken Rice", 6.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "17 - Basil Chicken Rice.jpg", "The chicken is stir fried with Thai holy basil, and served on top of rice with a fried egg on the side.");
+            menuItemSessionBean.createNewMenuItem(mi15, mcId7);
+            menuItemSessionBean.createNewMenuItem(mi16, mcId7);
+            menuItemSessionBean.createNewMenuItem(mi17, mcId7);
+            // Salads
+            MenuItem mi18 = new MenuItem("MI018", "Caesar Salad", 5.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "18 - Caesar Salad.jpg", "A Caesar salad is a green salad of romaine lettuce and croutons.");
+            MenuItem mi19 = new MenuItem("MI019", "Chef Salad", 5.50, 10L, MenuItemAvailabilityEnum.AVAILABLE, "19 - Chef Salad.jpg", "Chef salad is an American salad consisting of hard-boiled eggs.");
+            MenuItem mi20 = new MenuItem("MI020", "Coleslaw", 3.00, 10L, MenuItemAvailabilityEnum.AVAILABLE, "20 - Coleslaw.jpg", "A side dish consisting primarily of finely shredded raw cabbage with a salad dressing.");
+            menuItemSessionBean.createNewMenuItem(mi18, mcId8);
+            menuItemSessionBean.createNewMenuItem(mi19, mcId8);
+            menuItemSessionBean.createNewMenuItem(mi20, mcId8);
+            // Burgers
+            MenuItem mi21 = new MenuItem("MI021", "Beef Burger", 8.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "21 - Beef Burger.jpg", "These stacked beef burgers are a BBQ favourite.");
+            MenuItem mi22 = new MenuItem("MI022", "Portobello Mushroom Burger", 7.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "22 - Portobello Mushroom Burger.jpg", "These hamburgers cut through with roasted mushrooms.");
+            MenuItem mi23 = new MenuItem("MI023", "Wild Salmon Burger", 10.00, 15L, MenuItemAvailabilityEnum.AVAILABLE, "23 - Wild Salmon Burger.jpg", "Freshest salmon in the sea packed in buns.");
+            menuItemSessionBean.createNewMenuItem(mi21, mcId9);
+            menuItemSessionBean.createNewMenuItem(mi22, mcId9);
+            menuItemSessionBean.createNewMenuItem(mi23, mcId9);
+            // Mains
+            MenuItem mi24 = new MenuItem("MI024", "Chicken Chop", 8.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "24 - Chicken Chop.jpg", "Chicken chop is a dish that is prepared with boneless chicken meat.");
+            MenuItem mi25 = new MenuItem("MI025", "Chicken Cutlet", 8.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "25 - Chicken Cutlet.jpg", "Chicken Cutlets is a Fusion recipe, which is loved by people of all age groups.");
+            MenuItem mi26 = new MenuItem("MI026", "Fish n Chips", 7.50, 20L, MenuItemAvailabilityEnum.AVAILABLE, "26 - Fish n Chips.jpg", "Fish and chips is a hot dish consisting of fried fish in batter served with chips.");
+            menuItemSessionBean.createNewMenuItem(mi24, mcId10);
+            menuItemSessionBean.createNewMenuItem(mi25, mcId10);
+            menuItemSessionBean.createNewMenuItem(mi26, mcId10);
+            // Pizzas
+            MenuItem mi27 = new MenuItem("MI027", "New York-Style Pizza", 15.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "27 - New York-Style Pizza.jpg", "New York-style pizza is pizza made with a characteristically large hand-tossed thin crust.");
+            MenuItem mi28 = new MenuItem("MI028", "Chicken Alfredo Pizza", 16.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "28 - Chicken Alfredo Pizza.jpg", "This Delicious Chicken Alfredo Pizza is made with a homemade pizza crust.");
+            MenuItem mi29 = new MenuItem("MI029", "Hawaiian Pizza", 14.00, 20L, MenuItemAvailabilityEnum.AVAILABLE, "29 - Hawaiian Pizza.jpg", "Classic Hawaiian Pizza combines pizza sauce, cheese, cooked ham, and pineapple.");
+            menuItemSessionBean.createNewMenuItem(mi27, mcId11);
+            menuItemSessionBean.createNewMenuItem(mi28, mcId11);
+            menuItemSessionBean.createNewMenuItem(mi29, mcId11);
+            // Cold
+            MenuItem mi30 = new MenuItem("MI030", "Iced Latte", 3.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "30 - Iced Latte.jpg", "An iced latte is a simple and straight forward cold espresso based drink.");
+            MenuItem mi31 = new MenuItem("MI031", "Iced Mixed Fruit Blended", 4.50, 7L, MenuItemAvailabilityEnum.AVAILABLE, "31 - Iced Mixed Fruit Blended.jpg", "This is a great smoothie consisting of strawberries, banana, peaches, fruit juice and ice.");
+            MenuItem mi32 = new MenuItem("MI032", "Milkshake", 5.50, 7L, MenuItemAvailabilityEnum.AVAILABLE, "32 - Milkshake.jpg", "A milkshake made by blending milk, ice cream");
+            menuItemSessionBean.createNewMenuItem(mi30, mcId12);
+            menuItemSessionBean.createNewMenuItem(mi31, mcId12);
+            menuItemSessionBean.createNewMenuItem(mi32, mcId12);
+            // Hot
+            MenuItem mi33 = new MenuItem("MI033", "Coffee", 1.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "33 - Coffee.jpg", "Locally produced coffee beans. Authentic.");
+            MenuItem mi34 = new MenuItem("MI034", "Tea", 1.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "34 - Tea.jpg", "Locally produced tea leaves. Authentic.");
+            MenuItem mi35 = new MenuItem("MI035", "Ginger Tea", 1.80, 5L, MenuItemAvailabilityEnum.AVAILABLE, "35 - Ginger Tea.jpg", "Homemade ginger tea concoction. Best Seller.");
+            menuItemSessionBean.createNewMenuItem(mi33, mcId13);
+            menuItemSessionBean.createNewMenuItem(mi34, mcId13);
+            menuItemSessionBean.createNewMenuItem(mi35, mcId13);
+            // Canned
+            MenuItem mi36 = new MenuItem("MI036", "Coke", 1.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "36 - Coke.jpg", "355ml");
+            MenuItem mi37 = new MenuItem("MI037", "Sprite", 1.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "37 - Sprite.jpg", "355ml");
+            MenuItem mi38 = new MenuItem("MI038", "Root Beer", 1.50, 5L, MenuItemAvailabilityEnum.AVAILABLE, "38 - Root Beer.jpg", "355ml");
+            menuItemSessionBean.createNewMenuItem(mi36, mcId14);
+            menuItemSessionBean.createNewMenuItem(mi37, mcId14);
+            menuItemSessionBean.createNewMenuItem(mi38, mcId14);
+
+            Date startDate = new GregorianCalendar(2020, Calendar.JANUARY, 1).getTime();
+            Date today = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+
+            while (startDate.before(today)) {
+                System.out.println(dateFormat.format(startDate));
+
+                Calendar c = Calendar.getInstance();
+                c.setTime(startDate);
+                c.add(Calendar.DATE, 1);
+                startDate = c.getTime();
+            }
+
             for (int i = 0; i < 20; i++) {
                 Boolean orderIsCancelled = true;
-                
+
                 List<OrderLineItem> orderLineItems = new ArrayList<>();
-                
+
                 Integer numItems = (int) (Math.random() * 3) + 1;
 //                System.out.println("numItems --> " + numItems);
 
                 for (int x = 0; numItems > x; x++) {
                     Long quantity = (long) (Math.random() * 10) + 1L;
                     Long menuItemId = (long) (Math.random() * 8) + 1L;
-                    
+
                     OrderLineItemStatusEnum lineItemStatus = lineItemStatusRandomiser();
-                    
+
                     if (lineItemStatus != OrderLineItemStatusEnum.CANCELLED) {
                         orderIsCancelled = false;
                     }
-                    
+
                     Long oliId = orderLineItemSessionBean.createNewOrderLineItem(new OrderLineItem(quantity, remarksRandomiser(), lineItemStatus), menuItemId);
                     OrderLineItem oli = orderLineItemSessionBean.retrieveOrderLineItemById(oliId);
                     orderLineItems.add(oli);
                 }
-                
+
                 CustomerOrder customerOrder = new CustomerOrder();
                 customerOrder.setTotalAmount(calculateTotalPrice(orderLineItems));
-                
+
                 if (orderIsCancelled) {
                     customerOrder.setStatus(OrderStatusEnum.CANCELLED);
                     customerOrder.setIsCompleted(true);
                 }
-                
+
                 customerOrderSessionBean.createCustomerOrder(customerOrder, (long) (Math.random() * 4) + 1L, orderLineItems);
-                
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ie) {
-                    Thread.currentThread().interrupt();
-                }
-                
+
             }
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
@@ -192,7 +317,75 @@ public class DataInitializationSessionBean {
             ex.printStackTrace();
         }
     }
-    
+
+    private CustomerOrder customerOrderRandomiser(Date date) throws Exception {
+        Long custId = (long) (Math.random() * totalNumOfCustomers) + 1L;
+        List<OrderLineItem> orderLineItems = orderLineItemsRandomiser();
+        CustomerOrder customerOrder = new CustomerOrder();
+        customerOrder.setTotalAmount(calculateTotalPrice(orderLineItems));
+        customerOrder.setStatus(OrderStatusEnum.PAID);
+        customerOrder.setIsCompleted(true);
+        customerOrder.setOrderDate(date);
+
+        customerOrderSessionBean.createCustomerOrder(customerOrder, custId, orderLineItems);
+        return customerOrder;
+    }
+
+    private List<OrderLineItem> orderLineItemsRandomiser() throws Exception {
+        Integer numOfItems = (int) (Math.random() * 5) + 1;
+        List<OrderLineItem> orderLineItems = new ArrayList<>();
+
+        for (int i = 0; i < numOfItems; i++) {
+            Long quantity = (long) (Math.random() * 5) + 1L;
+            Long menuItemId = (long) (Math.random() * totalNumOfMenuItems) + 1L;
+
+            OrderLineItem newOli = new OrderLineItem(quantity, enhancedRemarksRandomiser(menuItemId), OrderLineItemStatusEnum.SERVED);
+            orderLineItemSessionBean.createNewOrderLineItem(newOli, menuItemId);
+            orderLineItems.add(newOli);
+        }
+
+        return orderLineItems;
+    }
+
+    private String enhancedRemarksRandomiser(Long menuItemId) {
+        Integer remarksRandomiser = (int) (Math.random() * 6);
+
+        if (menuItemId < 30) {
+            // Food
+            switch (remarksRandomiser) {
+                case 0:
+                    return "Less salty please";
+                case 1:
+                    return "More spicy please";
+                case 2:
+                    return "Less spicy please";
+                case 3:
+                    return "Less sweet";
+                case 4:
+                    return "In a rush, will need it to be served faster!";
+                default:
+                    return null;
+            }
+        } else {
+            // Drinks
+            switch (remarksRandomiser) {
+                case 0:
+                    return "Less ice";
+                case 1:
+                    return "More ice please";
+                case 2:
+                    return "Less sweet";
+                case 3:
+                    return "More sweet please";
+                case 4:
+                    return "Will need a straw";
+                default:
+                    return null;
+            }
+        }
+
+    }
+
     private String remarksRandomiser() {
         Integer remarksRandomiser = (int) (Math.random() * 5);
         switch (remarksRandomiser) {
@@ -208,7 +401,7 @@ public class DataInitializationSessionBean {
                 return "Faster!!";
         }
     }
-    
+
     private OrderLineItemStatusEnum lineItemStatusRandomiser() {
         Integer lineItemStatusRandomiser = (int) (Math.random() * 4);
         switch (lineItemStatusRandomiser) {
@@ -222,7 +415,7 @@ public class DataInitializationSessionBean {
                 return OrderLineItemStatusEnum.CANCELLED;
         }
     }
-    
+
     private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {
         double totalPrice = 0.0;
         for (OrderLineItem oli : orderLineItems) {
@@ -230,5 +423,5 @@ public class DataInitializationSessionBean {
         }
         return totalPrice;
     }
-    
+
 }
