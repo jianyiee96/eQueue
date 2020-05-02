@@ -11,9 +11,9 @@
 
         <h:form id="formChangePassword">
 
-            <p:dialog id="dialogChangePassword" widgetVar="dialogChangePassword" responsive="true" header="Change Password" closable="true" showEffect="clip" hideEffect="clip">
+            <p:dialog id="dialogChangePassword" widgetVar="dialogChangePassword" responsive="true" header="Change Password" closable="true" draggable="false" resizable="false">
 
-                <p:panelGrid>
+                <p:panelGrid id='panelGridChangePassword'>
                     <p:growl redisplay="false" life="3500" />
 
                     <p:row>
@@ -21,7 +21,7 @@
                             <h:outputText style="font-weight: bold;" value="Current Password" />
                         </p:column>
                         <p:column>
-                            <p:password value="#{employeeProfilePageManagedBean.enteredCurrentPassword}" placeholder="CURRENT PASSWORD" required="true" requiredMessage="Current password is required" size="16" maxlength="64" />                                
+                            <p:password value="#{employeeProfilePageManagedBean.enteredCurrentPassword}" placeholder="CURRENT PASSWORD" required="true" requiredMessage="Current password is required" size="64" maxlength="64" />                                
                         </p:column>
                     </p:row>
 
@@ -30,10 +30,20 @@
                             <h:outputText style='font-weight: bold;' value='New Password' />
                         </p:column>
                         <p:column>
-                            <p:password value='#{employeeProfilePageManagedBean.enteredNewPassword}' placeholder="NEW PASSWORD" required="true" requiredMessage="New password is required" size='16' maxlength="64" />
+                            <p:password value='#{employeeProfilePageManagedBean.enteredNewPassword}' placeholder="NEW PASSWORD" required="true" requiredMessage="New password is required" size='64' maxlength="64" />
                         </p:column>
                     </p:row>
 
+                    <p:row>
+                        <p:column>
+                            <h:outputText style='font-weight: bold;' value='Retype Password' />
+                        </p:column>
+                        
+                        <p:column>
+                            <p:password value='#{employeeProfilePageManagedBean.enteredRetypePassword}' placeholder="RETYPE PASSWORD" size='64' maxlength="64" />
+                        </p:column>
+                    </p:row>
+                    
                     <p:row>
                         <p:column colspan="2">
                             <div style="text-align: center;">
@@ -133,7 +143,7 @@
                         </p:column>
                         <p:column>
                             <div style="text-align: left;">
-                                <p:inputText id="employeePersonalFirstName" value="#{employeeProfilePageManagedBean.currentEmployee.firstName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.firstName}" required="true" requiredMessage="First name is required" size="16" maxlength="64">
+                                <p:inputText id="employeePersonalFirstName" value="#{employeeProfilePageManagedBean.currentEmployee.firstName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.firstName}" required="true" requiredMessage="First name is required" size="64" maxlength="64">
                                     <f:validateBean />
                                 </p:inputText>
                             </div>
@@ -149,7 +159,7 @@
                         <p:column>
                             <div style="text-align: left;">
 
-                                <p:inputText id="employeePersonalLastName" value="#{employeeProfilePageManagedBean.currentEmployee.lastName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.lastName}" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
+                                <p:inputText id="employeePersonalLastName" value="#{employeeProfilePageManagedBean.currentEmployee.lastName}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.lastName}" required="true" requiredMessage="Last name is required" size="64" maxlength="64">
                                     <f:validateBean />
                                 </p:inputText>
                             </div>
@@ -164,7 +174,7 @@
                         </p:column>
                         <p:column>
                             <div style="text-align: left;">
-                                <p:inputText id="employeePersonalEmail" value="#{employeeProfilePageManagedBean.currentEmployee.email}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.email}" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
+                                <p:inputText id="employeePersonalEmail" value="#{employeeProfilePageManagedBean.currentEmployee.email}" placeholder="#{employeeProfilePageManagedBean.currentEmployee.email}" required="true" requiredMessage="E-mail is required" size="64" maxlength="64">
                                     <f:validateBean />
                                 </p:inputText>
                             </div>
