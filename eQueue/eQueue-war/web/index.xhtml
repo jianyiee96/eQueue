@@ -35,8 +35,9 @@
                 <br />
                 <br />
                 <section>
-                    <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />&nbsp;&nbsp;
-                    <p:commandButton type="submit" value="Login" actionListener="#{employeeLoginManagedBean.login}" icon="fa fa-sign-in" />
+                    <p:commandButton type="submit" value="Login" actionListener="#{employeeLoginManagedBean.login}" icon="fa fa-sign-in" />&nbsp;&nbsp;
+
+                    <p:commandButton type="reset" value="Clear" icon="fa fa-undo" />
                 </section>
 
                 <p:growl life="2000">
@@ -46,36 +47,5 @@
 
         </h:panelGroup>
 
-        <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
-
-            <h4>Customer Login:</h4>
-            <h:form id="customerLoginForm">
-                <h:outputLabel for="email" value="Email:" />&nbsp;
-                <h:inputText id="username" value="#{customerLoginManagedBean.email}" size="16"  required="true" requiredMessage="Email is required" maxlength="32"/>
-                <h:message for="email" errorClass="errorText" fatalClass="errorText" />&nbsp;
-                &nbsp;
-                <h:outputLabel for="password" value="Password:" />&nbsp;
-                <h:inputSecret id="password" value="#{customerLoginManagedBean.password}"  size="16"  required="true" requiredMessage="Password is required" maxlength="32"/>
-                <h:message for="password" errorClass="errorText" fatalClass="errorText" />&nbsp;
-                <br />
-                <br />
-                <h:commandButton type="reset" value="Clear" />&nbsp;
-                <h:commandButton type="submit" value="Login" actionListener="#{customerLoginManagedBean.customerLogin}" />&nbsp;
-                <h:button value="Create New Customer" outcome="createNewCustomer" />
-            </h:form>
-        </h:panelGroup>
-
-        <h:panelGroup rendered="#{sessionScope.customerIsLogin == true}">
-            Welcome #{sessionScope.currentCustomer.firstName}
-            <ul>
-                <li><h:link value="Join Queue" outcome="joinQueue" /></li>
-            </ul>
-
-            <h:form id="customerLogoutForm">
-                <h:commandButton value="Logout" actionListener="#{customerLoginManagedBean.customerLogout}" />
-            </h:form>
-            <br />
-            <br />
-        </h:panelGroup>
     </h:body>
 </html>
