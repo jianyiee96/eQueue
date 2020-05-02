@@ -11,7 +11,7 @@
     <h:outputStylesheet library="css" name="tableManagement.css" />
 
     <ui:define name="content">
-        
+
         <p:poll interval="15" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables additionalDetails"></p:poll>
         <p:layout>
             <p:layoutUnit position="center">
@@ -30,66 +30,66 @@
 
                             <p:dataViewGridItem columns="4">
 
-                                <p:panel rendered="#{diningTable.diningTableId != null}" header="Table Id: #{diningTable.diningTableId}" style="text-align: center">
+                                    <p:panel class="#{diningTableManagementManagedBean.statusOf(diningTable.tableStatus)}" rendered="#{diningTable.diningTableId != null}" header="Table Id: #{diningTable.diningTableId}" style="text-align: center">
+
+                                        <f:attribute name="tableId" value="#{diningTable.diningTableId}"></f:attribute>
 
 
-                                    <f:attribute name="tableId" value="#{diningTable.diningTableId}"></f:attribute>
+                                        <p:barcode type="qr" value="#{diningTable.qrCode}" />
+
+                                        <h:panelGrid columns="2" style="width:100%; text-align: left">
+
+                                            <h:outputText value="Dining Table ID:" />
+                                            <h:outputText value="#{diningTable.diningTableId}" />
+
+                                            <h:outputText value="QR Code: " />
+                                            <h:outputText value="#{diningTable.qrCode}" />
+
+                                            <h:outputText value="Capacity: " />
+                                            <h:outputText value="#{diningTable.seatingCapacity}" />
+
+                                            <h:outputText value="Status: " />
+                                            <h:outputText value="#{diningTableManagementManagedBean.statusOf(diningTable.tableStatus)}" />
+
+                                            <h:outputText value="Time Since Occupied: "/>
+                                            <h:outputText  id="timerCell" value="#{diningTableManagementManagedBean.dateDiff(diningTable.seatedTime)}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
+                                                <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
+                                            </h:outputText>
+
+                                            <h:outputText value="-" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'UNFROZEN_OCCUPIED'}" />
+
+                                            <h:outputText value="Frozen: " />
+                                            <h:outputText value="#{diningTableManagementManagedBean.frozenStatusOf(diningTable.tableStatus)}" />
 
 
-                                    <p:barcode type="qr" value="#{diningTable.qrCode}" />
-
-                                    <h:panelGrid columns="2" style="width:100%; text-align: left">
-
-                                        <h:outputText value="Dining Table ID:" />
-                                        <h:outputText value="#{diningTable.diningTableId}" />
-
-                                        <h:outputText value="QR Code: " />
-                                        <h:outputText value="#{diningTable.qrCode}" />
-
-                                        <h:outputText value="Capacity: " />
-                                        <h:outputText value="#{diningTable.seatingCapacity}" />
-
-                                        <h:outputText value="Status: " />
-                                        <h:outputText value="#{diningTableManagementManagedBean.statusOf(diningTable.tableStatus)}" />
-
-                                        <h:outputText value="Time Since Occupied: "/>
-                                        <h:outputText  id="timerCell" value="#{diningTableManagementManagedBean.dateDiff(diningTable.seatedTime)}" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" >
-                                            <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
-                                        </h:outputText>
-
-                                        <h:outputText value="-" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'UNFROZEN_OCCUPIED'}" />
-
-                                        <h:outputText value="Frozen: " />
-                                        <h:outputText value="#{diningTableManagementManagedBean.frozenStatusOf(diningTable.tableStatus)}" />
-
-
-                                        <p:poll interval="1" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
-                                    </h:panelGrid>
-
-
-
-                                    <p:column headerText="Action" >
-                                        <p:commandButton value="UNFreeze Table" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
-                                            <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
-                                        </p:commandButton>
-                                        <p:commandButton value="Freeze Table" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'FROZEN_ALLOCATED' and diningTable.tableStatus != 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
-                                            <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
-                                        </p:commandButton>
-                                        <p:commandButton value="Delete Table" icon="fa fa-remove" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
-                                            <f:attribute name="diningTableToDelete" value="#{diningTable}" />
-                                            <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
-                                        </p:commandButton>
-
-                                        <p:commandButton value="Display Details" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
-                                            <f:attribute name="diningTableToView" value="#{diningTable}" />
-                                        </p:commandButton>
-
-                                    </p:column>
+                                            <p:poll interval="1" update="timerCell" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}" />
+                                        </h:panelGrid>
 
 
 
+                                        <p:column headerText="Action" >
+                                            <p:commandButton value="Unfreeze Table" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
+                                                <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                            </p:commandButton>
+                                            <p:commandButton value="Freeze Table" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'FROZEN_ALLOCATED' and diningTable.tableStatus != 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
+                                                <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
+                                            </p:commandButton>
+                                            <p:commandButton value="Delete Table" icon="fa fa-remove" actionListener="#{diningTableManagementManagedBean.deleteDiningTable}" update="formAllDiningTables:dataTableAllDiningTables formAllDiningTables:messages" title="Delete">
+                                                <f:attribute name="diningTableToDelete" value="#{diningTable}" />
+                                                <p:confirm header="Confirmation" message="Are you sure you want to delete #{diningTable.diningTableId}?" icon="ui-icon-alert" />
+                                            </p:commandButton>
 
-                                </p:panel>
+                                            <p:commandButton value="Display Details" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                                <f:attribute name="diningTableToView" value="#{diningTable}" />
+                                            </p:commandButton>
+
+                                        </p:column>
+
+
+
+
+                                    </p:panel>
+
 
                                 <p:panel rendered="#{diningTable.diningTableId == null}" header="Create New Table" style="text-align: center">
 
@@ -154,7 +154,7 @@
                                             <h:panelGrid columns="1">
 
 
-                                                <p:commandButton value="UNFreeze Table" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
+                                                <p:commandButton value="Unfreeze Table" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
                                                     <f:attribute name="diningTableToUpdate" value="#{diningTable}" />
                                                 </p:commandButton>
                                                 <p:commandButton value="Freeze Table" rendered="#{diningTable.tableStatus != 'FROZEN_OCCUPIED' and diningTable.tableStatus != 'FROZEN_ALLOCATED' and diningTable.tableStatus != 'FROZEN_UNOCCUPIED'}" actionListener="#{diningTableManagementManagedBean.updateFreezeStatus}" update="@form formAllDiningTables:dataTableAllDiningTables" icon="fa fa-ge" title="Freeze/Unfreeze">
