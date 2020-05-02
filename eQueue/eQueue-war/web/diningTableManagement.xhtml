@@ -22,7 +22,7 @@
                         <p:growl id="messages" redisplay="false" life="4500" keepAlive="true"/>
 
 
-                        <p:dataView id="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" var="diningTable">
+                        <p:dataView id="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" layout="grid" var="diningTable">
 
                             <f:facet name="header">
                                 Dining Tables
@@ -30,7 +30,7 @@
 
                             <p:dataViewGridItem columns="4">
 
-                                <p:panel rendered="#{diningTable.diningTableId != null}" header="Table #{diningTable.diningTableId}" style="text-align: center">
+                                <p:panel rendered="#{diningTable.diningTableId != null}" header="Table Id: #{diningTable.diningTableId}" style="text-align: center">
 
 
                                     <f:attribute name="tableId" value="#{diningTable.diningTableId}"></f:attribute>
