@@ -85,47 +85,48 @@ public class TransactionManagementManagedBean implements Serializable {
     }
 
     public void checkout(ActionEvent event) {
-        if (!this.isDiningTableSelected) {
-            Double transactionValue = 0.00;
-            Employee currentEmployee = (Employee) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployee");
-
-            try {
-                currentEmployee = employeeSessionBeanLocal.retrieveEmployeeById(currentEmployee.getEmployeeId());
-                this.newPaymentTransaction.setEmployee(currentEmployee);
-            } catch (EmployeeNotFoundException ex) {
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while checking out: " + ex.getMessage(), null));
-            }
-
-            this.isDiningTableSelected = true;
-
-            this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToCheckout");
-            this.selectedCustomer = this.selectedDiningTable.getCustomer();
-
-            for (CustomerOrder co : this.selectedCustomer.getCustomerOrders()) {
-                // should be paying for all unpaid orders...
-                // otherwise it's weird for the customer to make many round trips...
-                if (co.getStatus() == OrderStatusEnum.UNPAID) {
-                    this.customerUnpaidOrders.add(co);
-
-                    for (OrderLineItem oli : co.getOrderLineItems()) {
-                        customerUnpaidOrderLineItems.add(oli);
-                        transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
-                    }
-                }
-            }
-
-            sortOrderLineItems(customerUnpaidOrderLineItems);
-
-            this.newPaymentTransaction.setTransactionDate(new Date(Calendar.getInstance(TimeZone.getDefault().getTimeZone("GMT+8:00")).getTimeInMillis()));
-            this.newPaymentTransaction.setCustomerOrders(this.customerUnpaidOrders);
-            this.newPaymentTransaction.setTransactionValue(transactionValue);
-
-            Double gst = transactionValue - (transactionValue / 1.07);
-            String formattedGst = String.format("%.2f", gst);
-            this.newPaymentTransaction.setGst(Double.parseDouble(formattedGst));
-        } else {
+        if (this.isDiningTableSelected) {
             this.initProcess();
         }
+
+        Double transactionValue = 0.00;
+        Employee currentEmployee = (Employee) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployee");
+
+        try {
+            currentEmployee = employeeSessionBeanLocal.retrieveEmployeeById(currentEmployee.getEmployeeId());
+            this.newPaymentTransaction.setEmployee(currentEmployee);
+        } catch (EmployeeNotFoundException ex) {
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while checking out: " + ex.getMessage(), null));
+        }
+
+        this.isDiningTableSelected = true;
+
+        this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToCheckout");
+        this.selectedCustomer = this.selectedDiningTable.getCustomer();
+
+        for (CustomerOrder co : this.selectedCustomer.getCustomerOrders()) {
+            // should be paying for all unpaid orders...
+            // otherwise it's weird for the customer to make many round trips...
+            if (co.getStatus() == OrderStatusEnum.UNPAID) {
+                this.customerUnpaidOrders.add(co);
+
+                for (OrderLineItem oli : co.getOrderLineItems()) {
+                    customerUnpaidOrderLineItems.add(oli);
+                    transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
+                }
+            }
+        }
+
+        sortOrderLineItems(customerUnpaidOrderLineItems);
+
+        this.newPaymentTransaction.setTransactionDate(new Date(Calendar.getInstance(TimeZone.getDefault().getTimeZone("GMT+8:00")).getTimeInMillis()));
+        this.newPaymentTransaction.setCustomerOrders(this.customerUnpaidOrders);
+        this.newPaymentTransaction.setTransactionValue(transactionValue);
+
+        Double gst = transactionValue - (transactionValue / 1.07);
+        String formattedGst = String.format("%.2f", gst);
+        this.newPaymentTransaction.setGst(Double.parseDouble(formattedGst));
+
     }
 
     public void computeChange() {
@@ -189,9 +190,9 @@ public class TransactionManagementManagedBean implements Serializable {
         return "Unknown";
     }
 
-    public void viewPastTransactionDetails() {
+    public void viewPastTransactionDetails(ActionEvent event) {
         this.isPastTransactionSelected = true;
-        System.out.println("selectedPastTransaction -> " + this.selectedPastTransaction);
+        this.selectedPastTransaction = (PaymentTransaction) event.getComponent().getAttributes().get("pastTransactionToView");
     }
 
     public List<DiningTable> getDiningTables() {
