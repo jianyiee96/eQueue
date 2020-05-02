@@ -131,24 +131,36 @@ public class TransactionManagementManagedBean implements Serializable {
 
     public void computeChange() {
         try {
-            this.change = Double.parseDouble(this.cashAmount) - this.newPaymentTransaction.getTransactionValue();
+            if (this.cashAmount == null) {
+                this.change = 0.00;
+            } else {
+                this.change = Double.parseDouble(this.cashAmount) - this.newPaymentTransaction.getTransactionValue();
+            }
         } catch (NumberFormatException ex) {
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please key in numeric values only", null));
+            if (this.cashAmount.charAt(0) != '-') {
+                this.cashAmount = null;
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Please key in numeric values only", null));
+            }
         }
     }
 
-    public void voidChange() {
+    public void voidCashChange() {
         this.cashAmount = null;
         this.change = 0.00;
     }
 
     public void confirmPayment() {
         try {
-            this.paymentTransactionSessionBeanLocal.createNewPaymentTransactionByCustomer(newPaymentTransaction);
+            if (this.change > 0.00) {
+                this.paymentTransactionSessionBeanLocal.createNewPaymentTransactionByCustomer(newPaymentTransaction);
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Payment processed successfully on " + this.newPaymentTransaction.getTransactionDate() + " (ID: " + this.newPaymentTransaction.getPaymentTransactionId() + ")", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Payment processed successfully on " + this.newPaymentTransaction.getTransactionDate() + " (ID: " + this.newPaymentTransaction.getPaymentTransactionId() + ")", null));
 
-            this.initProcess();
+                this.initProcess();
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "The input cash amount must be larger than the total amount!", null));
+            }
+
         } catch (CreateNewPaymentTransactionException | CustomerOrderNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while creating a new transaction: " + ex.getMessage(), null));
         } catch (Exception ex) {

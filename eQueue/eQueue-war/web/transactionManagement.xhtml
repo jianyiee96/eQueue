@@ -176,7 +176,7 @@
                         <f:facet name="footer">
                             <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                             &nbsp;
-                            <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" />
+                            <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" actionListener="#{transactionManagementManagedBean.voidCashChange}"/>
                         </f:facet>
                     </p:dataTable>
 
@@ -230,7 +230,6 @@
                                 </p:column>
                             </p:row>
 
-
                             <p:row>                            
                                 <p:column>
                                     <h:outputLabel style="font-weight: bold;" value="Due (Includes 7% GST)" />
@@ -251,7 +250,7 @@
                                         <f:selectItem itemLabel="Credit Card" itemValue="Credit Card" />
                                         <f:selectItem itemLabel="Cash" itemValue="Cash" />
 
-                                        <p:ajax event="itemSelect" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.voidChange}" />
+                                        <p:ajax event="itemSelect" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.voidCashChange}" />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -261,7 +260,7 @@
                                     <h:outputLabel style="font-weight: bold;" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="Cash Amount" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <p:inputText class="text-center" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" placeholder="12.34" value="#{transactionManagementManagedBean.cashAmount}" required="true" size="12" maxlength="12">
+                                    <p:inputText class="text-center" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="#{transactionManagementManagedBean.cashAmount}" size="12" maxlength="12">
                                         <!--                                    <f:convertNumber type="number" />-->
                                         <p:ajax event="keyup" update="panelGridPaymentConfirmation checkoutGrowl" listener="#{transactionManagementManagedBean.computeChange}"/>
                                     </p:inputText>
