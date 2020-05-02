@@ -15,18 +15,40 @@
             #selectOption {
                 margin: 2.5px 5px 5px 5px
             }
+            .ui-panelgrid.ui-panelgrid-blank .ui-panelgrid-content.ui-widget-content, 
+            .ui-panelgrid.ui-panelgrid-blank .ui-panelgrid-header.ui-widget-header,
+            .ui-panelgrid.ui-panelgrid-blank .ui-panelgrid-footer.ui-widget-header,
+            .ui-panelgrid.ui-panelgrid-blank .ui-panelgrid-header > tr.ui-widget-header, 
+            .ui-panelgrid.ui-panelgrid-blank tbody > tr.ui-widget-content,
+            .ui-panelgrid.ui-panelgrid-blank tbody > tr.ui-widget-content > td.ui-panelgrid-cell,
+            .ui-panelgrid.ui-panelgrid-blank .ui-panelgrid-footer > tr.ui-widget-footer {
+                background: none !important;
+                border: 0 none !important;
+            }
         </style>
+        <script>
+            expanded = false;
+            function toggleExpansion() {
+                $('div.ui-row-toggler').each(function (i) {
+                    if ($(this).attr('aria-expanded') === expanded.toString())
+                        this.click();
+                });
+                if (expanded) {
+                    expanded = false;
+                    $('span.ui-icon-circle-triangle-s')
+                            .addClass('ui-icon-circle-triangle-e')
+                            .removeClass('ui-icon-circle-triangle-s');
+                } else {
+                    expanded = true;
+                    $('span.ui-icon-circle-triangle-e')
+                            .addClass('ui-icon-circle-triangle-s')
+                            .removeClass('ui-icon-circle-triangle-e');
+                }
+            }
+        </script>
 
         <p:layout>
-            <p:layoutUnit position="west" size="600">
-
-                <!--                <p:selectOneMenu autoWidth="true" required="true">
-                                    <f:selectItem itemLabel="Checkout" itemValue="1" />
-                                    <f:selectItem itemLabel="Past Transactions" itemValue="2" />
-                
-                                    <p:ajax event="itemSelect" update="" listener="{transactionManagementManagedBean.handleOptionSelected}"/>
-                                </p:selectOneMenu>-->
-
+            <p:layoutUnit position="west" size="650">
                 <p:tabView id="transactionManagementTabView">
                     <p:ajax event="tabChange" update="checkoutForm pastTransactionForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
 
@@ -36,10 +58,6 @@
                         </f:facet>
 
                         <p:dataGrid id="checkoutDataGrid" var="diningTable" value="#{transactionManagementManagedBean.diningTables}" columns="3" layout="grid" >
-                            <!--                            <f:facet name="header">
-                                                            Dining Tables
-                                                        </f:facet>-->
-
                             <p:panel header="Table #{diningTable.diningTableId}" style="text-align: center;">
                                 <h:panelGrid columns="1" style="width:100%; text-align: center; height: 100px;">
                                     <p:graphicImage library="images" name="round-table.png" style="margin: 5px 0px 5px 0px" height="45" width="45" alt="Table" />
@@ -65,15 +83,13 @@
                             <p:dataTable id="dataTablePastTransactions" widgetVar="dataTablePastTransactions" value="#{transactionManagementManagedBean.pastTransactions}" var="pastTransaction" 
                                          rowIndexVar="rowIdx" rowKey="#{pastTransaction.paymentTransactionId}" filteredValue="#{transactionManagementManagedBean.filteredPastTransactions}" rows="10" 
                                          paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
-                                         rowsPerPageTemplate="10,20,50" sortBy="#{pastTransaction.transactionDate}" selection="#{transactionManagementManagedBean.selectedPastTransaction}" selectionMode="single">
+                                         rowsPerPageTemplate="10,20,50">
                                 <f:facet name="header">
                                     <p:outputPanel style="text-align: right;">
                                         <h:outputText value="Search all fields: " />
                                         <p:inputText id="globalFilter" onkeyup="PF('dataTablePastTransactions').filter()" style="width: 150px;" placeholder="Enter keyword" />
                                     </p:outputPanel>
                                 </f:facet>
-
-                                <p:ajax event="contextMenu" update="pastTransactionForm" />
 
                                 <p:column class="text-center" headerText="No." width="15">
                                     <h:outputText value="#{rowIdx + 1}" />
@@ -99,11 +115,13 @@
                                     <h:outputText rendered="#{pastTransaction.employee != null}" value="#{pastTransaction.employee.firstName} #{pastTransaction.employee.lastName}" />
                                     <h:outputText rendered="#{pastTransaction.employee == null}" value="-" />
                                 </p:column>
-                            </p:dataTable>
 
-                            <p:contextMenu for="dataTablePastTransactions">
-                                <p:menuitem value="View" update="pastTransactionForm" icon="pi pi-search" action="#{transactionManagementManagedBean.viewPastTransactionDetails}"/>
-                            </p:contextMenu>
+                                <p:column class="text-center" headerText="Action" width="30">
+                                    <p:commandButton title="View" icon="pi pi-search" update="pastTransactionForm checkoutForm" actionListener="#{transactionManagementManagedBean.viewPastTransactionDetails}">
+                                        <f:attribute name="pastTransactionToView" value="#{pastTransaction}" />
+                                    </p:commandButton>
+                                </p:column>
+                            </p:dataTable>
                         </h:form>
                     </p:tab>
                 </p:tabView>           
@@ -158,7 +176,7 @@
                         <f:facet name="footer">
                             <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                             &nbsp;
-                            <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" />
+                            <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" actionListener="#{transactionManagementManagedBean.voidCashChange}"/>
                         </f:facet>
                     </p:dataTable>
 
@@ -168,7 +186,7 @@
                 </h:form>
 
                 <h:form id="formPaymentConfirmation">
-                    <p:dialog id="dialogPaymentConfirmation" widgetVar="dialogPaymentConfirmation" header="Payment Confirmation" responsive="true" position="825,225">
+                    <p:dialog id="dialogPaymentConfirmation" widgetVar="dialogPaymentConfirmation" header="Payment Confirmation" responsive="true" position="875,200" resizable="false" draggable="false">
                         <p:panelGrid id="panelGridPaymentConfirmation">
                             <p:row>
                                 <p:column>
@@ -212,7 +230,6 @@
                                 </p:column>
                             </p:row>
 
-
                             <p:row>                            
                                 <p:column>
                                     <h:outputLabel style="font-weight: bold;" value="Due (Includes 7% GST)" />
@@ -233,7 +250,7 @@
                                         <f:selectItem itemLabel="Credit Card" itemValue="Credit Card" />
                                         <f:selectItem itemLabel="Cash" itemValue="Cash" />
 
-                                        <p:ajax event="itemSelect" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.voidChange}" />
+                                        <p:ajax event="itemSelect" update="panelGridPaymentConfirmation" listener="#{transactionManagementManagedBean.voidCashChange}" />
                                     </p:selectOneMenu>
                                 </p:column>
                             </p:row>
@@ -243,7 +260,7 @@
                                     <h:outputLabel style="font-weight: bold;" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="Cash Amount" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <p:inputText class="text-center" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" placeholder="12.34" value="#{transactionManagementManagedBean.cashAmount}" required="true" size="12" maxlength="12">
+                                    <p:inputText class="text-center" rendered="#{transactionManagementManagedBean.newPaymentTransaction.paymentType eq 'Cash'}" value="#{transactionManagementManagedBean.cashAmount}" size="12" maxlength="12">
                                         <!--                                    <f:convertNumber type="number" />-->
                                         <p:ajax event="keyup" update="panelGridPaymentConfirmation checkoutGrowl" listener="#{transactionManagementManagedBean.computeChange}"/>
                                     </p:inputText>
@@ -272,45 +289,137 @@
                 </h:form>
 
                 <h:form id="pastTransactionForm">
-                    <p:panelGrid id="panelGridPastTransaction" rendered="#{transactionManagementManagedBean.isPastTransactionSelected == true}">
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="font-weight: bold;" value="Payment Transaction ID" />
-                            </p:column>
-                            <p:column class="text-center">
-                                <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.paymentTransactionId}" />
-                            </p:column>
-                        </p:row>
 
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="font-weight: bold;" value="Payment Date" />
-                            </p:column>
-                            <p:column class="text-center">
-                                <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.transactionDate}">
-                                    <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
-                                </h:outputText>
-                            </p:column>
-                        </p:row>
+                    <p:panel style="margin: 0px 5px 15px 5px; text-align: center" header="Payment Transaction Summary" rendered="#{transactionManagementManagedBean.isPastTransactionSelected == true}" >
+                        <p:panelGrid id="panelGridPastTransaction" style="margin: 0 auto;" styleClass="ui-panelgrid-blank">
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="ID" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.paymentTransactionId}" />
+                                </p:column>
+                            </p:row>
 
-                        <p:row>
-                            <p:column>
-                                <h:outputLabel style="font-weight: bold;" value="Employee in Charge" />
-                            </p:column>
-                            <p:column class="text-center">
-                                <h:outputText value="#{transactionManagementManagedBean.newPaymentTransaction.employee.firstName} #{transactionManagementManagedBean.newPaymentTransaction.employee.lastName}" />
-                            </p:column>
-                        </p:row>
-                    </p:panelGrid>
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="Payment Date" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputText value="#{transactionManagementManagedBean.selectedPastTransaction.transactionDate}">
+                                        <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
+                                    </h:outputText>
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="Subtotal (Exclude 7% GST)" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.transactionValue - transactionManagementManagedBean.selectedPastTransaction.gst}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="GST (7%)" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.gst}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="Total (Includes 7% GST)" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.transactionValue}" />
+                                </p:column>
+                            </p:row>
+
+                            <p:row>
+                                <p:column>
+                                    <h:outputLabel style="font-weight: bold;" value="Employee in Charge" />
+                                </p:column>
+                                <p:column class="text-center">
+                                    <h:outputText rendered="#{transactionManagementManagedBean.selectedPastTransaction.employee != null}" value="#{transactionManagementManagedBean.selectedPastTransaction.employee.firstName} #{transactionManagementManagedBean.selectedPastTransaction.employee.lastName}" />
+                                    <h:outputText rendered="#{transactionManagementManagedBean.selectedPastTransaction.employee == null}" value="-" />
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+                    </p:panel>
 
                     <p:dataTable rendered="#{transactionManagementManagedBean.isPastTransactionSelected == true}" value="#{transactionManagementManagedBean.selectedPastTransaction.customerOrders}"
-                                 var="customerOrder" style="margin: 0px 5px 0px 5px;" rowIndexVar="rowIdx" scrollable="true" scrollHeight="500">
+                                 var="customerOrder" style="margin: 0px 5px 0px 5px;" scrollable="true">
                         <f:facet name="header">
                             Customer Orders
                         </f:facet>
 
+                        <p:column width="16">
+                            <f:facet name="header">
+                                <p:commandButton id="showall" type="button" icon="fa fa-arrow-circle-o-down" onclick="toggleExpansion()" style="width: 12px; height: 12px"/>
+                            </f:facet>
+                            <p:rowToggler />
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Order Date">
+                            <h:outputText value="#{customerOrder.orderDate}">
+                                <f:convertDateTime pattern="dd-MMMM-yyyy hh:mm:ss a" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Order Status">
+                            <h:outputText value="#{customerOrder.status}" />
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Total Amount (SGD)">
+                            <h:outputText value="#{customerOrder.totalAmount}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column class="text-center" headerText="Customer">
+                            <h:outputText rendered="#{customerOrder.customer != null}" value="#{customerOrder.customer.firstName} #{customerOrder.customer.lastName}" />
+                            <h:outputText rendered="#{customerOrder.customer == null}" value="-" />
+                        </p:column>
+
+                        <p:rowExpansion>
+                            <p:dataTable value="#{customerOrder.orderLineItems}" var="lineItem" style="margin: 0px 5px 0px 5px;" rowIndexVar="rowIdx">
+                                <p:column class="text-center" headerText="No." width="5">
+                                    <h:outputText value="#{rowIdx + 1}" />
+                                </p:column>
+
+                                <p:column class="text-center" headerText="Menu Item" width="80">
+                                    <h:outputText value="#{lineItem.menuItem.menuItemName}" />
+                                </p:column>
+
+                                <p:column class="text-center" headerText="Qty" width="5">
+                                    <h:outputText value="#{lineItem.quantity}"/>
+                                </p:column>
+
+                                <p:column class="text-center" headerText="Unit Price (SGD)" width="35">
+                                    <h:outputText value="#{lineItem.menuItem.menuItemPrice}">
+                                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column class="text-center" headerText="Subtotal (SGD)" width="35">
+                                    <h:outputText value="#{lineItem.quantity * lineItem.menuItem.menuItemPrice}">
+                                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                    </h:outputText>
+                                </p:column>
+
+                                <p:column class="text-center" headerText="Remarks" width="60">
+                                    <h:outputText rendered="#{lineItem.remarks != '' and lineItem.remarks != null}" value="#{lineItem.remarks}"/>
+                                    <h:outputText rendered="#{lineItem.remarks == '' or lineItem.remarks == null}" value="-"/>
+                                </p:column>
+                            </p:dataTable>
+                        </p:rowExpansion>
+
                         <f:facet name="footer">
-                            <p:commandButton value="Cancel" update="pastTransactionForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
+                            <p:commandButton value="Cancel" update="checkoutForm pastTransactionForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                         </f:facet>
                     </p:dataTable>
                 </h:form>
