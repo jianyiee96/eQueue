@@ -100,17 +100,17 @@
                                     <h:outputText value="#{menuItem.menuCategory.categoryName}" />
                                 </p:column>
 
-                                <p:column headerText="Action" width="100">
-                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="ui-icon-document" title="View">
+                                <p:column headerText="Action" width="100" style="text-align: center">
+                                    <p:commandButton update="ccViewMenuItem:formViewMenuItem" oncomplete="PF('dialogViewMenuItem').show()" icon="fa fa-search" title="View">
                                         <f:setPropertyActionListener value="#{menuItem}" target="#{menuManagementManagedBean.viewMenuItemManagedBean.menuItemToView}" />
                                         <f:attribute name="menuItemToView" value="#{menuItem}" />
                                     </p:commandButton>
 
-                                    <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuItem}" update="menuManagementTabView:formUpdateMenuItem" oncomplete="PF('dialogUpdateMenuItem').show()" icon="ui-icon-pencil" title="Update">
+                                    <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuItem}" update="menuManagementTabView:formUpdateMenuItem" oncomplete="PF('dialogUpdateMenuItem').show()" icon="fa fa-pencil" title="Update">
                                         <f:attribute name="menuItemToUpdate" value="#{menuItem}" />
                                     </p:commandButton>
 
-                                    <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuItem}" update="menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formAllMenuItems:messages treeForm">
+                                    <p:commandButton icon="fa fa-trash" actionListener="#{menuManagementManagedBean.deleteMenuItem}" update="menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formAllMenuItems:messages treeForm">
                                         <f:attribute name="menuItemToDelete" value="#{menuItem}" />
                                         <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuItem.menuItemName} (Menu Item Code: #{menuItem.menuItemCode})?" icon="ui-icon-alert" />
                                     </p:commandButton>
@@ -121,8 +121,8 @@
 
                             <!--This is for delete menu item-->
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                <p:commandButton value="Yes" type="button" styleClass="fa fa-check" icon="ui-icon-check" />
+                                <p:commandButton value="No" type="button" styleClass="fa fa-close" icon="ui-icon-close" />
                             </p:confirmDialog>
 
                         </h:form>
@@ -264,7 +264,7 @@
 
                         <h:form id="formUpdateMenuItem">
 
-                            <p:dialog id="dialogUpdateMenuItem" widgetVar="dialogUpdateMenuItem" header="Update Menu Item" closable="true">
+                            <p:dialog id="dialogUpdateMenuItem" widgetVar="dialogUpdateMenuItem" header="Update Menu Item" closable="true" height="500">
 
                                 <p:messages id="messagesUpdateMenuItem" redisplay="false" />
 
@@ -464,17 +464,17 @@
                                     <h:outputText value="#{menuCategory.parentMenuCategory.categoryName}" />
                                 </p:column>
 
-                                <p:column headerText="Action" >
+                                <p:column headerText="Action" width="100" style="text-align: center">
 
-                                    <p:commandButton update="ccViewMenuCategory:formViewMenuCategory" oncomplete="PF('dialogViewMenuCategory').show()" icon="ui-icon-document" title="View">
+                                    <p:commandButton update="ccViewMenuCategory:formViewMenuCategory" oncomplete="PF('dialogViewMenuCategory').show()" icon="fa fa-search" title="View">
                                         <f:setPropertyActionListener value="#{menuCategory}" target="#{menuManagementManagedBean.viewMenuCategoryManagedBean.menuCategoryToView}" />
                                     </p:commandButton>
 
-                                    <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuCategory}" update="menuManagementTabView:formUpdateMenuCategory" oncomplete="PF('dialogUpdateMenuCategory').show()" icon="ui-icon-pencil" title="Update">
+                                    <p:commandButton actionListener="#{menuManagementManagedBean.doUpdateMenuCategory}" update="menuManagementTabView:formUpdateMenuCategory" oncomplete="PF('dialogUpdateMenuCategory').show()" icon="fa fa-pencil" title="Update">
                                         <f:attribute name="menuCategoryToUpdate" value="#{menuCategory}" />
                                     </p:commandButton>
 
-                                    <p:commandButton icon="ui-icon-trash" actionListener="#{menuManagementManagedBean.deleteMenuCategory}" update="
+                                    <p:commandButton icon="fa fa-trash" actionListener="#{menuManagementManagedBean.deleteMenuCategory}" update="
                                                      menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formAllMenuCategories:messages menuManagementTabView:formCreateNewMenuItem:createNewMenuItemPanel treeForm">
                                         <f:attribute name="menuCategoryToDelete" value="#{menuCategory}" />
                                         <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuCategory.categoryName}?" icon="ui-icon-alert" />
@@ -486,8 +486,8 @@
 
                             <!--This is for delete menu category-->
                             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
-                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
-                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close" />
                             </p:confirmDialog>
 
                         </h:form>
