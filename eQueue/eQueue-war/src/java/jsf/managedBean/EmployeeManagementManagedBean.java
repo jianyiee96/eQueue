@@ -49,7 +49,16 @@ public class EmployeeManagementManagedBean implements Serializable {
 
     @PostConstruct
     public void postConstruct() {
+        List<Employee> unfilteredEmployees = employeeSessionBeanLocal.retrieveAllEmployees();
         employees = employeeSessionBeanLocal.retrieveAllEmployees();
+
+        Employee currentEmployee = (Employee) FacesContext.getCurrentInstance().getExternalContext().getSessionMap().get("currentEmployee");
+
+        for (Employee e : unfilteredEmployees) {
+            if (e.equals(currentEmployee)) {
+                employees.remove(e);
+            }
+        }
     }
 
     public void createNewEmployee() {

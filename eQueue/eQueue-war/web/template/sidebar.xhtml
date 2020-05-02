@@ -26,10 +26,11 @@
                         <p:menuitem value="Transaction Management" outcome="/transactionManagement.xhtml" icon="custom-icon transaction-icon" />
                     </p:submenu>
                     <p:submenu label="Analytics">
-                        <p:menuitem value="Analytics" outcome="/analyticsPage.xhtml" icon="custom-icon analytics-icon" />
+                        <p:menuitem value="Business Analytics" outcome="/analyticsPage.xhtml" icon="custom-icon analytics-icon" />
                     </p:submenu>
                     <p:submenu label="Navigations" >
                         <p:menuitem value="Home" outcome="/homepage" icon="custom-icon home-icon"/>
+                        <p:menuitem value="Logout" icon="custom-icon logout-icon" actionListener="#{employeeLoginManagedBean.logout}" />
                     </p:submenu>
                 </p:panelMenu>
             </h:form>

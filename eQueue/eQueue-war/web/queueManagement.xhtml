@@ -116,39 +116,39 @@
                     <p:dataTable id="dataTableAllQueues" widgetVar="dataTableAllQueues" value="#{queueManagementManagedBean.queues}" var="queue" rowKey="#{queue.queueId}" rowIndexVar="row"
                                  rows="10" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="10,20,50">
 
-                        <p:column headerText="Position" >
+                        <p:column headerText="Position" style="text-align: center;" width="10" >
                             <h:outputText value="#{row + 1}" />
                         </p:column>  
 
-                        <p:column headerText="Queue ID" >
+                        <p:column headerText="Queue ID" style="text-align: center;" width="10" >
                             <h:outputText value="#{queue.queueId}" />
                         </p:column>                            
 
-                        <p:column headerText="Name" >
-                            <h:outputText value="#{queue.customer.firstName}" />
+                        <p:column headerText="Name" width="60">
+                            <h:outputText value="#{queue.customer.lastName} #{queue.customer.firstName}" />
                         </p:column>
 
-                        <p:column headerText="Email" >
+                        <p:column headerText="Email" width="80">
                             <h:outputText value="#{queue.customer.email}" />
                         </p:column>
 
-                        <p:column headerText="Status" >
+                        <p:column headerText="Status" style="text-align: center;" width="30">
                             <h:outputText value="#{queue.queueStatus}" />
                         </p:column>
 
-                        <p:column headerText="Time Joined Queue" >
+                        <p:column headerText="Time Joined Queue" style="text-align: center;" width="40" >
                             <h:outputText value="#{queueManagementManagedBean.formatDate(queue.startDateTime)}" >
                             </h:outputText>
                         </p:column>
 
-                        <p:column headerText="Duration in Queue" >
+                        <p:column headerText="Duration in Queue" style="text-align: center;" width="40" >
                             <h:outputText  id="timerCell" value="#{queueManagementManagedBean.dateDiff(queue.startDateTime)}" >
                                 <f:convertDateTime pattern="HH:mm:ss" type="localTime" />
                             </h:outputText>
                             <p:poll interval="1" update="timerCell" />
                         </p:column>
 
-                        <p:column headerText="Send Notification" style="text-align: center">
+                        <p:column headerText="Send Notification" style="text-align: center" width="30">
                             <p:commandButton actionListener="#{queueManagementManagedBean.doCreateNotification}" update="formCreateNotification" oncomplete="PF('dialogCreateNotification').show()" icon="fa fa-send-o" title="Send Notification">
                                 <f:attribute name="selectedQueue" value="#{queue}" />
                             </p:commandButton>

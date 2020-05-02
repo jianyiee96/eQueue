@@ -200,15 +200,18 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<Integer, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
 
         for (CustomerOrder co : orders) {
             for (OrderLineItem orderLineItem : co.getOrderLineItems()) {
                 if (orderLineItem.getMenuItem().getMenuItemId().equals(selectedMenuItemId)) {
                     Date date = co.getOrderDate();
-                    int hours = date.getHours();
-                    int day = date.getDate();
-                    int month = date.getMonth();
+                    SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
+                    SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
+                    SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+                    String hours = hoursSdf.format(date) + ":00";
+                    String day = daySdf.format(date);
+                    String month = monthSdf.format(date);
 
                     if (optionDateType.equals("DAY")) {
                         int count = map.containsKey(hours) ? map.get(hours) : 0;
@@ -224,10 +227,10 @@ public class AnalyticsPageManagedBean implements Serializable {
             }
         }
 
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
             System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
             values.add(entry.getValue());
-            labels.add(entry.getKey().toString());
+            labels.add(entry.getKey());
         }
 
         dataSet.setData(values);
@@ -255,13 +258,16 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<Integer, Double> map = new HashMap<>();
+        Map<String, Double> map = new HashMap<>();
 
         for (CustomerOrder co : orders) {
             Date date = co.getOrderDate();
-            int hours = date.getHours();
-            int day = date.getDate();
-            int month = date.getMonth();
+            SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
+            SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
+            SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+            String hours = hoursSdf.format(date) + ":00";
+            String day = daySdf.format(date);
+            String month = monthSdf.format(date);
 
             if (optionDateType.equals("DAY")) {
                 double count = map.containsKey(hours) ? map.get(hours) : 0;
@@ -275,10 +281,10 @@ public class AnalyticsPageManagedBean implements Serializable {
             }
         }
 
-        for (Map.Entry<Integer, Double> entry : map.entrySet()) {
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
             System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
             values.add(entry.getValue());
-            labels.add(entry.getKey().toString());
+            labels.add(entry.getKey());
         }
 
         dataSet.setData(values);
@@ -306,13 +312,16 @@ public class AnalyticsPageManagedBean implements Serializable {
         List<String> labels = new ArrayList<>();
 
         List<CustomerOrder> orders = filterByDateRange();
-        Map<Integer, Integer> map = new HashMap<>();
+        Map<String, Integer> map = new HashMap<>();
 
         for (CustomerOrder co : orders) {
             Date date = co.getOrderDate();
-            int hours = date.getHours();
-            int day = date.getDate();
-            int month = date.getMonth();
+            SimpleDateFormat hoursSdf = new SimpleDateFormat("hh");
+            SimpleDateFormat daySdf = new SimpleDateFormat("dd/MM");
+            SimpleDateFormat monthSdf = new SimpleDateFormat("MMM");
+            String hours = hoursSdf.format(date) + ":00";
+            String day = daySdf.format(date);
+            String month = monthSdf.format(date);
 
             if (optionDateType.equals("DAY")) {
                 int count = map.containsKey(hours) ? map.get(hours) : 0;
@@ -326,10 +335,10 @@ public class AnalyticsPageManagedBean implements Serializable {
             }
         }
 
-        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
             System.out.println("Added into Series: " + entry.getKey() + ", " + entry.getValue());
             values.add(entry.getValue());
-            labels.add(entry.getKey().toString());
+            labels.add(entry.getKey());
         }
 
         dataSet.setData(values);

@@ -7,6 +7,7 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core">
     <h:head>
         <title>eQueue Management System</title>
+        <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}" />
         <h:outputStylesheet library="css" name="default.css" />
     </h:head>
     <h:body>
@@ -27,13 +28,17 @@
                     <p:link class="header-text" outcome="homepage" value="eQueue Management System" style="font-size: 25px"/>
 
                     <div style="margin-right: 20px">
+
                         <p:commandLink id="alertBtn" class="bell" style=" text-align: center; vertical-align: central; margin-right: 10px;">
+
                             <i class="fa fa-bell" style="font-size: 25px" title="Notifications"/>
                             <p:outputLabel style="font-size: 25px" id="alertCount" value=" #{alertManagedBean.alerts.size()}" />
                         </p:commandLink>
                         &nbsp;
                         <p:commandLink class="nav-logout" actionListener="#{employeeLoginManagedBean.logout}" style="text-align: center; vertical-align: central;" >
+
                             <i class="fa fa-sign-out nav-logout-icon" style="font-size: 28px" title="Sign Out"/>
+
                         </p:commandLink>
                     </div>
 
@@ -52,7 +57,9 @@
 
             <p:dataTable id="alertDataTable" var="alert" value="#{alertManagedBean.alerts}" rows="5" paginator="true">
 
+
                 <p:column headerText="Table ID" style="width: 80px; text-align: center" >
+
                     <h:outputText value="#{alert.tableId}" />
                 </p:column>
 

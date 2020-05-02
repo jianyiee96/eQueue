@@ -36,6 +36,7 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     private Employee currentEmployee;
     private String enteredCurrentPassword;
     private String enteredNewPassword;
+    private String enteredRetypePassword;
 
     private Boolean deleteOldPhoto;
     private Boolean cropOldPhoto;
@@ -47,6 +48,7 @@ public class EmployeeProfilePageManagedBean implements Serializable {
     public EmployeeProfilePageManagedBean() {
         enteredCurrentPassword = "";
         enteredNewPassword = "";
+        enteredRetypePassword = "";
     }
 
     @PostConstruct
@@ -126,13 +128,18 @@ public class EmployeeProfilePageManagedBean implements Serializable {
 
     public void changePassword() {
         try {
-            employeeSessionBeanLocal.updateEmployeePassword(this.currentEmployee.getUsername(), this.enteredCurrentPassword, this.enteredNewPassword);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", this.currentEmployee);
+            if (this.enteredNewPassword.equals(this.enteredRetypePassword)) {
+                employeeSessionBeanLocal.updateEmployeePassword(this.currentEmployee.getUsername(), this.enteredCurrentPassword, this.enteredNewPassword);
+                FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentEmployee", this.currentEmployee);
 
-            enteredCurrentPassword = "";
-            enteredNewPassword = "";
+                enteredCurrentPassword = "";
+                enteredNewPassword = "";
+                enteredRetypePassword = "";
 
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Password has been updated successfully!", null));
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Password has been updated successfully!", null));
+            } else {
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Retyped password mismatch!", null));
+            }
         } catch (EmployeeInvalidEnteredCurrentPasswordException | EmployeeNotFoundException ex) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "An error has occurred while changing password: " + ex.getMessage(), null));
         } catch (Exception ex) {
@@ -186,7 +193,7 @@ public class EmployeeProfilePageManagedBean implements Serializable {
         while (m.find()) {
             positions.add(m.end());
         }
-        
+
         return newFilePath.substring(0, positions.get(positions.size() - 3)) + "/eQueue-war/web/resources/images/profiles/";
     }
 
@@ -258,6 +265,14 @@ public class EmployeeProfilePageManagedBean implements Serializable {
 
     public void setEnteredNewPassword(String enteredNewPassword) {
         this.enteredNewPassword = enteredNewPassword;
+    }
+
+    public String getEnteredRetypePassword() {
+        return enteredRetypePassword;
+    }
+
+    public void setEnteredRetypePassword(String enteredRetypePassword) {
+        this.enteredRetypePassword = enteredRetypePassword;
     }
 
 }

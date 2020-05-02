@@ -11,10 +11,10 @@
 
         <style type="text/css">
             .manager {
-                background-color: beige;
+                background-color: beige !important;
             }
             .employee {
-                background-color: antiquewhite;
+                background-color: antiquewhite !important;
             }
         </style>
 
@@ -29,8 +29,7 @@
                     <p:dataTable id="dataTableAllEmployees" widgetVar="dataTableAllEmployees" value="#{employeeManagementManagedBean.employees}" var="employee" 
                                  rowKey="#{employee.employeeId}" rowIndexVar="row" filteredValue="#{employeeManagementManagedBean.filteredEmployees}" rows="10" paginator="true" 
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
-                                 rowsPerPageTemplate="10,20,50" sortBy="#{employee.employeeRole}"
-                                 rowStyleClass="#{employee.employeeRole eq 'MANAGER' ? 'manager' : 'employee'}">
+                                 rowsPerPageTemplate="10,20,50" rowStyleClass="#{employee.employeeRole eq 'MANAGER' ? 'manager' : 'employee'}">
                         <f:facet name="header">
                             <p:commandButton style="float: left;" onclick="PF('dialogCreateNewEmployee').show()" icon="fa fa-user-plus" />
 
@@ -40,7 +39,7 @@
                             </p:outputPanel>
                         </f:facet>
 
-                        <p:column headerText="Employee ID" width="20" sortBy="#{employee.employeeId}" filterBy="#{employee.employeeId}" filterMatchMode="contains">
+                        <p:column style="text-align: center;" headerText="Employee ID" width="20" sortBy="#{employee.employeeId}" filterBy="#{employee.employeeId}" filterMatchMode="contains">
                             <p:outputLabel value="#{employee.employeeId}" />
                         </p:column>
 
@@ -48,7 +47,7 @@
                             <p:outputLabel value="#{employee.lastName} #{employee.firstName}" />
                         </p:column>
 
-                        <p:column headerText="Role" width="60" sortBy="#{employee.employeeRole}" filterBy="#{employee.employeeRole}" filterMatchMode="exact">
+                        <p:column style="text-align: center;" headerText="Role" width="60" sortBy="#{employee.employeeRole}" filterBy="#{employee.employeeRole}" filterMatchMode="exact">
                             <f:facet name="filter">
                                 <p:selectOneMenu id="selEmployeeRole" onchange="PF('dataTableAllEmployees').filter()">
                                     <f:selectItem itemValue="#{null}" itemLabel="[No Filter]" noSelectionOption="true" />
@@ -60,15 +59,15 @@
                         </p:column>
 
                         <p:column headerText="Action" width="40" style="text-align: center;">
-                            <p:commandButton update="formViewEmployee" oncomplete="PF('dialogViewEmployee').show()" icon="ui-icon-document" title="View">
+                            <p:commandButton update="formViewEmployee" oncomplete="PF('dialogViewEmployee').show()" icon="fa fa-search" title="View">
                                 <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToView}" />
                             </p:commandButton>
                             &nbsp;
-                            <p:commandButton update="formUpdateEmployee" oncomplete="PF('dialogUpdateEmployee').show()" icon="ui-icon-pencil" title="Update">
+                            <p:commandButton update="formUpdateEmployee" oncomplete="PF('dialogUpdateEmployee').show()" icon="fa fa-pencil" title="Update">
                                 <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToUpdate}" />
                             </p:commandButton>
                             &nbsp;
-                            <p:commandButton update="formDeleteEmployee" oncomplete="PF('dialogDeleteEmployee').show()" icon="ui-icon-trash" title="Delete">
+                            <p:commandButton update="formDeleteEmployee" oncomplete="PF('dialogDeleteEmployee').show()" icon="fa fa-trash" title="Delete">
                                 <f:setPropertyActionListener value="#{employee}" target="#{employeeManagementManagedBean.employeeToDelete}" />
                             </p:commandButton>
                         </p:column>
@@ -85,18 +84,18 @@
                 </h:form>
 
                 <h:form id="formCreateNewEmployee">
-                    <p:dialog resizable="false" id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true">
+                    <p:dialog id="dialogCreateNewEmployee" widgetVar="dialogCreateNewEmployee" header="Create New Employee" closable="true" resizable="false" draggable="false">
 
                         <p:growl redisplay="false" life="3500" />
 
                         <p:panelGrid id="createNewEmployeePanel">
 
                             <p:row>
-                                <p:column>
+                                <p:column width="64">
                                     <h:outputLabel for="employeeUsername" value="Username" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeUsername" value="#{employeeManagementManagedBean.employeeToCreate.username}" placeholder="USERNAME" required="true" requiredMessage="Username is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeUsername" value="#{employeeManagementManagedBean.employeeToCreate.username}" placeholder="USERNAME" required="true" requiredMessage="Username is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -107,7 +106,7 @@
                                     <h:outputLabel for="employeePassword" value="Password" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:password id="employeePassword" value="#{employeeManagementManagedBean.employeeToCreate.password}" placeholder="PASSWORD" required="true" requiredMessage="Password is required" size="16" maxlength="64">
+                                    <p:password id="employeePassword" value="#{employeeManagementManagedBean.employeeToCreate.password}" placeholder="PASSWORD" required="true" requiredMessage="Password is required" size="64" maxlength="64">
                                         <f:validateBean />  
                                     </p:password>
                                 </p:column>
@@ -118,7 +117,7 @@
                                     <h:outputLabel for="employeeFirstName" value="First Name" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeFirstName" value="#{employeeManagementManagedBean.employeeToCreate.firstName}" placeholder="FIRST NAME" required="true" requiredMessage="First name is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeFirstName" value="#{employeeManagementManagedBean.employeeToCreate.firstName}" placeholder="FIRST NAME" required="true" requiredMessage="First name is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -129,7 +128,7 @@
                                     <h:outputLabel for="employeeLastName" value="Last Name" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeLastName" value="#{employeeManagementManagedBean.employeeToCreate.lastName}" placeholder="LAST NAME" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeLastName" value="#{employeeManagementManagedBean.employeeToCreate.lastName}" placeholder="LAST NAME" required="true" requiredMessage="Last name is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -140,7 +139,7 @@
                                     <h:outputLabel for="employeeEmail" value="E-mail" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeEmail" value="#{employeeManagementManagedBean.employeeToCreate.email}" placeholder="EMAIL" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeEmail" value="#{employeeManagementManagedBean.employeeToCreate.email}" placeholder="EMAIL" required="true" requiredMessage="E-mail is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -292,7 +291,7 @@
                                     <h:outputLabel for="employeeFirstName" value="First Name" style="text-align: right; font-weight: bold;"  />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeFirstName" value="#{employeeManagementManagedBean.employeeToUpdate.firstName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.firstName}" required="true" requiredMessage="First name is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeFirstName" value="#{employeeManagementManagedBean.employeeToUpdate.firstName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.firstName}" required="true" requiredMessage="First name is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -303,7 +302,7 @@
                                     <h:outputLabel for="employeeLastName" value="Last Name" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeLastName" value="#{employeeManagementManagedBean.employeeToUpdate.lastName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.lastName}" required="true" requiredMessage="Last name is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeLastName" value="#{employeeManagementManagedBean.employeeToUpdate.lastName}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.lastName}" required="true" requiredMessage="Last name is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
@@ -314,7 +313,7 @@
                                     <h:outputLabel for="employeeEmail" value="E-mail" style="text-align: right; font-weight: bold;" />
                                 </p:column>
                                 <p:column>
-                                    <p:inputText id="employeeEmail" value="#{employeeManagementManagedBean.employeeToUpdate.email}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.email}" required="true" requiredMessage="E-mail is required" size="16" maxlength="64">
+                                    <p:inputText id="employeeEmail" value="#{employeeManagementManagedBean.employeeToUpdate.email}" placeholder="#{employeeManagementManagedBean.employeeToUpdate.email}" required="true" requiredMessage="E-mail is required" size="64" maxlength="64">
                                         <f:validateBean />
                                     </p:inputText>
                                 </p:column>
