@@ -144,16 +144,17 @@
                                     </p:column>
 
                                     <p:column headerText="Action" style="width: 70px; text-align: center;">
-                                        <p:commandButton rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon">
+                                        <p:commandButton id="remarksButton" rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon-white">
                                             <f:setPropertyActionListener value="#{item}" target="#{kitchenManagementManagedBean.selectedOrderItem}" />
                                         </p:commandButton>
+                                        <p:tooltip id="toolTipFade" for="remarksButton" value="#{item.remarks}" position="top"/>
 
-                                        <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}">
+                                        <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon-white" actionListener="#{kitchenManagementManagedBean.prepare}">
                                             <f:attribute name="orderItemToPrepare" value="#{item}" />
                                             <f:attribute name="order" value="#{order}"/>
                                         </p:commandButton>
 
-                                        <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
+                                        <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon-white" actionListener="#{kitchenManagementManagedBean.serve}">
                                             <f:attribute name="orderItemToServe" value="#{item}" />
                                             <f:attribute name="order" value="#{order}"/>
                                         </p:commandButton>
@@ -175,7 +176,7 @@
                     </p:dataGrid>
                 </h:form>
 
-                <p:dialog header="Remarks" widgetVar="dialogViewOrderItemRemarks">
+                <p:dialog header="Remarks for #{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemName}" widgetVar="dialogViewOrderItemRemarks" width="350px">
                     <h:outputText id="remarksText" value="#{kitchenManagementManagedBean.selectedOrderItem.remarks}" />
                 </p:dialog>
 
