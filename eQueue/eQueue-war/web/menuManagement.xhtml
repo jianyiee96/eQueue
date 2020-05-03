@@ -10,8 +10,23 @@
     <h:outputStylesheet library="css" name="menuManagement.css" />
 
     <ui:define name="content">
+        <style>
+            /*            .ui-layout-unit-header-icon {
+                            icon: 
+                        }*/
+        </style>
+
         <p:layout>
-            <p:layoutUnit minSize="300" position="west"  header="Menu Management" collapsible="true">
+            <p:layoutUnit minSize="300" position="west">
+                <f:facet name="header">
+                    <div style="float: left; font-size: medium;">
+                        Menu Management
+                    </div>
+                    <div style="text-align: right;">
+                        <p:commandButton icon="fa fa-warning" style="width: 28px; height: 28px;"/>
+                    </div>
+                </f:facet>
+
                 <div style="margin:5;display: flex;">
                     <div style="display: inline-block; height:auto; margin-left: auto;">
                         <p:commandButton actionListener="#{menuManagementManagedBean.collapsingORexpanding(menuManagementManagedBean.treeNode, true)}" update="treeForm" value="Expand"/>
@@ -112,7 +127,7 @@
 
                                     <p:commandButton icon="fa fa-trash" actionListener="#{menuManagementManagedBean.deleteMenuItem}" update="menuManagementTabView:formAllMenuItems:dataTableAllMenuItems menuManagementTabView:formAllMenuItems:messages treeForm">
                                         <f:attribute name="menuItemToDelete" value="#{menuItem}" />
-                                        <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuItem.menuItemName} (Menu Item Code: #{menuItem.menuItemCode})?" icon="ui-icon-alert" />
+                                        <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuItem.menuItemName} (Menu Item Code: #{menuItem.menuItemCode})?" icon="fa fa-warning" />
                                     </p:commandButton>
 
                                 </p:column>
@@ -148,7 +163,7 @@
                                             <p:outputLabel for="menuItemCode" value="Item Code: " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="menuItemCode" value="#{menuManagementManagedBean.menuItemToCreate.menuItemCode}" placeholder="MI999" required="true" requiredMessage="Item Code is required" />
+                                            <p:inputText id="menuItemCode" value="#{menuManagementManagedBean.menuItemToCreate.menuItemCode}" placeholder="MI999" required="true" requiredMessage="Item Code is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="menuItemCode" />
@@ -160,7 +175,7 @@
                                             <p:outputLabel for="name" value="Name: " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToCreate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" />
+                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToCreate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="name" />
@@ -172,7 +187,7 @@
                                             <p:outputLabel for="description" value="Description " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToCreate.menuItemDescription}" placeholder="Menu Item 1" required="false" requiredMessage="Description is required" />
+                                            <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToCreate.menuItemDescription}" placeholder="Menu Item 1" required="false" requiredMessage="Description is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="description" />
@@ -184,7 +199,7 @@
                                             <p:outputLabel for="unitPrice" value="Unit Price " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>                            
-                                            <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToCreate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.10" required="true" requiredMessage="Item Unit Price is required" />
+                                            <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToCreate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.10" required="true" requiredMessage="Item Unit Price is required" size="60" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="unitPrice" />
@@ -196,7 +211,7 @@
                                             <p:outputLabel for="waitingTime" value="Waiting Time (mins) " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>
-                                            <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToCreate.waitingTimeMinutes}" placeholder="10" min="0" stepFactor="1" required="true" requiredMessage="Waiting Time is required" />
+                                            <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToCreate.waitingTimeMinutes}" placeholder="10" min="0" stepFactor="1" required="true" requiredMessage="Waiting Time is required" size="60" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="waitingTime" />
@@ -324,7 +339,7 @@
                                             <p:outputLabel for="name" value="Name: " />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" />
+                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemName}" placeholder="Menu Item 1" required="true" requiredMessage="Name is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="name" />
@@ -336,7 +351,7 @@
                                             <p:outputLabel for="description" value="Description " />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemDescription}" placeholder="Menu Item 1" required="false" requiredMessage="Description is required" />
+                                            <p:inputText id="description" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemDescription}" placeholder="Menu Item 1" required="false" requiredMessage="Description is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="description" />
@@ -348,7 +363,7 @@
                                             <p:outputLabel for="unitPrice" value="Unit Price " />
                                         </p:column>
                                         <p:column>
-                                            <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.1" required="true" requiredMessage="Unit Price is required" />
+                                            <p:spinner id="unitPrice" value="#{menuManagementManagedBean.menuItemToUpdate.menuItemPrice}" placeholder="10.00" min="0" max="1000000" stepFactor="0.1" required="true" requiredMessage="Unit Price is required" size="60" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="unitPrice" />
@@ -360,7 +375,7 @@
                                             <p:outputLabel for="waitingTime" value="Wating Time (mins) " />
                                         </p:column>
                                         <p:column>
-                                            <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToUpdate.waitingTimeMinutes}" placeholder="10" min="0" max="500" stepFactor="1" required="true" requiredMessage="Waiting Time is required" />
+                                            <p:spinner id="waitingTime" value="#{menuManagementManagedBean.menuItemToUpdate.waitingTimeMinutes}" placeholder="10" min="0" max="500" stepFactor="1" required="true" requiredMessage="Waiting Time is required" size="60" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="waitingTime" />
@@ -477,7 +492,7 @@
                                     <p:commandButton icon="fa fa-trash" actionListener="#{menuManagementManagedBean.deleteMenuCategory}" update="
                                                      menuManagementTabView:formAllMenuCategories:dataTableAllMenuCategories menuManagementTabView:formAllMenuCategories:messages menuManagementTabView:formCreateNewMenuItem:createNewMenuItemPanel treeForm">
                                         <f:attribute name="menuCategoryToDelete" value="#{menuCategory}" />
-                                        <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuCategory.categoryName}?" icon="ui-icon-alert" />
+                                        <p:confirm header="Confirmation" message="Are you sure you want to delete #{menuCategory.categoryName}?" icon="fa fa-warning" />
                                     </p:commandButton>
 
                                 </p:column>
@@ -505,7 +520,7 @@
                                             <p:outputLabel for="name" value="Name: " style="font-weight: bold;" />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToCreate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" />
+                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToCreate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="name" />
@@ -567,7 +582,7 @@
                                             <p:outputLabel for="name" value="Name: " />
                                         </p:column>
                                         <p:column>
-                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToUpdate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" />
+                                            <p:inputText id="name" value="#{menuManagementManagedBean.menuCategoryToUpdate.categoryName}" placeholder="Menu Category 1" required="true" requiredMessage="Name is required" size="64" />
                                         </p:column>
                                         <p:column>
                                             <p:message for="name" />

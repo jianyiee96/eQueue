@@ -50,7 +50,7 @@
         <p:layout>
             <p:layoutUnit position="west" size="650">
                 <p:tabView id="transactionManagementTabView">
-                    <p:ajax event="tabChange" update="checkoutForm pastTransactionForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
+                    <p:ajax event="tabChange" update="checkoutForm pastTransactionsForm pastTransactionForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
 
                     <p:tab id="checkoutTab">
                         <f:facet name="title">
@@ -79,7 +79,7 @@
                             Past Transactions
                         </f:facet>
 
-                        <h:form>
+                        <h:form id="pastTransactionsForm">
                             <p:dataTable id="dataTablePastTransactions" widgetVar="dataTablePastTransactions" value="#{transactionManagementManagedBean.pastTransactions}" var="pastTransaction" 
                                          rowIndexVar="rowIdx" rowKey="#{pastTransaction.paymentTransactionId}" filteredValue="#{transactionManagementManagedBean.filteredPastTransactions}" rows="10" 
                                          paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
@@ -317,7 +317,7 @@
                                     <h:outputLabel style="font-weight: bold;" value="Subtotal (Exclude 7% GST)" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.transactionValue - transactionManagementManagedBean.selectedPastTransaction.gst}" />
+                                    <h:outputLabel value="SGD #{transactionManagementManagedBean.selectedPastTransaction.transactionValue - transactionManagementManagedBean.selectedPastTransaction.gst}" />
                                 </p:column>
                             </p:row>
 
@@ -326,7 +326,7 @@
                                     <h:outputLabel style="font-weight: bold;" value="GST (7%)" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.gst}" />
+                                    <h:outputLabel value="SGD #{transactionManagementManagedBean.selectedPastTransaction.gst}" />
                                 </p:column>
                             </p:row>
 
@@ -335,7 +335,7 @@
                                     <h:outputLabel style="font-weight: bold;" value="Total (Includes 7% GST)" />
                                 </p:column>
                                 <p:column class="text-center">
-                                    <h:outputLabel value="#{transactionManagementManagedBean.selectedPastTransaction.transactionValue}" />
+                                    <h:outputLabel value="SGD #{transactionManagementManagedBean.selectedPastTransaction.transactionValue}" />
                                 </p:column>
                             </p:row>
 

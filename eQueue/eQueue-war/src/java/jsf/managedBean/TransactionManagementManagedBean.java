@@ -71,6 +71,10 @@ public class TransactionManagementManagedBean implements Serializable {
         this.diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         this.pastTransactions = paymentTransactionSessionBeanLocal.retrieveAllPastTransactions();
 
+        for(PaymentTransaction pt : pastTransactions) {
+            System.out.println(pt);
+        }
+        
         this.customerUnpaidOrders = new ArrayList<>();
         this.customerUnpaidOrderLineItems = new ArrayList<>();
 
@@ -151,7 +155,7 @@ public class TransactionManagementManagedBean implements Serializable {
 
     public void confirmPayment() {
         try {
-            if (this.change > 0.00) {
+            if (this.newPaymentTransaction.getPaymentType().equals("Credit Card") || (this.newPaymentTransaction.getPaymentType().equals("Cash") && this.change > 0.00)) {
                 this.paymentTransactionSessionBeanLocal.createNewPaymentTransactionByCustomer(newPaymentTransaction);
 
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Payment processed successfully on " + this.newPaymentTransaction.getTransactionDate() + " (ID: " + this.newPaymentTransaction.getPaymentTransactionId() + ")", null));
