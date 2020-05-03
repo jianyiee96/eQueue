@@ -50,7 +50,7 @@
         <p:layout>
             <p:layoutUnit position="west" size="650">
                 <p:tabView id="transactionManagementTabView">
-                    <p:ajax event="tabChange" update="checkoutForm pastTransactionForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
+                    <p:ajax event="tabChange" update="checkoutForm pastTransactionsForm" listener="#{transactionManagementManagedBean.voidSelection}"/>
 
                     <p:tab id="checkoutTab">
                         <f:facet name="title">
@@ -79,7 +79,7 @@
                             Past Transactions
                         </f:facet>
 
-                        <h:form>
+                        <h:form id="pastTransactionsForm">
                             <p:dataTable id="dataTablePastTransactions" widgetVar="dataTablePastTransactions" value="#{transactionManagementManagedBean.pastTransactions}" var="pastTransaction" 
                                          rowIndexVar="rowIdx" rowKey="#{pastTransaction.paymentTransactionId}" filteredValue="#{transactionManagementManagedBean.filteredPastTransactions}" rows="10" 
                                          paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" 
