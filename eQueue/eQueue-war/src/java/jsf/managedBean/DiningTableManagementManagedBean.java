@@ -96,9 +96,8 @@ public class DiningTableManagementManagedBean implements Serializable {
             System.out.println("Unexpected Error.");
         }
     }
-}
 
-public void viewDiningTableDetails(ActionEvent event) throws IOException {
+    public void viewDiningTableDetails(ActionEvent event) throws IOException {
         Long diningTableIdToView = (Long) event.getComponent().getAttributes().get("diningTableId");
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("diningTableIdToView", diningTableIdToView);
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewDiningTableDetails.xhtml");
@@ -235,7 +234,7 @@ public void viewDiningTableDetails(ActionEvent event) throws IOException {
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
-                if ((c.getOrderDate() != null && selectedDiningTable.getSeatedTime() != null) &&c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                if ((c.getOrderDate() != null && selectedDiningTable.getSeatedTime() != null) && c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
             }
