@@ -53,6 +53,7 @@ public class KitchenManagementManagedBean implements Serializable {
     private Map.Entry<MenuItem, Integer> menuItemToViewEntry;
 
     private OrderLineItem selectedOrderItem;
+    private CustomerOrder selectedCustomerOrder;
     private OrderLineItem orderItemToPrepare;
     private OrderLineItem orderItemToServe;
 
@@ -183,10 +184,15 @@ public class KitchenManagementManagedBean implements Serializable {
         }
     }
 
+    public void selectOrder(CustomerOrder order) {
+        this.selectedCustomerOrder = order;
+    }
+    
     public void updateOrderLineItem() {
         try {
             orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(selectedOrderItem);
-
+            customerOrderSessionBeanLocal.recalculateTotalAmount(selectedCustomerOrder.getOrderId());
+            
             Long customerId = customerSessionBeanLocal.retrieveCustomerIdByOrderLineItemId(selectedOrderItem.getOrderLineItemId());
             String title = "Update on Order Line Item";
             String message = "Your order line item (" + selectedOrderItem.getMenuItem().getMenuItemName() + ") has been updated to:"

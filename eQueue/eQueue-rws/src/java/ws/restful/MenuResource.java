@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import ws.datamodel.ErrorRsp;
 import ws.datamodel.RetrieveAllCategoryRsp;
 import ws.datamodel.RetrieveAllMenuItemRsp;
+import ws.datamodel.RetrievePopularMenuItemRsp;
 
 @Path("Menu")
 public class MenuResource {
@@ -48,6 +49,25 @@ public class MenuResource {
                 m.setMenuCategory(null);
             }
             return Response.status(Response.Status.OK).entity(new RetrieveAllMenuItemRsp(menuItems)).build();
+
+        } catch (Exception ex) {
+            ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
+
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(errorRsp).build();
+        }
+    }
+    
+    @Path("retrievePopularMenuItem")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response retrievePopularMenuItem(@QueryParam("maxItem") String maxItem) {
+        try {
+
+            List<MenuItem> menuItems = menuItemSessionBeanLocal.retrievePopularMenuItems(Integer.parseInt(maxItem));
+            for(MenuItem m : menuItems) {
+                m.setMenuCategory(null);
+            }
+            return Response.status(Response.Status.OK).entity(new RetrievePopularMenuItemRsp(menuItems)).build();
 
         } catch (Exception ex) {
             ErrorRsp errorRsp = new ErrorRsp(ex.getMessage());
