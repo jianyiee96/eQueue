@@ -105,16 +105,15 @@ public class MenuItemSessionBean implements MenuItemSessionBeanLocal {
     }
     
     @Override
-    public List<MenuItem> retrievePopularMenuItems() {
+    public List<MenuItem> retrievePopularMenuItems(Integer maxItem) {
         Query query = em.createQuery("select c.menuItem from OrderLineItem c GROUP BY c.menuItem.menuItemId ORDER BY COUNT(c.menuItem.menuItemId) DESC");
         List<MenuItem> topMenuItems = query.getResultList();
         
         List<MenuItem> menuItems = new ArrayList<>();
         
         for(MenuItem t : topMenuItems){
-            System.out.println(t.getMenuItemName());
             menuItems.add(t);
-            if(menuItems.size() >= 4) {
+            if(menuItems.size() >= maxItem) {
                 break;
             }
         }

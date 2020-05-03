@@ -60,10 +60,10 @@ public class MenuResource {
     @Path("retrievePopularMenuItem")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response retrievePopularMenuItem() {
+    public Response retrievePopularMenuItem(@QueryParam("maxItem") String maxItem) {
         try {
 
-            List<MenuItem> menuItems = menuItemSessionBeanLocal.retrievePopularMenuItems();
+            List<MenuItem> menuItems = menuItemSessionBeanLocal.retrievePopularMenuItems(Integer.parseInt(maxItem));
             for(MenuItem m : menuItems) {
                 m.setMenuCategory(null);
             }

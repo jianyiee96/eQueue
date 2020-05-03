@@ -78,6 +78,10 @@ public class DiningTableManagementManagedBean implements Serializable {
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         diningTables.add(new DiningTable());
 
+        if(selectedCustomer == null) {
+            return;
+        }
+        
         try {
             selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
             this.selectedCustomerActiveOrders = new ArrayList<>();

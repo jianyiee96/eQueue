@@ -19,7 +19,7 @@ public interface MenuItemSessionBeanLocal {
 
     public List<MenuItem> retrieveAllMenuItems();
     
-    public List<MenuItem> retrievePopularMenuItems();
+    public List<MenuItem> retrievePopularMenuItems(Integer maxItem);
     
     public List<MenuItem> retrieveAllMenuItemsByCategory(Long categoryId);
 
