@@ -181,7 +181,7 @@
                 </p:dialog>
 
                 <h:form id="formViewOrderLineItem">
-                    <p:dialog id="dialogViewOrderLineItem" widgetVar="dialogViewOrderLineItem" responsive="true" header="View Order Item Details" closable="true" showEffect="clip" hideEffect="clip">
+                    <p:dialog id="dialogViewOrderLineItem" widgetVar="dialogViewOrderLineItem" responsive="true" header="View Order Item Details" closable="true">
                         <p:panelGrid>
                             <p:row rendered="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.imagePath != null}">
                                 <p:column colspan="2">
@@ -211,9 +211,9 @@
 
                             <p:row>
                                 <p:column>
-                                    <h:outputLabel style="text-align: right; font-weight: bold;" value="Item Description" />
+                                    <h:outputLabel style="text-align: right; font-weight: bold" value="Item Description" />
                                 </p:column>
-                                <p:column>
+                                <p:column style="max-width: 200px">
                                     <h:outputText value="#{kitchenManagementManagedBean.selectedOrderItem.menuItem.menuItemDescription}" />
                                 </p:column>
                             </p:row>
