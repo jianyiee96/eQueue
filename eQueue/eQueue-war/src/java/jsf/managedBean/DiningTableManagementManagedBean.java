@@ -77,7 +77,7 @@ public class DiningTableManagementManagedBean implements Serializable {
     public void refresh() {
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         diningTables.add(new DiningTable());
-//        System.out.println("selectedCustomer = " + selectedCustomer);
+
         if (selectedCustomer != null) {
 
             try {
@@ -233,6 +233,9 @@ public class DiningTableManagementManagedBean implements Serializable {
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
+//                System.out.println("Order Date:  " + c.getOrderDate());
+//                System.out.println("Seated Date: " + selectedDiningTable.getSeatedTime());
+                
                 if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
