@@ -13,9 +13,13 @@
         <h:outputStylesheet name="primeicons/primeicons.css" library="primefaces" />
         <h:outputStylesheet library="css" name="default.css" />
         <style type="text/css">
-
-            .ui-button {
-                background-color: pink;
+/*            body .ui-button {
+                background-color: pink !important;
+            }*/
+            
+            body .ui-datatable .ui-datatable-data>tr.ui-state-highlight {
+                background-color: white !important;
+                color: black !important;
             }
 
             .ui-datagrid-header {
@@ -45,8 +49,8 @@
         </style>
 
         <ez:viewMenuItem id="ccViewMenuItem" />
-        <p:layout>
-            <p:poll interval="5" listener="#{kitchenManagementManagedBean.retrieveIncompleteOrders}" update="formOrdersOverview formCurrentDayOrders"></p:poll>
+        <p:layout widgetVar="layoutWdgt">
+            <p:poll interval="5" listener="{kitchenManagementManagedBean.retrieveIncompleteOrders}" update="formOrdersOverview formCurrentDayOrders"></p:poll>
 
             <p:layoutUnit minSize="300" position="west"  header="Kitchen Overview" collapsible="true" resizable="true">
                 <h:form id="formOrdersOverview">
@@ -105,6 +109,15 @@
                 </h:form>
             </p:layoutUnit>
             <p:layoutUnit position="center" >
+                <h:form id="toggleButton">
+                    <p:commandButton rendered="#{not menuManagementManagedBean.isCollapsed}" style="margin: 0px 5px 5px 5px;" value="Hide Panel" onclick="PF('layoutWdgt').toggle('west')" update="toggleButton">
+                        <f:setPropertyActionListener value="#{true}" target="#{menuManagementManagedBean.isCollapsed}" />
+                    </p:commandButton>
+                    <p:commandButton rendered="#{menuManagementManagedBean.isCollapsed}" style="margin: 0px 5px 5px 5px;" value="Show Panel" onclick="PF('layoutWdgt').toggle('west')" update="toggleButton">
+                        <f:setPropertyActionListener value="#{false}" target="#{menuManagementManagedBean.isCollapsed}" />
+                    </p:commandButton>
+                </h:form>
+
                 <p:growl id="infoGrowl" redisplay="false" life="2500" />
 
                 <h:form id="formCurrentDayOrders">
@@ -144,17 +157,17 @@
                                     </p:column>
 
                                     <p:column headerText="Action" style="width: 70px; text-align: center;">
-                                        <p:commandButton id="remarksButton" rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon-white">
+                                        <p:commandButton id="remarksButton" rendered="#{item.remarks != null and (item.status == 'ORDERED' or item.status == 'PREPARING')}" update="remarksText" oncomplete="PF('dialogViewOrderItemRemarks').show()" title="Remarks" icon="custom-icon alert-icon">
                                             <f:setPropertyActionListener value="#{item}" target="#{kitchenManagementManagedBean.selectedOrderItem}" />
                                         </p:commandButton>
                                         <p:tooltip id="toolTipFade" for="remarksButton" value="#{item.remarks}" position="top"/>
 
-                                        <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon-white" actionListener="#{kitchenManagementManagedBean.prepare}">
+                                        <p:commandButton rendered="#{item.status == 'ORDERED'}" update="@form formOrdersOverview infoGrowl" title="Prepare" icon="custom-icon cooking-icon" actionListener="#{kitchenManagementManagedBean.prepare}">
                                             <f:attribute name="orderItemToPrepare" value="#{item}" />
                                             <f:attribute name="order" value="#{order}"/>
                                         </p:commandButton>
 
-                                        <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon-white" actionListener="#{kitchenManagementManagedBean.serve}">
+                                        <p:commandButton rendered="#{item.status == 'PREPARING'}" update="@form formOrdersOverview infoGrowl" title="Serve" icon="custom-icon serve-icon" actionListener="#{kitchenManagementManagedBean.serve}">
                                             <f:attribute name="orderItemToServe" value="#{item}" />
                                             <f:attribute name="order" value="#{order}"/>
                                         </p:commandButton>

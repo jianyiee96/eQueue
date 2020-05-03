@@ -70,10 +70,6 @@ public class TransactionManagementManagedBean implements Serializable {
     private void initProcess() {
         this.diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         this.pastTransactions = paymentTransactionSessionBeanLocal.retrieveAllPastTransactions();
-
-        for(PaymentTransaction pt : pastTransactions) {
-            System.out.println(pt);
-        }
         
         this.customerUnpaidOrders = new ArrayList<>();
         this.customerUnpaidOrderLineItems = new ArrayList<>();

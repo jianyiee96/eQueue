@@ -60,6 +60,8 @@ public class KitchenManagementManagedBean implements Serializable {
     private Integer numPreparing;
 
     private CustomerOrder orderToComplete;
+    
+    private Boolean isCollapsed;
 
     public KitchenManagementManagedBean() {
         orderItemToPrepare = new OrderLineItem();
@@ -281,5 +283,13 @@ public class KitchenManagementManagedBean implements Serializable {
         List<OrderLineItemStatusEnum> list = new ArrayList<>(Arrays.asList(OrderLineItemStatusEnum.values()));
         list.remove(OrderLineItemStatusEnum.IN_CART);
         return list;
+    }
+
+    public Boolean getIsCollapsed() {
+        return isCollapsed;
+    }
+
+    public void setIsCollapsed(Boolean isCollapsed) {
+        this.isCollapsed = isCollapsed;
     }
 }

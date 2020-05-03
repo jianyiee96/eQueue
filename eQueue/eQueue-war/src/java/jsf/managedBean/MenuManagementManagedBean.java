@@ -95,6 +95,8 @@ public class MenuManagementManagedBean implements Serializable {
 
     private CroppedImage croppedImage;
     private Boolean cropMode;
+    
+    private Boolean isCollapsed;
 
     MenuManagementManagedBean() {
         menuItemToCreate = new MenuItem();
@@ -684,5 +686,13 @@ public class MenuManagementManagedBean implements Serializable {
 
     public void setSelectedTreeNode(TreeNode selectedTreeNode) {
         this.selectedTreeNode = selectedTreeNode;
+    }
+
+    public Boolean getIsCollapsed() {
+        return isCollapsed;
+    }
+
+    public void setIsCollapsed(Boolean isCollapsed) {
+        this.isCollapsed = isCollapsed;
     }
 }

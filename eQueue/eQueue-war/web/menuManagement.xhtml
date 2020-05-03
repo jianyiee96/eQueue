@@ -10,23 +10,9 @@
     <h:outputStylesheet library="css" name="menuManagement.css" />
 
     <ui:define name="content">
-        <style>
-            /*            .ui-layout-unit-header-icon {
-                            icon: 
-                        }*/
-        </style>
+        <p:layout widgetVar="layoutWdgt">
 
-        <p:layout>
-            <p:layoutUnit minSize="300" position="west">
-                <f:facet name="header">
-                    <div style="float: left; font-size: medium;">
-                        Menu Management
-                    </div>
-                    <div style="text-align: right;">
-                        <p:commandButton icon="fa fa-warning" style="width: 28px; height: 28px;"/>
-                    </div>
-                </f:facet>
-
+            <p:layoutUnit minSize="300" position="west" header="Menu Management" collapsible="true">
                 <div style="margin:5;display: flex;">
                     <div style="display: inline-block; height:auto; margin-left: auto;">
                         <p:commandButton actionListener="#{menuManagementManagedBean.collapsingORexpanding(menuManagementManagedBean.treeNode, true)}" update="treeForm" value="Expand"/>
@@ -49,12 +35,16 @@
             <ez:viewMenuCategory id="ccViewMenuCategory" />
             <ez:viewMenuItem id="ccViewMenuItem" />
 
-            <p:layoutUnit position="center" >
+            <p:layoutUnit position="center">
                 <p:tabView id="menuManagementTabView">
                     <p:tab id="itemsTabSelection">
                         <f:facet name="title">
                             <h:outputText value="Items"/>
                         </f:facet>
+
+                        <h:form id="toggleButtonSidePanelMenu">
+                            <p:commandButton value="Toggle Panel" onclick="PF('layoutWdgt').toggle('west')" update="toggleButtonSidePanelMenu" />
+                        </h:form>
 
                         <h:form id="formAllMenuItems">
 
@@ -440,10 +430,14 @@
                         </h:form>
 
                     </p:tab>
-                    <p:tab>
+                    <p:tab id="categoryTabSelection">
                         <f:facet name="title">
                             <h:outputText value="Categories"/>
                         </f:facet>
+
+                        <h:form id="toggleButtonSidePanelCategory">
+                            <p:commandButton style="margin: 0px 5px 5px 5px;" value="Toggle Panel" onclick="PF('layoutWdgt').toggle('west')" update="toggleButtonSidePanelCategory" />
+                        </h:form>
 
                         <h:form id="formAllMenuCategories">
 
