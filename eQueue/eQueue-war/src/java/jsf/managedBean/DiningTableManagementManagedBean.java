@@ -233,7 +233,7 @@ public class DiningTableManagementManagedBean implements Serializable {
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
-                if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                if ((c.getOrderDate() != null && selectedDiningTable.getSeatedTime() != null) &&c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
             }

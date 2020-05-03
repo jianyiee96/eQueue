@@ -19,6 +19,8 @@ public interface MenuItemSessionBeanLocal {
 
     public List<MenuItem> retrieveAllMenuItems();
     
+    public List<MenuItem> retrievePopularMenuItems();
+    
     public List<MenuItem> retrieveAllMenuItemsByCategory(Long categoryId);
 
     public void updateMenuItem(MenuItem menuItem, Long menuCategoryId) throws MenuItemNotFoundException, MenuCategoryNotFoundException, UpdateMenuItemException, InputDataValidationException;
