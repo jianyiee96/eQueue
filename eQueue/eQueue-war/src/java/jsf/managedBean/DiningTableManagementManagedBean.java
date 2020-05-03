@@ -81,7 +81,7 @@ public class DiningTableManagementManagedBean implements Serializable {
         if (selectedCustomer != null) {
 
             try {
-                this.selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
+                selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
                 this.selectedCustomerActiveOrders = new ArrayList<>();
 
                 for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
@@ -232,17 +232,11 @@ public class DiningTableManagementManagedBean implements Serializable {
         System.out.println("Table id:" + selectedDiningTable.getDiningTableId());
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
-
-//                System.out.println("Order Date:  " + c.getOrderDate());
-//                System.out.println("Seated Date: " + selectedDiningTable.getSeatedTime());
-                
-                if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                if ((c.getOrderDate() != null && selectedDiningTable.getSeatedTime() != null) && c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
             }
-
         }
-
     }
 
     public String dateDiff(Date date) {
