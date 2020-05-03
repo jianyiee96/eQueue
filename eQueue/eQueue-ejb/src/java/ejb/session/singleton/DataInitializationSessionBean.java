@@ -426,11 +426,14 @@ public class DataInitializationSessionBean {
     }
 
     private Double calculateTotalPrice(List<OrderLineItem> orderLineItems) {
-        double totalPrice = 0.0;
+        Double totalPrice = 0.0;
         for (OrderLineItem oli : orderLineItems) {
-            totalPrice += oli.getQuantity() * oli.getMenuItem().getMenuItemPrice();
+            Long qty = oli.getQuantity();
+            Double price = oli.getMenuItem().getMenuItemPrice();
+            Double sum = Math.round((qty * price) * 100.0) / 100.0;
+            totalPrice += sum;
         }
-        return totalPrice;
+        return Math.round((totalPrice) * 100.0) / 100.0;
     }
 
 }

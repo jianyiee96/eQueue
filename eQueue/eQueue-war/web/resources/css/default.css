@@ -113,8 +113,16 @@ div.ui-growl {
     background-image: url("#{resource['images/icons/cook_icon.svg']}") !important;
 }
 
+.cooking-icon-white {
+    background-image: url("#{resource['images/icons/cook_icon_white.svg']}") !important;
+}
+
 .serve-icon {
     background-image: url("#{resource['images/icons/serve_icon.svg']}") !important;
+}
+
+.serve-icon-white {
+    background-image: url("#{resource['images/icons/serve_icon_white.svg']}") !important;
 }
 
 .analytics-icon {
@@ -123,6 +131,10 @@ div.ui-growl {
 
 .alert-icon {
     background-image: url("#{resource['images/icons/alert_icon.svg']}") !important;
+}
+
+.alert-icon-white {
+    background-image: url("#{resource['images/icons/alert_icon_white.svg']}") !important;
 }
 
 .logout-icon {
