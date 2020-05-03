@@ -174,14 +174,14 @@
                         </p:summaryRow>
 
                         <f:facet name="footer">
-                            <p:commandButton value="Cancel" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
+                            <p:commandButton value="Close" update="checkoutForm" actionListener="#{transactionManagementManagedBean.voidSelection}" />
                             &nbsp;
                             <p:commandButton value="Proceed" update="formPaymentConfirmation" oncomplete="PF('dialogPaymentConfirmation').show()" actionListener="#{transactionManagementManagedBean.voidCashChange}"/>
                         </f:facet>
                     </p:dataTable>
 
                     <div class="text-center">
-                        <p:graphicImage rendered="#{transactionManagementManagedBean.isDiningTableSelected == false and transactionManagementManagedBean.isPastTransactionSelected == false}" library="images" name="equeue-logo.png" height="160" width="500" />
+                        <p:graphicImage rendered="#{transactionManagementManagedBean.isDiningTableSelected == false and transactionManagementManagedBean.isPastTransactionSelected == false}" library="images" name="modified_logo.png" height="320" width="900" />
                     </div>
                 </h:form>
 

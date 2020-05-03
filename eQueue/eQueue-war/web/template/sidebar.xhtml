@@ -43,7 +43,7 @@
                             <ui:fragment rendered="#{employeeProfilePageManagedBean.imageContents != null}" >
                                 <img class="profile-picture" src="data:image/png;base64,#{employeeProfilePageManagedBean.imageContents}" style="width: 75px; height: 75px;" alt="#{employeeProfilePageManagedBean.currentEmployee.lastName} #{employeeProfilePageManagedBean.currentEmployee.firstName}'s Profile Picture"/>
                             </ui:fragment>
-                            <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath == null}" library="images" 
+                            <p:graphicImage class="profile-picture" rendered="#{sessionScope.currentEmployee.imagePath == null or employeeProfilePageManagedBean.imageContents == null}" library="images" 
                                             name="default-user-profile-picture.png" height="75" width="75" alt="User Profile Picture"
                                             />
                         </div>

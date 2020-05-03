@@ -56,7 +56,7 @@
                             <br/>
                             <div style="display: flex; align-items: baseline">
                                 <p:row rendered="#{analyticsPageManagedBean.optionMenuItemsType == 'SINGLE'}" >
-                                    <h:outputLabel for="menuItemSelection" value="Choose Menu Item: " />
+                                    <h:outputLabel for="menuItemSelection" value="Choose Menu Item:" />&nbsp;
                                     <p:selectOneMenu id="menuItemSelection" value="#{analyticsPageManagedBean.selectedMenuItemId}" label="MenuItem"
                                                      filter="true" filterMatchMode="contains" style="width:160px" panelStyle="width:180px">
                                         <f:selectItems value="#{analyticsPageManagedBean.menuItems}" var="menuItem" itemValue="#{menuItem.menuItemId}" itemLabel="#{menuItem.menuItemName}"/>
@@ -85,20 +85,26 @@
                                 </p:column>
                             </p:row>
                             <br/>
-                            <p:datePicker id="dayDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'DAY' or analyticsPageManagedBean.optionDateType == 'WEEK'}" inline="true" value="#{analyticsPageManagedBean.selectedDate}" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
-                                <p:ajax event="dateSelect" process="@form:dayDatePicker"/>
-                            </p:datePicker>
-                            <p:message id="dayMsg" for="dayDatePicker"/>
-                            <p:datePicker id="monthDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'MONTH' or analyticsPageManagedBean.optionDateType == 'YEAR'}" view="month" value="#{analyticsPageManagedBean.selectedDate}"
-                                          inline="true" pattern="MM/yyyy" yearNavigator="true" yearRange="2010:2020" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
-                                <p:ajax event="dateSelect" process="@form:monthDatePicker"/>
-                            </p:datePicker>
-                            <p:message id="monthMsg" for="monthDatePicker"/>
+                            <div style="width: 100%; text-align: center">
+                                <p:datePicker id="dayDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'DAY' or analyticsPageManagedBean.optionDateType == 'WEEK'}" inline="true" value="#{analyticsPageManagedBean.selectedDate}" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
+                                    <p:ajax event="dateSelect" process="@form:dayDatePicker"/>
+                                </p:datePicker>
+                                <p:message id="dayMsg" for="dayDatePicker"/>
+                                <p:datePicker id="monthDatePicker" rendered="#{analyticsPageManagedBean.optionDateType == 'MONTH' or analyticsPageManagedBean.optionDateType == 'YEAR'}" view="month" value="#{analyticsPageManagedBean.selectedDate}"
+                                              inline="true" pattern="MM/yyyy" yearNavigator="true" yearRange="2010:2020" maxdate="#{analyticsPageManagedBean.todaysDate}" required="true" requiredMessage="Please select a date">
+                                    <p:ajax event="dateSelect" process="@form:monthDatePicker"/>
+                                </p:datePicker>
+                                <p:message id="monthMsg" for="monthDatePicker"/>
+                            </div>
                         </ui:fragment>
                         <br/>
                         <br/>
-                        <p:commandButton value="Process" validateClient="true" update="@form charts" icon="pi pi-check" actionListener="#{analyticsPageManagedBean.processFilter}"/>
+                        <div style="width: 100%; text-align: center">
+                            <p:commandButton value="Process" validateClient="true" update="@form charts" icon="pi pi-check" actionListener="#{analyticsPageManagedBean.processFilter}"/>
+                        </div>
                     </h:form>
+
+
 
                 </h:panelGrid>
             </p:layoutUnit>
@@ -111,7 +117,7 @@
                     <ui:fragment rendered="#{!analyticsPageManagedBean.initialized}">
                         <h3 style="margin-left: 30px">Please select the data you wish to display</h3>
                     </ui:fragment>
-                    <p:barChart rendered="#{analyticsPageManagedBean.initialized and analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL'}" id="chart" model="#{analyticsPageManagedBean.allMenuItemsBarChart}" />
+                    <p:barChart rendered="#{analyticsPageManagedBean.initialized and analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL'}" model="#{analyticsPageManagedBean.allMenuItemsBarChart}" widgetVar="chart"/>
                     <p:lineChart rendered="#{analyticsPageManagedBean.initialized and !(analyticsPageManagedBean.optionType == 'MENU_ITEMS' and analyticsPageManagedBean.optionMenuItemsType == 'ALL')}" model="#{analyticsPageManagedBean.lineChart}" />
                 </h:form>
             </p:layoutUnit>
