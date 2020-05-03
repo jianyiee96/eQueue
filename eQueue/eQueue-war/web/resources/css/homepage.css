@@ -39,6 +39,7 @@
 .vertically-centered {
     position: absolute;
     height: 120px;
+    width: 140px;
     top: 0;
     bottom: 0;
     margin:auto;
