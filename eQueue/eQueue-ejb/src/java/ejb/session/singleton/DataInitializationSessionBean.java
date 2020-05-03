@@ -133,12 +133,13 @@ public class DataInitializationSessionBean {
             diningTableSessionBean.createNewDiningTable(new DiningTable(2L));
 
             employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Kek", "Tan", "weekek-tan@eQueue.com", "manager", "password", EmployeeRoleEnum.MANAGER, "1 - tan_wee_kek.jpg"));
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER));
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER));
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Jian Yee", "Hew", "jianyiee-hew@eQueue.com", "hewjianyiee", "password", EmployeeRoleEnum.MANAGER));
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Keat", "Tan", "weekeat-tan@eQueue.com", "tanweekeat", "password", EmployeeRoleEnum.MANAGER));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Chen Kun Keith", "Lim", "keith-lim@eQueue.com", "keithlim", "password", EmployeeRoleEnum.MANAGER, "2 - keith_lim.jpg"));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Jia Jin Bryan", "Thum", "bryan-thum@eQueue.com", "bryanthum", "password", EmployeeRoleEnum.MANAGER, "3 - bryan_thum.jpg"));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Jian Yee", "Hew", "jianyiee-hew@eQueue.com", "hewjianyiee", "password", EmployeeRoleEnum.MANAGER, "4 - jian_yiee.jpg"));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Keat", "Tan", "weekeat-tan@eQueue.com", "tanweekeat", "password", EmployeeRoleEnum.MANAGER, "5 - wee_keat.jpg"));
 
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "One", "employee-one@eQueue.com", "employee1", "password", EmployeeRoleEnum.EMPLOYEE));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "One", "employee-one@eQueue.com", "employee1", "passworcom\", \"tanweekeat\", \"password\", EmployeeRoleEnum.MANAGER));\n" +
+"d", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "Two", "employee-two@eQueue.com", "employee2", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "Three", "employee-three@eQueue.com", "employee3", "password", EmployeeRoleEnum.EMPLOYEE));
 
