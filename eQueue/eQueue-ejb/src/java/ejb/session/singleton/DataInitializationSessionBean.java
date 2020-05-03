@@ -138,8 +138,7 @@ public class DataInitializationSessionBean {
             employeeSessionBeanLocal.createNewEmployee(new Employee("Jian Yee", "Hew", "jianyiee-hew@eQueue.com", "hewjianyiee", "password", EmployeeRoleEnum.MANAGER, "4 - jian_yiee.jpg"));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Wee Keat", "Tan", "weekeat-tan@eQueue.com", "tanweekeat", "password", EmployeeRoleEnum.MANAGER, "5 - wee_keat.jpg"));
 
-            employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "One", "employee-one@eQueue.com", "employee1", "passworcom\", \"tanweekeat\", \"password\", EmployeeRoleEnum.MANAGER));\n" +
-"d", EmployeeRoleEnum.EMPLOYEE));
+            employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "One", "employee-one@eQueue.com", "employee1", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "Two", "employee-two@eQueue.com", "employee2", "password", EmployeeRoleEnum.EMPLOYEE));
             employeeSessionBeanLocal.createNewEmployee(new Employee("Employee", "Three", "employee-three@eQueue.com", "employee3", "password", EmployeeRoleEnum.EMPLOYEE));
 
