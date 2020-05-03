@@ -9,10 +9,30 @@
                 template="/template/defaultTemplate.xhtml">
 
     <h:outputStylesheet library="css" name="tableManagement.css" />
-
     <ui:define name="content">
 
-        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables additionalDetails" />
+        <script>
+            expanded = false;
+            function toggleExpansion() {
+                $('div.ui-row-toggler').each(function (i) {
+                    if ($(this).attr('aria-expanded') === expanded.toString())
+                        this.click();
+                });
+                if (expanded) {
+                    expanded = false;
+                    $('span.ui-icon-circle-triangle-s')
+                            .addClass('ui-icon-circle-triangle-e')
+                            .removeClass('ui-icon-circle-triangle-s');
+                } else {
+                    expanded = true;
+                    $('span.ui-icon-circle-triangle-e')
+                            .addClass('ui-icon-circle-triangle-s')
+                            .removeClass('ui-icon-circle-triangle-e');
+                }
+            }
+        </script>
+
+        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables" />
         <p:layout>
             <p:layoutUnit position="center">
 
@@ -20,7 +40,7 @@
 
                     <p:growl id="messages" redisplay="false" life="3000" keepAlive="true"/>
 
-                    <p:dataView id="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" layout="list" var="diningTable" gridIcon="fa fa-th-large" listIcon="fa fa-list-alt">
+                    <p:dataView id="dataTableAllDiningTables" value="#{diningTableManagementManagedBean.diningTables}" layout="grid" var="diningTable" gridIcon="fa fa-th-large" listIcon="fa fa-list-alt">
                         <f:facet id="dataViewGridHeader" name="header">
                             Dining Tables
                         </f:facet>
@@ -224,7 +244,6 @@
                         </p:dataViewListItem>
                     </p:dataView>
 
-
                     <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                         <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check" />
                         <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-close" />
@@ -238,35 +257,32 @@
 
                 <h:form id="additionalDetails">
 
+                    <p:growl id="additionalMessages" redisplay="false" life="3000" keepAlive="true"/>
 
-                    <p:growl id="additionalMessages" redisplay="false" life="4500" keepAlive="true"/>
-
-                    <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer == null}">
-                        <p:graphicImage library="images" name="equeue-logo.png" height="160" width="500" />
+                    <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer == null}" style="text-align: center;">
+                        <p:graphicImage library="images" name="modified_logo.png" height="180" width="450" />
                     </p:outputPanel>
 
                     <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer != null}">
-
-
                         <h:panelGrid columns="2" cellpadding="10">
 
-                            <p:outputLabel style="font-weight: bold" value="Table Information"></p:outputLabel>
-                            <p:outputLabel value=""></p:outputLabel>
+                            <p:outputLabel style="font-weight: bold" value="Table Information" />
+                            <p:outputLabel value="" />
 
-                            <p:outputLabel value="Table ID: "></p:outputLabel>
-                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedDiningTable.diningTableId}"></p:outputLabel>
+                            <p:outputLabel value="Table ID: " />
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedDiningTable.diningTableId}" />
 
-                            <p:outputLabel value="Current Status: "></p:outputLabel>
-                            <p:outputLabel value="#{diningTableManagementManagedBean.statusOf(diningTableManagementManagedBean.selectedDiningTable.tableStatus)}"></p:outputLabel>
+                            <p:outputLabel value="Current Status: "/>
+                            <p:outputLabel value="#{diningTableManagementManagedBean.statusOf(diningTableManagementManagedBean.selectedDiningTable.tableStatus)}" />
 
-                            <p:outputLabel style="font-weight: bold" value="Customer Information"></p:outputLabel>
-                            <p:outputLabel value=""></p:outputLabel>
+                            <p:outputLabel style="font-weight: bold" value="Customer Information" />
+                            <p:outputLabel value="" />
 
-                            <p:outputLabel value="Customer Name:"></p:outputLabel>
-                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.firstName} #{diningTableManagementManagedBean.selectedCustomer.lastName}"></p:outputLabel>
+                            <p:outputLabel value="Customer Name: " />
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.firstName} #{diningTableManagementManagedBean.selectedCustomer.lastName}" />
 
-                            <p:outputLabel value="Customer Email:"></p:outputLabel>
-                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.email}"></p:outputLabel>
+                            <p:outputLabel value="Customer Email: " />
+                            <p:outputLabel value="#{diningTableManagementManagedBean.selectedCustomer.email}" />
 
                         </h:panelGrid>
 
@@ -274,57 +290,60 @@
                             <f:facet name="header">
                                 Active Orders
                             </f:facet>
-                            <p:column style="width:16px">
+                            <p:column width="16" style="text-align: center;">
+                                <f:facet name="header">
+                                    <p:commandButton id="showall" type="button" icon="fa fa-arrow-circle-o-down" onclick="toggleExpansion()" style="width: 12px; height: 12px; margin-top: 15px;"/>
+                                </f:facet>
                                 <p:rowToggler />
                             </p:column>
-                            <p:column headerText="Order Id">
+
+                            <p:column headerText="Order ID" width="64" style="text-align: center;">
                                 <h:outputText value="#{order.orderId}" />
                             </p:column>
 
-                            <p:column headerText="Total Amount">
-                                <h:outputText value="#{order.totalAmount}" />
+                            <p:column headerText="Total Amount (SGD)" style="text-align: center;">
+                                <h:outputText value="#{order.totalAmount}">
+                                    <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+                                </h:outputText>
                             </p:column>
-                            <p:column headerText="Completed">
-                                <h:outputText value="#{order.isCompleted}" />
+
+                            <p:column headerText="Completed" style="text-align: center;">
+                                <h:outputText rendered="#{order.isCompleted}" value="Yes" />
+                                <h:outputText rendered="#{not order.isCompleted}" value="No" />
                             </p:column>
-                            <p:column headerText="Payment Status">
+
+                            <p:column headerText="Payment Status" style="text-align: center;">
                                 <h:outputText value="#{order.status}" />
                             </p:column>
 
-
                             <p:rowExpansion>
-
                                 <p:dataTable var="orderLineItem" value="#{order.orderLineItems}">
-
-                                    <p:column headerText="Menu Item">
-                                        <h:outputText value="#{orderLineItem.menuItem.menuItemName} x #{orderLineItem.quantity}" />
+                                    <p:column headerText="Menu Item" width="180">
+                                        <h:outputText value="#{orderLineItem.menuItem.menuItemName}" />
                                     </p:column>
-                                    <p:column headerText="Status">
+
+                                    <p:column headerText="Qty" style="text-align: center;" width="30">
+                                        <h:outputText value="#{orderLineItem.quantity}" />
+                                    </p:column>
+
+                                    <p:column headerText="Status" style="text-align: center;" width="80">
                                         <h:outputText value="#{orderLineItem.status}" />
                                     </p:column>
                                     <p:column headerText="Remarks">
                                         <h:outputText value="#{orderLineItem.remarks}" />
                                     </p:column>
                                 </p:dataTable>
-
-
-
                             </p:rowExpansion>
+
                         </p:dataTable>
+
                         <h:panelGrid columns="1" cellpadding="10">
-                            <p:commandButton value="Clear Table" update="@form formAllDiningTables:dataTableAllDiningTables additionalDetails"  actionListener="#{diningTableManagementManagedBean.cleanDiningTable()}">
-
-
-                            </p:commandButton>
-
+                            <p:commandButton value="Clear Table" update="@form formAllDiningTables:dataTableAllDiningTables additionalDetails"  actionListener="#{diningTableManagementManagedBean.cleanDiningTable()}" />
                         </h:panelGrid>
-
 
                     </p:outputPanel>
 
-
                 </h:form>
-
             </p:layoutUnit>
         </p:layout>
     </ui:define>
