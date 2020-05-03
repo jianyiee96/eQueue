@@ -31,7 +31,7 @@
             }
         </script>
 
-        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables" />
+        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables additionalDetails" />
         <p:layout>
             <p:layoutUnit position="center">
 
@@ -116,11 +116,10 @@
                                     </h:column>
 
                                     <h:column>
-                                        <p:commandButton style="width: 105px;" value="Display" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                        <p:commandButton style="width: 105px;" value="Display" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
                                             <f:attribute name="diningTableToView" value="#{diningTable}" />
                                         </p:commandButton>
-
-                                        <p:commandButton style="width: 105px;" value="Display" disabled="true" rendered="#{not (diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED')}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                        <p:commandButton style="width: 105px;" value="Display" disabled="true" rendered="#{not (diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED')}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
                                             <f:attribute name="diningTableToView" value="#{diningTable}" />
                                         </p:commandButton>
                                     </h:column>
@@ -220,11 +219,11 @@
                                         </h:column>
 
                                         <h:column>
-                                            <p:commandButton style="width: 105px;" value="Display" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                            <p:commandButton style="width: 105px;" value="Display" rendered="#{diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED'}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
                                                 <f:attribute name="diningTableToView" value="#{diningTable}" />
                                             </p:commandButton>
 
-                                            <p:commandButton style="width: 105px;" value="Display" disabled="true" rendered="#{not (diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'FROZEN_ALLOCATED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_ALLOCATED')}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
+                                            <p:commandButton style="width: 105px;" value="Display" disabled="true" rendered="#{not (diningTable.tableStatus == 'FROZEN_OCCUPIED' or diningTable.tableStatus == 'UNFROZEN_OCCUPIED')}"  actionListener="#{diningTableManagementManagedBean.viewDetails}" update="additionalDetails" icon="fa fa-angle-double-right" title="View">
                                                 <f:attribute name="diningTableToView" value="#{diningTable}" />
                                             </p:commandButton>
                                         </h:column>

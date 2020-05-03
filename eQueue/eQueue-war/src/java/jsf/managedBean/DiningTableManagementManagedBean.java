@@ -78,29 +78,27 @@ public class DiningTableManagementManagedBean implements Serializable {
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         diningTables.add(new DiningTable());
 
-        if(selectedCustomer == null) {
+        if (selectedCustomer == null) {
             return;
         }
-        
+
         try {
             selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
             this.selectedCustomerActiveOrders = new ArrayList<>();
 
-            if (selectedCustomer != null) {
-                for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
+            for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
-                    if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
-                        this.selectedCustomerActiveOrders.add(c);
-                    }
+                if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                    this.selectedCustomerActiveOrders.add(c);
                 }
-
             }
         } catch (CustomerNotFoundException ex) {
             System.out.println("Unexpected Error.");
         }
     }
+}
 
-    public void viewDiningTableDetails(ActionEvent event) throws IOException {
+public void viewDiningTableDetails(ActionEvent event) throws IOException {
         Long diningTableIdToView = (Long) event.getComponent().getAttributes().get("diningTableId");
         FacesContext.getCurrentInstance().getExternalContext().getFlash().put("diningTableIdToView", diningTableIdToView);
         FacesContext.getCurrentInstance().getExternalContext().redirect("viewDiningTableDetails.xhtml");
