@@ -43,8 +43,8 @@
                             <p:outputLabel value="#{employee.employeeId}" />
                         </p:column>
 
-                        <p:column headerText="Name" width="80" sortBy="#{employee.lastName} #{employee.firstName}" filterBy="#{employee.lastName} #{employee.firstName}" filterMatchMode="contains">
-                            <p:outputLabel value="#{employee.lastName} #{employee.firstName}" />
+                        <p:column headerText="Name" width="80" sortBy="#{employee.firstName} #{employee.lastName}" filterBy="#{employee.firstName} #{employee.lastName}" filterMatchMode="contains">
+                            <p:outputLabel value="#{employee.firstName} #{employee.lastName}" />
                         </p:column>
 
                         <p:column style="text-align: center;" headerText="Role" width="60" sortBy="#{employee.employeeRole}" filterBy="#{employee.employeeRole}" filterMatchMode="exact">

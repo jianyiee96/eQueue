@@ -129,7 +129,7 @@
                             <f:facet name="header">
                                 <h:outputText value="Order [ #{order.orderId} ]" />&nbsp;
                                 <h:outputText value="Table [ #{order.customer.allocatedDiningTable.diningTableId} ]" />&nbsp;
-                                <h:outputText value="Customer [ #{order.customer.firstName} ]" />
+                                <h:outputText value="Customer [ #{order.customer.firstName} #{order.customer.lastName} ]" />
                                 <br />
                                 <h:outputText value="#{order.orderDate}">
                                     <f:convertDateTime pattern="hh:mm a" />
