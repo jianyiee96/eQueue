@@ -61,7 +61,7 @@ public class KitchenManagementManagedBean implements Serializable {
     private Integer numPreparing;
 
     private CustomerOrder orderToComplete;
-    
+
     private Boolean isCollapsed;
 
     public KitchenManagementManagedBean() {
@@ -187,12 +187,15 @@ public class KitchenManagementManagedBean implements Serializable {
     public void selectOrder(CustomerOrder order) {
         this.selectedCustomerOrder = order;
     }
-    
+
     public void updateOrderLineItem() {
         try {
             orderLineItemSessionBeanLocal.updateOrderLineItemByEmployee(selectedOrderItem);
+            if (selectedOrderItem.getStatus() == OrderLineItemStatusEnum.CANCELLED) {
+                customerOrderSessionBeanLocal.updateOrderStatus(selectedCustomerOrder.getOrderId());
+            }
             customerOrderSessionBeanLocal.recalculateTotalAmount(selectedCustomerOrder.getOrderId());
-            
+
             Long customerId = customerSessionBeanLocal.retrieveCustomerIdByOrderLineItemId(selectedOrderItem.getOrderLineItemId());
             String title = "Update on Order Line Item";
             String message = "Your order line item (" + selectedOrderItem.getMenuItem().getMenuItemName() + ") has been updated to:"
