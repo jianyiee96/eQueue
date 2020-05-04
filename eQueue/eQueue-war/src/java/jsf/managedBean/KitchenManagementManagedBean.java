@@ -2,7 +2,6 @@ package jsf.managedBean;
 
 import ejb.session.stateless.CustomerOrderSessionBeanLocal;
 import ejb.session.stateless.CustomerSessionBeanLocal;
-import ejb.session.stateless.MenuItemSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.OrderLineItemSessionBeanLocal;
 import entity.CustomerOrder;
@@ -43,8 +42,7 @@ public class KitchenManagementManagedBean implements Serializable {
     private CustomerSessionBeanLocal customerSessionBeanLocal;
     @EJB(name = "NotificationSessionBeanLocal")
     private NotificationSessionBeanLocal notificationSessionBeanLocal;
-    @EJB
-    private MenuItemSessionBeanLocal menuItemSessionBean;
+    
     @Inject
     private ViewMenuItemManagedBean viewMenuItemManagedBean;
 
