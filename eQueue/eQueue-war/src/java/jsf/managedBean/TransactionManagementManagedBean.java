@@ -23,6 +23,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.inject.Named;
 import javax.faces.view.ViewScoped;
+import util.enumeration.OrderLineItemStatusEnum;
 import util.enumeration.OrderStatusEnum;
 import util.enumeration.TableStatusEnum;
 import util.exceptions.CreateNewPaymentTransactionException;
@@ -70,7 +71,7 @@ public class TransactionManagementManagedBean implements Serializable {
     private void initProcess() {
         this.diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         this.pastTransactions = paymentTransactionSessionBeanLocal.retrieveAllPastTransactions();
-        
+
         this.customerUnpaidOrders = new ArrayList<>();
         this.customerUnpaidOrderLineItems = new ArrayList<>();
 
@@ -104,6 +105,8 @@ public class TransactionManagementManagedBean implements Serializable {
         this.selectedDiningTable = (DiningTable) event.getComponent().getAttributes().get("diningTableToCheckout");
         this.selectedCustomer = this.selectedDiningTable.getCustomer();
 
+        List<OrderLineItem> orderLineItemsToAdd = new ArrayList<>();
+
         for (CustomerOrder co : this.selectedCustomer.getCustomerOrders()) {
             // should be paying for all unpaid orders...
             // otherwise it's weird for the customer to make many round trips...
@@ -111,8 +114,13 @@ public class TransactionManagementManagedBean implements Serializable {
                 this.customerUnpaidOrders.add(co);
 
                 for (OrderLineItem oli : co.getOrderLineItems()) {
-                    customerUnpaidOrderLineItems.add(oli);
-                    transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
+                    orderLineItemsToAdd.add(oli);
+
+                    if (oli.getStatus() != OrderLineItemStatusEnum.CANCELLED) {
+                        customerUnpaidOrderLineItems.add(oli);
+                        transactionValue += oli.getMenuItem().getMenuItemPrice() * oli.getQuantity();
+                    }
+
                 }
             }
         }

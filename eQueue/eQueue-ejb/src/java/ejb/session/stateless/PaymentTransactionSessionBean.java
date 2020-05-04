@@ -108,12 +108,10 @@ public class PaymentTransactionSessionBean implements PaymentTransactionSessionB
         getCustomerOrdersByCustomerId.setParameter("inCustomerId", customerId);
 
         List<CustomerOrder> customerOrders = getCustomerOrdersByCustomerId.getResultList();
-        System.out.println("customer orders " + customerOrders);
 
         Query getTransactions = em.createQuery("SELECT pt FROM PaymentTransaction pt");
         // currently, these transactions have not been filtered by customer id
         List<PaymentTransaction> paymentTransactionsUnfiltered = getTransactions.getResultList();
-        System.out.println("paymentTransactionsUnfiltered " + paymentTransactionsUnfiltered);
 
         List<PaymentTransaction> paymentTransactionsFiltered = new ArrayList<>();
 

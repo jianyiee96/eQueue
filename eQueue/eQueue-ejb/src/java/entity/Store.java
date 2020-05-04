@@ -59,7 +59,7 @@ public class Store implements Serializable {
     
     public Store(){
         this.estimatedQueueUnitWaitingMinutes = 5l;
-        this.allocationGraceWaitingMinutes = 1l;
+        this.allocationGraceWaitingMinutes = 15l;
     }
     
     public Store(String storeName, String storeEmail, String storeAddress, String messageOfTheDay, String storeContact) {
@@ -69,7 +69,6 @@ public class Store implements Serializable {
         this.storeAddress = storeAddress;
         this.messageOfTheDay = messageOfTheDay;
         this.storeContact = storeContact;
-        
     }
     
     public Long getStoreId() {

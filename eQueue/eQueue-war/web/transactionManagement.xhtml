@@ -410,6 +410,10 @@
                                         <f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
                                     </h:outputText>
                                 </p:column>
+                                
+                                <p:column class="text-center" headerText="Item Status" width="35">
+                                    <h:outputText value="#{lineItem.status}" />
+                                </p:column>
 
                                 <p:column class="text-center" headerText="Remarks" width="60">
                                     <h:outputText rendered="#{lineItem.remarks != '' and lineItem.remarks != null}" value="#{lineItem.remarks}"/>
