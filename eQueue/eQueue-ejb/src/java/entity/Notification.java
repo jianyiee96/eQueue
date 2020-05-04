@@ -42,7 +42,7 @@ public class Notification implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    private boolean isRead;
+    private Boolean isRead;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -97,11 +97,11 @@ public class Notification implements Serializable {
         this.message = message;
     }
 
-    public boolean getIsRead() {
+    public Boolean getIsRead() {
         return isRead;
     }
 
-    public void setIsRead(boolean isRead) {
+    public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
     }
 

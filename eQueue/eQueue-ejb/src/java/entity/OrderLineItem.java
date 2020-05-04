@@ -34,7 +34,7 @@ public class OrderLineItem implements Serializable {
 
     @Column(nullable = false)
     @NotNull
-    private boolean isEdited;
+    private Boolean isEdited;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -83,11 +83,11 @@ public class OrderLineItem implements Serializable {
         this.remarks = remarks;
     }
 
-    public boolean isIsEdited() {
+    public Boolean isIsEdited() {
         return isEdited;
     }
 
-    public void setIsEdited(boolean isEdited) {
+    public void setIsEdited(Boolean isEdited) {
         this.isEdited = isEdited;
     }
 
