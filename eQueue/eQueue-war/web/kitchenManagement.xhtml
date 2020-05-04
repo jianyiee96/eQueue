@@ -50,7 +50,7 @@
 
         <ez:viewMenuItem id="ccViewMenuItem" />
         <p:layout widgetVar="layoutWdgt">
-            <p:poll interval="5" listener="{kitchenManagementManagedBean.retrieveIncompleteOrders}" update="formOrdersOverview formCurrentDayOrders"></p:poll>
+            <p:poll interval="5" listener="#{kitchenManagementManagedBean.retrieveIncompleteOrders}" update="formOrdersOverview formCurrentDayOrders"></p:poll>
 
             <p:layoutUnit minSize="300" position="west"  header="Kitchen Overview" collapsible="true" resizable="true">
                 <h:form id="formOrdersOverview">
