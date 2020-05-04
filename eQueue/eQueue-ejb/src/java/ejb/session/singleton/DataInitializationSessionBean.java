@@ -110,7 +110,7 @@ public class DataInitializationSessionBean {
         try {
 
             storeManagementSessionBeanLocal.storeInitialization(
-                    new Store("The Everything Cafe", "contact-us@everythingcafe.com", "Kent Ridge Hall, NUS Street 71, #03-21",
+                    new Store("The Everything Café", "contact-us@everythingcafe.com", "Kent Ridge Hall, NUS Street 71, #03-21",
                             "In view of COVID-19 situation, we will be giving healthcare workers free coffee! #SGUNITED", "+65-65410434")
             );
 
@@ -371,14 +371,6 @@ public class DataInitializationSessionBean {
                 customerOrderSessionBean.createCustomerOrder(customerOrder, customer.getCustomerId(), orderLineItems);
             }
 
-//            List<DiningTable> diningTables = diningTableSessionBean.retrieveAllTables();
-//            for (DiningTable dt : diningTables) {
-//                if (dt.getCustomer().getCustomerOrders().isEmpty()) {
-//                    dt.setSeatedTime(null);
-//                    dt.setCustomer(null);
-//                    dt.setTableStatus(TableStatusEnum.FROZEN_UNOCCUPIED);
-//                }
-//            }
         } catch (EmployeeUsernameExistException | CustomerNotUniqueException | InputDataValidationException
                 | UnknownPersistenceException | CreateNewMenuCategoryException | CreateNewMenuItemException
                 | MenuItemNotUniqueException | CreateNewOrderLineItemException | OrderLineItemNotFoundException

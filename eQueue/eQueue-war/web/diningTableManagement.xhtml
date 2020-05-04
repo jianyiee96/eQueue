@@ -31,7 +31,7 @@
             }
         </script>
 
-        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables additionalDetails" />
+        <p:poll interval="10" listener="#{diningTableManagementManagedBean.refresh}" update="formAllDiningTables" />
         <p:layout>
             <p:layoutUnit position="center">
 
@@ -258,7 +258,7 @@
                     <p:growl id="additionalMessages" redisplay="false" life="3000" keepAlive="true"/>
 
                     <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer == null}" style="text-align: center;">
-                        <p:graphicImage library="images" name="modified_logo.png" height="180" width="450" />
+                        <p:graphicImage library="images" name="equeue-modified-logo.png" height="180" width="450" />
                     </p:outputPanel>
 
                     <p:outputPanel rendered="#{diningTableManagementManagedBean.selectedCustomer != null}">

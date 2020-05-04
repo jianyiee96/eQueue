@@ -10,7 +10,7 @@
         <link rel="shortcut icon" type="image/x-icon" href="#{resource['images/favicon.ico']}" />
         <style>
             body {
-                background-image: url("#{resource['images/background-2.png']}");
+                background-image: url("#{resource['images/index-background.png']}");
                 background-size: cover;
                 background-repeat: no-repeat;
                 background-position: center;
@@ -23,7 +23,7 @@
 
         <h:panelGroup rendered="#{sessionScope.employeeIsLogin == false}">       
             <h:form id="loginForm" style="float: right; height: 300px; width: 250px; text-align: center; margin: 12.5% 7.5%; background-color: aliceblue; opacity: 0.9">
-                <p:graphicImage library="images" name="modified_logo.png" height="120" width="250" alt="eQueue Login Form" style="background-color: aliceblue" />
+                <p:graphicImage library="images" name="equeue-modified-logo.png" height="120" width="250" alt="eQueue Login Form" style="background-color: aliceblue" />
                 <p:inputText id="username" placeholder="USERNAME" value="#{employeeLoginManagedBean.username}" size="16" required="true" requiredMessage="Username is required" maxlength="32">
                     <f:validateLength minimum="4" />
                 </p:inputText>
