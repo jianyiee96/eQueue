@@ -106,7 +106,7 @@ public class DataInitializationSessionBean {
 
     private void initializeData() {
 
-        System.out.println("Initializing Data...");
+        System.out.println("Initializing Data... This might take awhile...");
         try {
 
             storeManagementSessionBeanLocal.storeInitialization(
@@ -379,6 +379,7 @@ public class DataInitializationSessionBean {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        System.out.println("Data initialization complete!!");
     }
 
     private CustomerOrder customerOrderRandomiser(Date date, Long custId) throws Exception {
