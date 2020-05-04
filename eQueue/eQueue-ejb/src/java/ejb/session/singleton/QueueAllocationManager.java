@@ -1,13 +1,9 @@
 package ejb.session.singleton;
 
-import ejb.session.stateless.CustomerOrderSessionBeanLocal;
-import ejb.session.stateless.CustomerSessionBeanLocal;
 import ejb.session.stateless.DiningTableSessionBeanLocal;
 import ejb.session.stateless.NotificationSessionBeanLocal;
 import ejb.session.stateless.QueueSessionBeanLocal;
 import ejb.session.stateless.StoreManagementSessionBeanLocal;
-import entity.Customer;
-import entity.CustomerOrder;
 import entity.DiningTable;
 import entity.Notification;
 import entity.Queue;
@@ -28,7 +24,6 @@ import javax.ejb.TimerService;
 import util.enumeration.NotificationTypeEnum;
 import util.enumeration.QueueStatusEnum;
 import util.enumeration.TableStatusEnum;
-import util.exceptions.CustomerNotFoundException;
 import util.exceptions.QueueDoesNotExistException;
 import util.exceptions.StoreNotInitializedException;
 import util.exceptions.UnableToCreateNotificationException;
@@ -47,8 +42,6 @@ public class QueueAllocationManager {
     private StoreManagementSessionBeanLocal storeManagementSessionBeanLocal;
     @EJB
     private NotificationSessionBeanLocal notificationSessionBeanLocal;
-    @EJB
-    private CustomerSessionBeanLocal customerSessionBeanLocal;
 
     @Resource
     private TimerService timerService;
