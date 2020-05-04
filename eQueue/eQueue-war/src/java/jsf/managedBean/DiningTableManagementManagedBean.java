@@ -78,22 +78,21 @@ public class DiningTableManagementManagedBean implements Serializable {
         diningTables = diningTableSessionBeanLocal.retrieveAllTables();
         diningTables.add(new DiningTable());
 
-        if (selectedCustomer == null) {
-            return;
-        }
+        if (selectedCustomer != null) {
 
-        try {
-            selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
-            this.selectedCustomerActiveOrders = new ArrayList<>();
+            try {
+                selectedCustomer = customerSessionBeanLocal.retrieveCustomerById(selectedCustomer.getCustomerId());
+                this.selectedCustomerActiveOrders = new ArrayList<>();
 
-            for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
+                for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
 
-                if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
-                    this.selectedCustomerActiveOrders.add(c);
+                    if (c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
+                        this.selectedCustomerActiveOrders.add(c);
+                    }
                 }
+            } catch (CustomerNotFoundException ex) {
+                System.out.println("Unexpected Error.");
             }
-        } catch (CustomerNotFoundException ex) {
-            System.out.println("Unexpected Error.");
         }
     }
 
@@ -233,14 +232,11 @@ public class DiningTableManagementManagedBean implements Serializable {
         System.out.println("Table id:" + selectedDiningTable.getDiningTableId());
         if (selectedCustomer != null) {
             for (CustomerOrder c : this.selectedCustomer.getCustomerOrders()) {
-
                 if ((c.getOrderDate() != null && selectedDiningTable.getSeatedTime() != null) && c.getOrderDate().after(selectedDiningTable.getSeatedTime())) {
                     this.selectedCustomerActiveOrders.add(c);
                 }
             }
-
         }
-
     }
 
     public String dateDiff(Date date) {
